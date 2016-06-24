@@ -1,13 +1,13 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var $ = require('jquery');
 var config = {
-    apiKey: "AIzaSyA5CO5_leePTtdsTONfC6VDgvCDX57AEpI",
-    authDomain: "capstone-gmail-real-time.firebaseapp.com",
-    databaseURL: "https://capstone-gmail-real-time.firebaseio.com",
-    storageBucket: "capstone-gmail-real-time.appspot.com",
-};
+   apiKey: "AIzaSyDPRP1vgm6bQ7SXuVAQtgBS5ewsjJoDLzg",
+   authDomain: "capstone1604gha.firebaseapp.com",
+   databaseURL: "https://capstone1604gha.firebaseio.com",
+   storageBucket: "",
+ };
 firebase.initializeApp(config);
-// var root = firebase.database().ref('/openedEmail');
+// var root = firebase.database().ref('/messages');
 // root.on('child_added', function(data){
 //     console.log(data.val());
 // })
@@ -69,9 +69,14 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
           });
 
         }
-    });
-    sdk.Conversations.registerThreadViewHandler(function(threadView) {
+    })
 
+    sdk.Conversations.registerThreadViewHandler(function(threadView) {
+        var div = document.createElement('div');
+        threadView.addSidebarContentPanel({
+            el: div,
+            title: 'Task History'
+        })
         console.log('threadView: ', threadView);
         sdk.Lists.registerThreadRowViewHandler(function(threadRowView) {
             // console.log('getThreadViewID', threadView.getThreadID());

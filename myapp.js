@@ -1,12 +1,12 @@
 var $ = require('jquery');
 var config = {
-    apiKey: "AIzaSyA5CO5_leePTtdsTONfC6VDgvCDX57AEpI",
-    authDomain: "capstone-gmail-real-time.firebaseapp.com",
-    databaseURL: "https://capstone-gmail-real-time.firebaseio.com",
-    storageBucket: "capstone-gmail-real-time.appspot.com",
-};
+   apiKey: "AIzaSyDPRP1vgm6bQ7SXuVAQtgBS5ewsjJoDLzg",
+   authDomain: "capstone1604gha.firebaseapp.com",
+   databaseURL: "https://capstone1604gha.firebaseio.com",
+   storageBucket: "",
+ };
 firebase.initializeApp(config);
-// var root = firebase.database().ref('/openedEmail');
+// var root = firebase.database().ref('/messages');
 // root.on('child_added', function(data){
 //     console.log(data.val());
 // })
@@ -68,9 +68,14 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
           });
 
         }
-    });
-    sdk.Conversations.registerThreadViewHandler(function(threadView) {
+    })
 
+    sdk.Conversations.registerThreadViewHandler(function(threadView) {
+        var div = document.createElement('div');
+        threadView.addSidebarContentPanel({
+            el: div,
+            title: 'Task History'
+        })
         console.log('threadView: ', threadView);
         sdk.Lists.registerThreadRowViewHandler(function(threadRowView) {
             // console.log('getThreadViewID', threadView.getThreadID());
