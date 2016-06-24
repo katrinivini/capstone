@@ -7,7 +7,7 @@ var config = {
     storageBucket: "capstone-gmail-real-time.appspot.com",
 };
 firebase.initializeApp(config);
-// var root = firebase.database().ref('/hellos');
+// var root = firebase.database().ref('/openedEmail');
 // root.on('child_added', function(data){
 //     console.log(data.val());
 // })
@@ -49,30 +49,25 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     sdk.Toolbars.addToolbarButtonForApp({
         title: 'USE IDK',
         onClick: function(event) {
-            console.log(event);
             var provider = new firebase.auth.GoogleAuthProvider();
-            // // provider.addScope('https://mail.google.com');
+            provider.addScope('https://mail.google.com');
             firebase.auth().signInWithPopup(provider).then(function(result) {
                 // This gives you a Google Access Token. You can use it to access the Google API.
-                // var token = result.credential.accessToken;
+                var token = result.credential.accessToken;
                 // The signed-in user info.
-                // var user = result.user;
+                var user = result.user;
                 // ...
             }).catch(function(error) {
-                // Handle Errors here.
-                var errorCode = error.code;
-                var errorMessage = error.message;
-                // The email of the user's account used.
-                var email = error.email;
-                // The firebase.auth.AuthCredential type that was used.
-                var credential = error.credential;
-                // ...
-            });
-            firebase.auth().signOut().then(function() {
-                // Sign-out successful.
-            }, function(error) {
-                // An error happened.
-            });
+              // Handle Errors here.
+              var errorCode = error.code;
+              var errorMessage = error.message;
+              // The email of the user's account used.
+              var email = error.email;
+              // The firebase.auth.AuthCredential type that was used.
+              var credential = error.credential;
+              // ...
+          });
+
         }
     });
     sdk.Conversations.registerThreadViewHandler(function(threadView) {
