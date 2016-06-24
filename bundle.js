@@ -1,17 +1,19 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 var $ = require('jquery');
 var config = {
-    apiKey: "AIzaSyA5CO5_leePTtdsTONfC6VDgvCDX57AEpI",
-    authDomain: "capstone-gmail-real-time.firebaseapp.com",
-    databaseURL: "https://capstone-gmail-real-time.firebaseio.com",
-    storageBucket: "capstone-gmail-real-time.appspot.com",
+    apiKey: "AIzaSyDPRP1vgm6bQ7SXuVAQtgBS5ewsjJoDLzg",
+    authDomain: "capstone1604gha.firebaseapp.com",
+    databaseURL: "https://capstone1604gha.firebaseio.com",
+    storageBucket: "",
 };
 firebase.initializeApp(config);
-var root = firebase.database().ref('/hellos');
-root.on('child_added', function(data) {
-    console.log(data.val());
-})
-root.push({ message: 'hi', ts: window.performance.now() });
+var root = firebase.database().ref('/messages');
+root.set({isChanging: false});
+// root.on('child_added', function(data) {
+//     console.log(data.val());
+// })
+// root.push({ message: 'hi', ts: window.performance.now() });
+
 // console.log(database);
 // database.push('hi:)');
 // $(loaded => alert('heyooooo'));
@@ -28,14 +30,20 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
          http://stackoverflow.com/questions/5927284/how-can-i-make-setinterval-also-work-when-a-tab-is-inactive-in-chrome */
 
         //see if user has changed their text input
-        var interval = (1000 / 30); //30fps
+        var interval = (1000 / 2); //30fps
         var oldtext = '';
         setInterval(applyChanges, interval);
+
         function applyChanges() {
-            if (oldtext !== composeView.getTextContent()) {
-                console.log('text is now', composeView.getTextContent());
-                oldtext = composeView.getTextContent();
-            }
+            try {
+                if (oldtext !== composeView.getTextContent()) {
+                    console.log('text is now', composeView.getTextContent());
+                    oldtext = composeView.getTextContent();
+                    root.update({isChanging:true});
+                }  else {
+                    root.update({isChanging:false});
+                }
+            } catch (err) {}
         }
 
         // a compose view has come into existence, do something with it!
@@ -48,23 +56,23 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         });
     });
 
-    sdk.Conversations.registerThreadViewHandler(function(threadView) {
+    // sdk.Conversations.registerThreadViewHandler(function(threadView) {
 
-        console.log('threadView: ', threadView);
-        sdk.Lists.registerThreadRowViewHandler(function(threadRowView) {
-            console.log('getThreadViewID', threadView.getThreadID());
-            //   console.log('did i end up in here');
-            if (threadView.getThreadID() === threadRowView.getThreadID()) {
-                console.log()
-                threadRowView.addLabel({
-                    title: 'Kathy...',
-                    foregroundColor: 'white',
-                    backgroundColor: 'blue'
-                });
-            }
+    //     console.log('threadView: ', threadView);
+    //     sdk.Lists.registerThreadRowViewHandler(function(threadRowView) {
+    //         console.log('getThreadViewID', threadView.getThreadID());
+    //         //   console.log('did i end up in here');
+    //         if (threadView.getThreadID() === threadRowView.getThreadID()) {
+    //             console.log()
+    //             threadRowView.addLabel({
+    //                 title: 'Kathy...',
+    //                 foregroundColor: 'white',
+    //                 backgroundColor: 'blue'
+    //             });
+    //         }
 
-        });
-    });
+    //     });
+    // });
 
 });
 },{"jquery":2}],2:[function(require,module,exports){
