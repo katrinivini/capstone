@@ -8,7 +8,7 @@ var config = {
 };
 firebase.initializeApp(config);
 var root = firebase.database().ref('/messages');
-root.set({isChanging: false});
+root.set({isChanging: false, sender: ""});
 // root.on('child_added', function(data) {
 //     console.log(data.val());
 // })
@@ -33,15 +33,31 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         var interval = (1000 / 2); //30fps
         var oldtext = '';
         setInterval(applyChanges, interval);
+        var elem = document.createElement("p");
+        elem.innerHTML = "ths is fun";
+        var statusbar = composeView.addStatusBar();
+        // statusbar.el.innerHTML = "<h1>Is this workin?</h1>"
+        // root.on('child_changed', function(data){
+        //     // console.log(data.get(sender))
+        //     console.log("maybe",data.val().sender)
+        // })
+
 
         function applyChanges() {
             try {
+                // this will always fire on page load if there is a draft with text in it
                 if (oldtext !== composeView.getTextContent()) {
                     console.log('text is now', composeView.getTextContent());
                     oldtext = composeView.getTextContent();
                     root.update({isChanging:true});
+                    root.update({sender:composeView.getFromContact().name})
+                    // console.log(composeView.getFromContact(), "Contact")
+                    // CHANGE THE CONTACT NAME TO THE ROOT.SENDER THING //
+                    statusbar.el.innerHTML = composeView.getFromContact().name + "<b> is typing right now.</b>"
                 }  else {
                     root.update({isChanging:false});
+                    root.update({sender:""})
+                    statusbar.el.innerHTML = composeView.getFromContact().name +  "<b> is not typing right now.</b>";
                 }
             } catch (err) {}
         }
