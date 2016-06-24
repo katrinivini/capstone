@@ -7,16 +7,35 @@ var config = {
 };
 firebase.initializeApp(config);
 var root = firebase.database().ref('/hellos');
-root.on('child_added', function(data){
+root.on('child_added', function(data) {
     console.log(data.val());
 })
-root.push({message: 'hi', ts: window.performance.now()});
+root.push({ message: 'hi', ts: window.performance.now() });
 // console.log(database);
 // database.push('hi:)');
-$(loaded => alert('hi'));
+// $(loaded => alert('heyooooo'));
+
+
+
+
+
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     // the SDK has been loaded, now do something with it!
     sdk.Compose.registerComposeViewHandler(function(composeView) {
+
+        /* link with info about intervals in inactive windows
+         http://stackoverflow.com/questions/5927284/how-can-i-make-setinterval-also-work-when-a-tab-is-inactive-in-chrome */
+
+        //see if user has changed their text input
+        var interval = (1000 / 30); //30fps
+        var oldtext = '';
+        setInterval(applyChanges, interval);
+        function applyChanges() {
+            if (oldtext !== composeView.getTextContent()) {
+                console.log('text is now', composeView.getTextContent());
+                oldtext = composeView.getTextContent();
+            }
+        }
 
         // a compose view has come into existence, do something with it!
         composeView.addButton({
@@ -27,6 +46,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             }
         });
     });
+
     sdk.Conversations.registerThreadViewHandler(function(threadView) {
 
         console.log('threadView: ', threadView);
