@@ -45,4 +45,15 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         });
     });
 
+    sdk.Conversations.registerMessageViewHandler(function(messageView) {
+        if (messageView.isLoaded()) {
+        console.log("messageView: ", messageView);
+        console.log("messageID: ", messageView.getMessageID());
+        console.log("date: ", messageView.getDateString());
+        console.log("sender: ", messageView.getSender());
+        console.log("user: ", sdk.User.getEmailAddress());
+        console.log("current time: ", new Date());
+    }
+    })
+
 });
