@@ -6,12 +6,14 @@ var config = {
     storageBucket: "",
 };
 firebase.initializeApp(config);
-var root = firebase.database().ref('/messages');
-root.set({isChanging: false});
-// root.on('child_added', function(data) {
+var messages = firebase.database().ref('/messages');
+var threads = firebase.database().ref('/threads');
+messages.set({ isChanging: false });
+console.log('threads: ', threads);
+// messages.on('child_added', function(data) {
 //     console.log(data.val());
 // })
-// root.push({ message: 'hi', ts: window.performance.now() });
+// messages.push({ message: 'hi', ts: window.performance.now() });
 
 // console.log(database);
 // database.push('hi:)');
@@ -34,9 +36,9 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 if (oldtext !== composeView.getTextContent()) {
                     console.log('text is now', composeView.getTextContent());
                     oldtext = composeView.getTextContent();
-                    root.update({isChanging:true});
-                }  else {
-                    root.update({isChanging:false});
+                    messages.update({ isChanging: true });
+                } else {
+                    messages.update({ isChanging: false });
                 }
             } catch (err) {}
         }
@@ -63,25 +65,29 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 var user = result.user;
                 // ...
             }).catch(function(error) {
-              // Handle Errors here.
-              var errorCode = error.code;
-              var errorMessage = error.message;
-              // The email of the user's account used.
-              var email = error.email;
-              // The firebase.auth.AuthCredential type that was used.
-              var credential = error.credential;
-              // ...
-          });
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                // The email of the user's account used.
+                var email = error.email;
+                // The firebase.auth.AuthCredential type that was used.
+                var credential = error.credential;
+                // ...
+            });
 
         }
     })
 
     sdk.Conversations.registerThreadViewHandler(function(threadView) {
+
+
         var div = document.createElement('div');
         threadView.addSidebarContentPanel({
             el: div,
             title: 'Task History'
         })
+
+
         sdk.Lists.registerThreadRowViewHandler(function(threadRowView) {
             // console.log('getThreadViewID', threadView.getThreadID());
             //   console.log('did i end up in here');
@@ -93,6 +99,15 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                     backgroundColor: 'blue'
                 });
             }
+        });
 
-
+    });
+    
+    sdk.Conversations.registerMessageViewHandler(function(messageView){
+        if (messageView.isLoaded()){
+            threads.push({sender: messageView.getSender(), date: messageView.getDateString()})
+            console.log('userEmail: ', sdk.User.getEmailAddress());
+            console.log('messageID: ', messageView.getMessageID());
+        }
+    })
 });
