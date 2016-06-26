@@ -12,15 +12,6 @@ root.set({isChanging: false, sender: ""});
 // root.on('child_added', function(data) {
 //     console.log(data.val());
 // })
-// root.push({ message: 'hi', ts: window.performance.now() });
-
-// console.log(database);
-// database.push('hi:)');
-// $(loaded => alert('heyooooo'));
-
-
-
-
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     // the SDK has been loaded, now do something with it!
@@ -28,36 +19,35 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
         /* link with info about intervals in inactive windows
          http://stackoverflow.com/questions/5927284/how-can-i-make-setinterval-also-work-when-a-tab-is-inactive-in-chrome */
-
+         console.log('in compose view now whee')
         //see if user has changed their text input
-        var interval = (1000 / 2); //30fps
+        var interval = 1000; //30fps
         var oldtext = '';
         setInterval(applyChanges, interval);
-        var elem = document.createElement("p");
-        elem.innerHTML = "ths is fun";
-        var statusbar = composeView.addStatusBar();
-        // statusbar.el.innerHTML = "<h1>Is this workin?</h1>"
-        // root.on('child_changed', function(data){
-        //     // console.log(data.get(sender))
-        //     console.log("maybe",data.val().sender)
-        // })
-
+        var statusbar = composeView.addStatusBar();    
 
         function applyChanges() {
             try {
                 // this will always fire on page load if there is a draft with text in it
                 if (oldtext !== composeView.getTextContent()) {
-                    console.log('text is now', composeView.getTextContent());
+                    // console.log('text is now', composeView.getTextContent());
                     oldtext = composeView.getTextContent();
-                    root.update({isChanging:true});
-                    root.update({sender:composeView.getFromContact().name})
-                    // console.log(composeView.getFromContact(), "Contact")
-                    // CHANGE THE CONTACT NAME TO THE ROOT.SENDER THING //
-                    statusbar.el.innerHTML = composeView.getFromContact().name + "<b> is typing right now.</b>"
+                    root.update({isChanging: true});
+                    root.update({sender: composeView.getFromContact().name})
+
+                    //should not be using 'value' to update this - but child_changed doesn't work? 
+                    root.on('value', function(data){
+                        // if (data.val() === composeView.getFromContact().name) {
+                            // console.log('who is typing: ', composeView.getFromContact().name)
+                            statusbar.el.innerHTML = data.val().sender + "<b> is typing right now.</b>"
+                            // statusbar.el.innerHTML = composeView.getFromContact().name + "<b> is typing right now.</b>"
+                        // }
+                    })
+
                 }  else {
                     root.update({isChanging:false});
                     root.update({sender:""})
-                    statusbar.el.innerHTML = composeView.getFromContact().name +  "<b> is not typing right now.</b>";
+                    // statusbar.el.innerHTML = composeView.getFromContact().name +  "<b> is not typing right now.</b>";
                 }
             } catch (err) {}
         }
