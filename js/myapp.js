@@ -17,6 +17,7 @@ var members = firebase.database().ref('/members');
 /*also require all the files here. browserify will compile them and put them into the bundle file*/
 module.exports = {
     // team: team,
+    $: $,
     messages: messages,
     members: members
 }
