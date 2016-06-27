@@ -1,54 +1,164 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var $ = require('jquery');
-var config = {
-    apiKey: "AIzaSyA5CO5_leePTtdsTONfC6VDgvCDX57AEpI",
-    authDomain: "capstone-gmail-real-time.firebaseapp.com",
-    databaseURL: "https://capstone-gmail-real-time.firebaseio.com",
-    storageBucket: "capstone-gmail-real-time.appspot.com",
-};
-firebase.initializeApp(config);
-var root = firebase.database().ref('/hellos');
-root.on('child_added', function(data){
-    console.log(data.val());
-})
-root.push({message: 'hi', ts: window.performance.now()});
-// console.log(database);
-// database.push('hi:)');
-$(loaded => alert('hi'));
+var messages = require('../myapp.js').messages;
+
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     // the SDK has been loaded, now do something with it!
     sdk.Compose.registerComposeViewHandler(function(composeView) {
 
-        // a compose view has come into existence, do something with it!
-        composeView.addButton({
-            title: "Itsa me, Mario!",
-            iconUrl: 'http://icons.iconarchive.com/icons/ph03nyx/super-mario/128/Paper-Mario-icon.png',
-            onClick: function(event) {
-                event.composeView.insertTextIntoBodyAtCursor('Hello World!');
-            }
-        });
+        /* link with info about intervals in inactive windows
+         http://stackoverflow.com/questions/5927284/how-can-i-make-setinterval-also-work-when-a-tab-is-inactive-in-chrome */
+        console.log('in compose view now whee');
+        //see if user has changed their text input
+        var interval = 1000; //30fps
+        var oldtext = '';
+        setInterval(applyChanges, interval);
+        var statusbar = composeView.addStatusBar();
+
+        function applyChanges() {
+            try {
+                // this will always fire on page load if there is a draft with text in it
+                if (oldtext !== composeView.getTextContent()) {
+                    oldtext = composeView.getTextContent();
+                    messages.update({ isChanging: true });
+                    messages.update({ sender: composeView.getFromContact().name })
+
+                    //should not be using 'value' to update this - but child_changed doesn't work? 
+                    messages.on('value', function(data) {
+                        statusbar.el.innerHTML = data.val().sender + "<b> is typing right now.</b>"
+
+                    })
+
+                } else {
+                    messages.update({ isChanging: false });
+                    messages.update({ sender: "" })
+                }
+            } catch (err) {}
+        }
+
+    });    
+});
+},{"../myapp.js":4}],2:[function(require,module,exports){
+InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
+	sdk.NavMenu.addNavItem({
+		name: 'Assigned To Me',
+		routeID: 'assignedtome'
+	})
+});
+},{}],3:[function(require,module,exports){
+var $ = require('jquery');
+// var team = require('../myapp.js').team;
+var members = require('../myapp.js').members;
+
+InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
+    sdk.Toolbars.addToolbarButtonForApp({
+        title: 'USE IDK',
+        titleClass: 'authentication',
+        arrowColor: 'green',
+        onClick: function(event) {
+            sdk.Widgets.showModalView({
+                el: loginForm(),
+                title: 'USE IDK'
+            })
+        }
     });
-    sdk.Conversations.registerThreadViewHandler(function(threadView) {
 
-        console.log('threadView: ', threadView);
-        sdk.Lists.registerThreadRowViewHandler(function(threadRowView) {
-            console.log('getThreadViewID', threadView.getThreadID());
-            //   console.log('did i end up in here');
-            if (threadView.getThreadID() === threadRowView.getThreadID()) {
-                console.log()
-                threadRowView.addLabel({
-                    title: 'Kathy...',
-                    foregroundColor: 'white',
-                    backgroundColor: 'blue'
-                });
-            }
-
+    function loginForm() {
+        var form = document.createElement('form');
+        var personalEmail = document.createElement('input');
+        var teamEmail = document.createElement('input');
+        teamEmail.type = 'text';
+        teamEmail.placeholder = 'team email address';
+        var submit = document.createElement('input');
+        submit.type = 'submit';
+        submit.value = 'Confirm';
+        submit.addEventListener('click', function(event) {
+        	// console.log($(teamEmail).val());
+         //    team.set($(teamEmail).val());
+            members.push(sdk.User.getEmailAddress());
+            // var provider = new firebase.auth.GoogleAuthProvider();
+            // firebase.auth().signInWithPopup(provider).then(function(result) {
+            //     // This gives you a Google Access Token. You can use it to access the Google API.
+            //     var token = result.credential.accessToken;
+            //     // The signed-in user info.
+            //     var user = result.user;
+            //     // ...
+            // }).catch(function(error) {
+            //     // Handle Errors here.
+            //     var errorCode = error.code;
+            //     var errorMessage = error.message;
+            //     // The email of the user's account used.
+            //     var email = error.email;
+            //     // The firebase.auth.AuthCredential type that was used.
+            //     var credential = error.credential;
+            //     // ...
+            // });
         });
-    });
-
+        form.appendChild(teamEmail);
+        form.appendChild(submit);
+        return form;
+    }
 });
 
-},{"jquery":2}],2:[function(require,module,exports){
+},{"../myapp.js":4,"jquery":6}],4:[function(require,module,exports){
+var config = {
+    apiKey: "AIzaSyDPRP1vgm6bQ7SXuVAQtgBS5ewsjJoDLzg",
+    authDomain: "capstone1604gha.firebaseapp.com",
+    databaseURL: "https://capstone1604gha.firebaseio.com",
+    storageBucket: "https://capstone1604gha.firebaseio.com",
+};
+
+var $ = require('jquery');
+
+firebase.initializeApp(config);
+/*myapp.js is the file where we should create the 'tables' in our database, the rest go in the js folder*/
+var messages = firebase.database().ref('/messages');
+messages.set({ isChanging: false, sender: "" });
+// var team = firebase.database().ref('/teamEmail');
+var members = firebase.database().ref('/members');
+
+/*also require all the files here. browserify will compile them and put them into the bundle file*/
+module.exports = {
+    // team: team,
+    messages: messages,
+    members: members
+}
+
+require('./compose/realtime-updates.js');
+require('./left-navmenu/myconversations.js');
+require('./login/login.js');
+require('./threadview/assign/assign-button.js');
+},{"./compose/realtime-updates.js":1,"./left-navmenu/myconversations.js":2,"./login/login.js":3,"./threadview/assign/assign-button.js":5,"jquery":6}],5:[function(require,module,exports){
+var members = require('../../myapp.js').members;
+
+InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
+    sdk.Toolbars.registerToolbarButtonForThreadView({
+        title: 'Assign',
+        section: 'INBOX_STATE',
+        iconUrl: 'https://cdn0.iconfinder.com/data/icons/pixel-perfect-at-24px-volume-6/24/2140-512.png',
+        hasDropdown: true,
+        onClick: function(event) {
+            var emails = [];
+            var list = document.createElement('div');
+            Promise.resolve(members.once('value', function(snapshot) {
+                    var data = snapshot.val();
+                    var properties = Object.getOwnPropertyNames(data);
+                    properties.forEach(function(prop) {
+                        emails.push(data[prop]);
+                    })
+                }))
+                .then(function() {
+                    emails.forEach(function(email) {
+                        var em = document.createElement('div');
+                        em.innerHTML = email;
+                        list.appendChild(em);
+                    });
+                    event.dropdown.el.appendChild(list);
+                });
+        }
+    });
+});
+
+},{"../../myapp.js":4}],6:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v3.0.0
  * https://jquery.com/
@@ -10087,4 +10197,4 @@ if ( !noGlobal ) {
 return jQuery;
 } ) );
 
-},{}]},{},[1]);
+},{}]},{},[4]);
