@@ -11,7 +11,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             var list = document.createElement('div');
             Promise.resolve(members.once('value', function(snapshot) {
                     var data = snapshot.val();
-                    var properties = Object.getOwnPropertyNames(data);
+                    var properties = Object.getOwnPropertyNames(data); //returns array of enumerable property names
                     properties.forEach(function(prop) {
                         emails.push(data[prop]);
                     })
