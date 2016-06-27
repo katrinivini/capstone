@@ -6,6 +6,9 @@
     "https://mail.google.com/",
     "https://inbox.google.com/"
   ],
+   "web_accessible_resources": [
+    "node_modules/*"
+  ],
   "content_scripts" : [
     {
       "matches": ["https://mail.google.com/*", "https://inbox.google.com/*"],
