@@ -105,11 +105,26 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         submit.type = 'submit';
         submit.value = 'Create Shared Label';
         submit.addEventListener('click', function(event) {
-            sharedLabels.push({ label: $(labelName).val() });
             var checkedMembers = Array.prototype.slice.call(document.getElementsByClassName('checked')).map(function(checkedMembers) {
                 return checkedMembers.innerHTML;
             });
-            console.log('checked members: ', checkedMembers);
+            var threadId;
+            Promise.resolve(sdk.Conversations.registerThreadViewHandler(function(threadView){
+            	threadId = threadView.getThreadID();
+            	console.log("threadId inside registerThreadViewHandler: ", threadId);
+            	return threadId;
+            }))
+            .then(function(blah) {
+            	console.log('checked members: ', checkedMembers);
+            	console.log("threadId: ", threadId);
+            	sharedLabels.push({ label: $(labelName).val(), threadIds: threadId, members: checkedMembers});
+            })
+            
+
+            // sharedLabels.push({ label: $(labelName).val(), threadIds: threadId, members: checkedMembers});
+            	// labels.child('threadIds').set(threadId);
+            	// labels.child('members').set(checkedMembers);
+
         })
 
         //invite people
@@ -215,7 +230,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     }
 });
 
-},{"../myapp.js":5,"jquery":7}],5:[function(require,module,exports){
+},{"../myapp.js":5,"jquery":9}],5:[function(require,module,exports){
 var config = {
     apiKey: "AIzaSyDPRP1vgm6bQ7SXuVAQtgBS5ewsjJoDLzg",
     authDomain: "capstone1604gha.firebaseapp.com",
@@ -249,7 +264,9 @@ require('./left-navmenu/myconversations.js');
 require('./left-navmenu/shared-labels.js');
 require('./login/login.js');
 require('./threadview/assign/assign-button.js');
-},{"./compose/realtime-updates.js":1,"./left-navmenu/myconversations.js":2,"./left-navmenu/shared-labels.js":3,"./login/login.js":4,"./threadview/assign/assign-button.js":6,"jquery":7}],6:[function(require,module,exports){
+require('./threadview/shared-labels-button.js');
+require('./threadview/taskhistory.js');
+},{"./compose/realtime-updates.js":1,"./left-navmenu/myconversations.js":2,"./left-navmenu/shared-labels.js":3,"./login/login.js":4,"./threadview/assign/assign-button.js":6,"./threadview/shared-labels-button.js":7,"./threadview/taskhistory.js":8,"jquery":9}],6:[function(require,module,exports){
 var members = require('../../myapp.js').members;
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
@@ -281,6 +298,57 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 });
 
 },{"../../myapp.js":5}],7:[function(require,module,exports){
+var sharedLabels = require('../myapp.js').sharedLabels;
+
+InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
+	sdk.Toolbars.registerToolbarButtonForThreadView({
+		title: 'Shared Labels',
+		iconUrl: 'http://i.stack.imgur.com/6Yn8V.png',
+		section: 'METADATA_STATE',
+		hasDropdown: true,
+		onClick: function(event){
+			var labels;
+			Promise.resolve(sharedLabels.once('value', function(snapshot){
+				var data = snapshot.val();
+				var properties = Object.getOwnPropertyNames(data);
+				labels = properties.map(function(prop){
+					return data[prop].label;
+				});
+			}))
+			.then(function(){
+				var list = document.createElement('div');
+				labels.forEach(function(label){
+					var p  = document.createElement('div');
+					p.classList.add(label);
+					p.innerHTML = label;
+					p.addEventListener('click', function(event){
+						// sdk.Lists.registerThreadRowViewHandler(function(threadRow){
+						// 	threadRow.addLabel({
+
+						// 	})
+						// })
+					})
+					list.appendChild(p);
+				})
+				event.dropdown.el.appendChild(list);
+			});
+		}
+	})
+});
+
+},{"../myapp.js":5}],8:[function(require,module,exports){
+InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
+	sdk.Conversations.registerThreadViewHandler(function(threadView){
+		var taskHistory = document.createElement('div');
+		taskHistory.style = "height: 200px; width: 200px";
+		threadView.addSidebarContentPanel({
+			el : taskHistory,
+			title: 'Task History',
+			iconUrl: 'https://cdn3.iconfinder.com/data/icons/website-panel-icons/128/test1-13-512.png'
+		})
+	})
+});
+},{}],9:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v3.0.0
  * https://jquery.com/

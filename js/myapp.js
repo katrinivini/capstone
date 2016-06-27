@@ -31,3 +31,5 @@ require('./left-navmenu/myconversations.js');
 require('./left-navmenu/shared-labels.js');
 require('./login/login.js');
 require('./threadview/assign/assign-button.js');
+require('./threadview/shared-labels-button.js');
+require('./threadview/taskhistory.js');

@@ -58,11 +58,26 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         submit.type = 'submit';
         submit.value = 'Create Shared Label';
         submit.addEventListener('click', function(event) {
-            sharedLabels.push({ label: $(labelName).val() });
             var checkedMembers = Array.prototype.slice.call(document.getElementsByClassName('checked')).map(function(checkedMembers) {
                 return checkedMembers.innerHTML;
             });
-            console.log('checked members: ', checkedMembers);
+            var threadId;
+            Promise.resolve(sdk.Conversations.registerThreadViewHandler(function(threadView){
+            	threadId = threadView.getThreadID();
+            	console.log("threadId inside registerThreadViewHandler: ", threadId);
+            	return threadId;
+            }))
+            .then(function(blah) {
+            	console.log('checked members: ', checkedMembers);
+            	console.log("threadId: ", threadId);
+            	sharedLabels.push({ label: $(labelName).val(), threadIds: threadId, members: checkedMembers});
+            })
+            
+
+            // sharedLabels.push({ label: $(labelName).val(), threadIds: threadId, members: checkedMembers});
+            	// labels.child('threadIds').set(threadId);
+            	// labels.child('members').set(checkedMembers);
+
         })
 
         //invite people
