@@ -6,33 +6,37 @@ var config = {
 };
 
 var $ = require('jquery');
+window.firebase = firebase; 
 
 firebase.initializeApp(config);
 /*myapp.js is the file where we should create the 'tables' in our database, the rest go in the js folder*/
+var rootRef = firebase.database().ref();
+
 var messages = firebase.database().ref('/messages');
 messages.set({ isChanging: false, sender: "" });
 // var team = firebase.database().ref('/teamEmail');
 var members = firebase.database().ref('/members');
 
 function login () {
-	var provider = new firebase.auth.GoogleAuthProvider();
-	console.log('what is provider', provider)
-	// firebase.auth().signInWithPopup(provider)
-	firebase.auth().signInWithRedirect(provider)
-	.then(function(result) {
-    // This gives you a Google Access Token. You can use it to access the Google API.
-    	alert('hello are you there');
-	    console.log('here is result', result)
-	    // var token = result.credential.accessToken;
-	    // var user = result.user;
+
+	chrome.identity.getAuthToken({'interactive': true}, function (token){
+		console.log('success, not sure what this returns', token)
 	})
-	.catch(function(error) {
-		console.log('X_X :', error.code + error.message)
-	    // var errorCode = error.code;
-	    // var errorMessage = error.message;
-	    // var email = error.email;
-	    // var credential = error.credential;
-	});
+	
+	// console.log('in the login function');
+	// var auth = firebase.auth();
+	// var provider = new firebase.auth.GoogleAuthProvider();
+	// //signInWithPopup gives me the screen where it asks for permissions, but hangs indefinitely and does not ever consolelog either a success or result
+	// auth.signInWithPopup(provider).then(function(result) {
+	// // auth.signInWithCredential("teamidkgha@gmail.com").then(function(result) {
+	// //signInWithRedirect gives me the screen where it asks for permissions, but consolelogs undefined in the .then and also console logs my error message
+	// console.log(window.open(""));
+	// // auth.signInWithRedirect(provider).then(function(result) {
+	// 	console.log('success: ', result)
+	// 	console.log(arguments);
+	// }).catch(function(error) {
+	// 	console.log('you died of dysentery', error);
+	// });
 }
 
 
@@ -41,7 +45,8 @@ module.exports = {
     // team: team,
     messages: messages,
     members: members,
-    login: login
+    login: login 
+    // initApp: initApp
 }
 
 require('./compose/realtime-updates.js');

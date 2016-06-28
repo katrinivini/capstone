@@ -4,11 +4,30 @@
   "version": "1.0",
   "permissions": [
     "https://mail.google.com/",
-    "https://inbox.google.com/"
+    "https://inbox.google.com/", 
+    "identity"
   ],
+  // "browser_action": {
+  //   "default_icon": {                    // optional
+  //     "19": "images/icon19.png",           // optional
+  //     "38": "images/icon38.png"            // optional
+  //   },
+  //   "default_title": "Google Mail",      // optional; shown in tooltip
+  //   "default_popup": "popup.html"        // optional
+  // }, 
    "web_accessible_resources": [
     "node_modules/*"
   ],
+  "background": {
+          "scripts": ["background.js"]
+  }, 
+  "oauth2": {
+      "client_id": "124834244949-oh5nlivsjm6mlv19d3tskt64uvr5hurf.apps.googleusercontent.com",
+      "scopes": [
+        "https://mail.google.com/"
+      ]
+  }, 
+  "content_security_policy": "script-src 'self' 'unsafe-eval' https://*.google.com https://capstone1604gha.firebaseio.com; object-src 'self' https://*.google.com https://capstone1604gha.firebaseio.com",  
   "content_scripts" : [
     {
       "matches": ["https://mail.google.com/*", "https://inbox.google.com/*"],
