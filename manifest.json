@@ -24,7 +24,7 @@
     "oauth2": {
         "client_id": "124834244949-6hsbjtikf0ia38bes1p4oe8dsc6ubupn.apps.googleusercontent.com",
         "scopes": [
-            "https://www.googleapis.com/auth/gmail.readonly"
+          "email", "openid", "profile", "https://www.googleapis.com/auth/gmail.readonly"
         ]
     },
     "content_security_policy": "script-src 'self' 'unsafe-eval' https://*.google.com https://capstone1604gha.firebaseio.com; object-src 'self' https://*.google.com https://capstone1604gha.firebaseio.com",

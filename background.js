@@ -9,9 +9,7 @@ function gapiWasLoaded() {
 }
 
 function login(ok) {
-    console.log('trying to get auth token');
-    console.log('chrome.identity', chrome.identity);
-    console.log('getAuthToken() ->', chrome.identity.getAuthToken({
+ chrome.identity.getAuthToken({
         interactive: true
     }, function(token) {
         console.log('hi im here now');
@@ -20,13 +18,15 @@ function login(ok) {
             return;
         }
         ok(token)
+        console.log('token: ', token);
         var x = new XMLHttpRequest();
-        x.open('GET', 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' + token);
-        x.onload = function() {
-            alert(x.response);
-        };
-        x.send();
-    }));
+        x.open('GET', 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' + token); //i think this is where the page is supposed to pop up
+        // x.onload = function() {
+        //     console.log('this is the alert message');
+        //     alert(x.response);
+        // };
+        x.send(); 
+    });
 
 }
 
