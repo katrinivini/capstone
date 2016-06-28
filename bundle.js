@@ -1,4 +1,48 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+var head = document.getElementsByTagName('head')[0];
+var script = document.createElement('script');
+script.type = 'text/javascript';
+script.src = "https://apis.google.com/js/client.js?onload=gapiWasLoaded";
+head.appendChild(script);
+
+function gapiWasLoaded() {
+    console.log('gapi loaded: ', arguments);
+}
+
+function login(ok) {
+    console.log('trying to get auth token');
+    console.log('chrome.identity', chrome.identity);
+    console.log('getAuthToken() ->', chrome.identity.getAuthToken({
+        interactive: true
+    }, function(token) {
+        console.log('hi im here now');
+        if (chrome.runtime.lastError) {
+            alert(chrome.runtime.lastError.message);
+            return;
+        }
+        ok(token)
+        var x = new XMLHttpRequest();
+        x.open('GET', 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' + token);
+        x.onload = function() {
+            alert(x.response);
+        };
+        x.send();
+    }));
+
+}
+
+function hello(){
+    console.log("saying hello from background.js");
+}
+chrome.runtime.onMessage.addListener(function(request, sender, callback){
+    console.log('request: ', request);
+    console.log('sender: ', sender);
+    login(callback)
+    //callback(getAuthToken());
+})
+// module.exports = getAuthToken;
+
+},{}],2:[function(require,module,exports){
 var messages = require('../myapp.js').messages;
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
@@ -37,18 +81,19 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
     });    
 });
-},{"../myapp.js":4}],2:[function(require,module,exports){
+},{"../myapp.js":5}],3:[function(require,module,exports){
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 	sdk.NavMenu.addNavItem({
 		name: 'Assigned To Me',
 		routeID: 'assignedtome'
 	})
 });
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var $ = require('jquery');
 var fb = require('../myapp.js');
 // var team = require('../myapp.js').team;
 var members = require('../myapp.js').members;
+var getAuthToken = require('../../background.js');
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     sdk.Toolbars.addToolbarButtonForApp({
@@ -73,7 +118,13 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         submit.type = 'submit';
         submit.value = 'Confirm';
         submit.addEventListener('click', function(event) {
-            fb.login(); 
+            // fb.login(); 
+            // getAuthToken();
+            chrome.runtime.sendMessage({
+                type: 'start auth'
+            }, function(response){
+                console.log(response);
+            })
         	// console.log($(teamEmail).val());
             // team.set($(teamEmail).val());
             // members.push(sdk.User.getEmailAddress());
@@ -84,7 +135,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     }
 });
 
-},{"../myapp.js":4,"jquery":6}],4:[function(require,module,exports){
+},{"../../background.js":1,"../myapp.js":5,"jquery":7}],5:[function(require,module,exports){
 var config = {
     apiKey: "AIzaSyDPRP1vgm6bQ7SXuVAQtgBS5ewsjJoDLzg",
     authDomain: "capstone1604gha.firebaseapp.com",
@@ -106,7 +157,7 @@ var members = firebase.database().ref('/members');
 
 function login () {
 
-	chrome.identity.getAuthToken({'interactive': true}, function (token){
+	chrome.identity.getAuthToken({interactive: true}, function (token){
 		console.log('success, not sure what this returns', token)
 	})
 	
@@ -140,7 +191,8 @@ require('./compose/realtime-updates.js');
 require('./left-navmenu/myconversations.js');
 require('./login/login.js');
 require('./threadview/assign/assign-button.js');
-},{"./compose/realtime-updates.js":1,"./left-navmenu/myconversations.js":2,"./login/login.js":3,"./threadview/assign/assign-button.js":5,"jquery":6}],5:[function(require,module,exports){
+require('../background.js');
+},{"../background.js":1,"./compose/realtime-updates.js":2,"./left-navmenu/myconversations.js":3,"./login/login.js":4,"./threadview/assign/assign-button.js":6,"jquery":7}],6:[function(require,module,exports){
 var members = require('../../myapp.js').members;
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
@@ -171,7 +223,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     });
 });
 
-},{"../../myapp.js":4}],6:[function(require,module,exports){
+},{"../../myapp.js":5}],7:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v3.0.0
  * https://jquery.com/
@@ -10210,4 +10262,4 @@ if ( !noGlobal ) {
 return jQuery;
 } ) );
 
-},{}]},{},[4]);
+},{}]},{},[5]);

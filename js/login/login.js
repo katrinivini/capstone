@@ -2,6 +2,7 @@ var $ = require('jquery');
 var fb = require('../myapp.js');
 // var team = require('../myapp.js').team;
 var members = require('../myapp.js').members;
+var getAuthToken = require('../../background.js');
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     sdk.Toolbars.addToolbarButtonForApp({
@@ -26,7 +27,13 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         submit.type = 'submit';
         submit.value = 'Confirm';
         submit.addEventListener('click', function(event) {
-            fb.login(); 
+            // fb.login(); 
+            // getAuthToken();
+            chrome.runtime.sendMessage({
+                type: 'start auth'
+            }, function(response){
+                console.log(response);
+            })
         	// console.log($(teamEmail).val());
             // team.set($(teamEmail).val());
             // members.push(sdk.User.getEmailAddress());

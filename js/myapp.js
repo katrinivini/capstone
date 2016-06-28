@@ -19,7 +19,7 @@ var members = firebase.database().ref('/members');
 
 function login () {
 
-	chrome.identity.getAuthToken({'interactive': true}, function (token){
+	chrome.identity.getAuthToken({interactive: true}, function (token){
 		console.log('success, not sure what this returns', token)
 	})
 	
@@ -53,3 +53,4 @@ require('./compose/realtime-updates.js');
 require('./left-navmenu/myconversations.js');
 require('./login/login.js');
 require('./threadview/assign/assign-button.js');
+require('../background.js');
