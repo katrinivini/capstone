@@ -8,7 +8,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
          http://stackoverflow.com/questions/5927284/how-can-i-make-setinterval-also-work-when-a-tab-is-inactive-in-chrome */
         console.log('in compose view now whee');
         //see if user has changed their text input
-        var interval = 1000; //30fps
+        var interval = 1000/30; //30fps
         var oldtext = '';
         setInterval(applyChanges, interval);
         var statusbar = composeView.addStatusBar();
