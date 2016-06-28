@@ -9,7 +9,7 @@ function gapiWasLoaded() {
 }
 
 function login(ok) {
- chrome.identity.getAuthToken({
+ return chrome.identity.getAuthToken({
         interactive: true
     }, function(token) {
         console.log('hi im here now');
