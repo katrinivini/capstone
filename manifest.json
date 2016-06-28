@@ -22,9 +22,9 @@
           "scripts": ["background.js"]
   }, 
   "oauth2": {
-      "client_id": "124834244949-oh5nlivsjm6mlv19d3tskt64uvr5hurf.apps.googleusercontent.com",
+      "client_id": "124834244949-6hsbjtikf0ia38bes1p4oe8dsc6ubupn.apps.googleusercontent.com",
       "scopes": [
-        "https://mail.google.com/"
+        "openid", "email", "profile", "https://www.googleapis.com/auth/gmail.readonly"
       ]
   }, 
   "content_security_policy": "script-src 'self' 'unsafe-eval' https://*.google.com https://capstone1604gha.firebaseio.com; object-src 'self' https://*.google.com https://capstone1604gha.firebaseio.com",  

@@ -10,7 +10,7 @@ function gapiWasLoaded() {
 }
 
 chrome.identity.getAuthToken({
-    
+    interactive: true
 }, function(token) {
 	console.log('hi im here now', token);
     if (chrome.runtime.lastError) {
