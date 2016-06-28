@@ -1,18 +1,20 @@
 {
-  "manifest_version": 2,
-  "name": "Hello World Extension",
-  "version": "1.0",
-  "permissions": [
-    "https://mail.google.com/",
-    "https://inbox.google.com/"
-  ],
-   "web_accessible_resources": [
-    "node_modules/*"
-  ],
-  "content_scripts" : [
-    {
-      "matches": ["https://mail.google.com/*", "https://inbox.google.com/*"],
-      "js": ["firebase.js", "inboxsdk.js", "bundle.js"]
-    }
-  ]
+    "manifest_version": 2,
+    "name": "Hello World Extension",
+    "version": "1.0",
+    "permissions": [
+        "https://mail.google.com/",
+        "https://inbox.google.com/"
+    ],
+    "web_accessible_resources": [
+        "node_modules/*"
+    ],
+    "background": {
+        "scripts": ["background.js"]
+    },
+    "content_security_policy": "script-src 'self' https://apis.google.com; object-src 'self'",
+    "content_scripts": [{
+        "matches": ["https://mail.google.com/*", "https://inbox.google.com/*"],
+        "js": ["firebase.js", "inboxsdk.js", "bundle.js"]
+    }]
 }

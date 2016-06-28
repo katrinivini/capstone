@@ -5,6 +5,12 @@ var config = {
     storageBucket: "https://capstone1604gha.firebaseio.com",
 };
 
+chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
+  console.log(response.farewell);
+});
+
+
+
 var $ = require('jquery');
 
 firebase.initializeApp(config);
@@ -19,7 +25,7 @@ var sharedLabels = firebase.database().ref('/sharedLabels');
 // })
 /*also require all the files here. browserify will compile them and put them into the bundle file*/
 module.exports = {
-	$: $,
+    $: $,
     // team: team,
     sharedLabels: sharedLabels,
     messages: messages,
