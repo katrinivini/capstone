@@ -11,8 +11,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         function getThread(userId, threadId, callback) {
             var req = gapi.client.gmail.users.messages.get({
                 'id': threadId,
-                'userId': userId
-                    // 'format': 'raw'
+
+                'userId': userId,
+                'format': 'metadata'
             })
             return req.execute(callback);
         }
@@ -34,6 +35,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             // console.log('rawResp', rawresp);
             console.log("are we in here")
             sendResponse(msgHash);
+        	console.log('jsonresp', jsonresp);
+        	// console.log('rawResp', rawresp);
+            // sendResponse(jsonresp);
         });
     }
     return true;

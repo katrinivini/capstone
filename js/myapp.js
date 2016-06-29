@@ -9,8 +9,7 @@ var config = {
 //   console.log(response.farewell);
 // });
 
-
-
+// var clientId = require('./gapi/KV-clientID.js');
 var $ = require('jquery');
 window.firebase = firebase; 
 
@@ -60,7 +59,7 @@ module.exports = {
     sharedLabels: sharedLabels,
     messages: messages,
     members: members,
-    login: login 
+    login: login,
     // initApp: initApp
 }
 
@@ -69,9 +68,10 @@ require('./left-navmenu/myconversations.js');
 require('./left-navmenu/shared-labels.js');
 require('./login/login.js');
 require('./threadview/assign/assign-button.js');
-
-// require('../gapi/background.js');
-require('../gapi/taskhistory.js');
+require('./threadview/comment.js');
+// require('../gapi/background-two.js');
+// require('../gapi/taskhistory.js');
+// require('../gapi/comment.js');
 require('./threadview/shared-labels-button.js');
 require('./threadview/taskhistory.js');
-
+require('./dashboard/dashboard.js');
