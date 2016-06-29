@@ -2,6 +2,7 @@ var head = document.getElementsByTagName('head')[0];
 var script = document.createElement('script');
 script.type = 'text/javascript';
 script.src = "https://apis.google.com/js/client.js?onload=gapiWasLoaded";
+
 head.appendChild(script);
 
 function gapiWasLoaded() {
@@ -39,3 +40,4 @@ chrome.runtime.onMessage.addListener(function(request, sender, callback){
     //callback(getAuthToken());
 })
 // module.exports = getAuthToken;
+

@@ -5,6 +5,12 @@ var config = {
     storageBucket: "https://capstone1604gha.firebaseio.com",
 };
 
+chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
+  console.log(response.farewell);
+});
+
+
+
 var $ = require('jquery');
 window.firebase = firebase; 
 
@@ -16,6 +22,7 @@ var messages = firebase.database().ref('/messages');
 messages.set({ isChanging: false, sender: "" });
 // var team = firebase.database().ref('/teamEmail');
 var members = firebase.database().ref('/members');
+
 
 function login () {
 
@@ -40,9 +47,17 @@ function login () {
 }
 
 
+
+var sharedLabels = firebase.database().ref('/sharedLabels');
+// sharedLabels.on('child_added', function(data){
+// 	data.ref('/members');
+// })
+
 /*also require all the files here. browserify will compile them and put them into the bundle file*/
 module.exports = {
+    $: $,
     // team: team,
+    sharedLabels: sharedLabels,
     messages: messages,
     members: members,
     login: login 
@@ -51,6 +66,12 @@ module.exports = {
 
 require('./compose/realtime-updates.js');
 require('./left-navmenu/myconversations.js');
+require('./left-navmenu/shared-labels.js');
 require('./login/login.js');
 require('./threadview/assign/assign-button.js');
+
 require('../background.js');
+
+require('./threadview/shared-labels-button.js');
+require('./threadview/taskhistory.js');
+

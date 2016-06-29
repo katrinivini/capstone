@@ -3,6 +3,7 @@ var head = document.getElementsByTagName('head')[0];
 var script = document.createElement('script');
 script.type = 'text/javascript';
 script.src = "https://apis.google.com/js/client.js?onload=gapiWasLoaded";
+
 head.appendChild(script);
 
 function gapiWasLoaded() {
@@ -40,6 +41,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, callback){
     //callback(getAuthToken());
 })
 // module.exports = getAuthToken;
+
 
 },{}],2:[function(require,module,exports){
 var messages = require('../myapp.js').messages;
@@ -80,7 +82,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
     });    
 });
-},{"../myapp.js":5}],3:[function(require,module,exports){
+},{"../myapp.js":6}],3:[function(require,module,exports){
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 	sdk.NavMenu.addNavItem({
 		name: 'Assigned To Me',
@@ -88,6 +90,137 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 	})
 });
 },{}],4:[function(require,module,exports){
+var sharedLabels = require('../myapp.js').sharedLabels;
+var members = require('../myapp.js').members;
+var $ = require('../myapp.js').$;
+
+InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
+    var create;
+    create = document.createElement('input');
+    create.type = 'submit';
+    create.value = 'create';
+
+    sdk.NavMenu.addNavItem({
+        name: 'Shared Labels',
+        accessory: {
+            type: 'DROPDOWN_BUTTON',
+            buttonBackgroundColor: 'purple',
+            buttonForegroundColor: 'white',
+            onClick: function(event) {
+                var labels = [];
+                var list = document.createElement('div');
+                Promise.resolve(sharedLabels.on('child_added', function(snapshot) {
+                        var data = snapshot.val();
+                        var properties = Object.getOwnPropertyNames(data); //returns array of enumerable property names
+                        properties.forEach(function(prop) {
+                            labels.push(data[prop]);
+                        })
+                    }))
+                    .then(function() {
+                        labels.forEach(function(label) {
+                            var lb = document.createElement('div');
+                            lb.innerHTML = label;
+                            list.appendChild(lb);
+                        });
+
+                        list.appendChild(create);
+                        event.dropdown.el.appendChild(list);
+                    });
+            }
+        }
+    })
+
+    create.addEventListener('click', function(event) {
+        var mainDiv = document.createElement('div');
+
+        //creating the label name
+        var labelDiv = document.createElement('div');
+
+        var createLabelHeader = document.createElement('h4');
+        createLabelHeader.innerHTML = 'Create Label';
+
+        var labelName = document.createElement('input');
+        labelName.type = 'text';
+        labelDiv.appendChild(createLabelHeader);
+        labelDiv.appendChild(labelName);
+
+
+        //submit button
+        var submit = document.createElement('input');
+        submit.type = 'submit';
+        submit.value = 'Create Shared Label';
+        submit.addEventListener('click', function(event) {
+            var checkedMembers = Array.prototype.slice.call(document.getElementsByClassName('checked')).map(function(checkedMembers) {
+                return checkedMembers.innerHTML;
+            });
+            var threadId;
+            Promise.resolve(sdk.Conversations.registerThreadViewHandler(function(threadView){
+            	threadId = threadView.getThreadID();
+            	console.log("threadId inside registerThreadViewHandler: ", threadId);
+            	return threadId;
+            }))
+            .then(function(blah) {
+            	console.log('checked members: ', checkedMembers);
+            	console.log("threadId: ", threadId);
+            	sharedLabels.push({ label: $(labelName).val(), threadIds: threadId, members: checkedMembers});
+            })
+            
+
+            // sharedLabels.push({ label: $(labelName).val(), threadIds: threadId, members: checkedMembers});
+            	// labels.child('threadIds').set(threadId);
+            	// labels.child('members').set(checkedMembers);
+
+        })
+
+        //invite people
+        var membersDiv = document.createElement('div');
+        var membersHeader = document.createElement('h4');
+        membersHeader.innerHTML = 'Invite People';
+        membersDiv.appendChild(membersHeader);
+
+        var listOfMembers = [];
+        Promise.resolve(members.once('value', function(snapshot) {
+                var data = snapshot.val();
+                var properties = Object.getOwnPropertyNames(data); //returns array of enumerable property names
+                properties.forEach(function(prop) {
+                    listOfMembers.push(data[prop]);
+                })
+            }))
+            .then(function() {
+                return Promise.resolve(listOfMembers.forEach(function(member) {
+                    membersDiv.appendChild(createListItem(member));
+                }));
+            })
+            .then(function() {
+                mainDiv.appendChild(labelDiv);
+                mainDiv.appendChild(membersDiv);
+                mainDiv.appendChild(submit);
+
+                sdk.Widgets.showModalView({
+                    el: mainDiv,
+                    title: 'Create Shared Label'
+                })
+            });
+    });
+});
+
+function createListItem(name) {
+    var listItem = document.createElement('li');
+    var span = document.createElement('span');
+    span.innerHTML = name;
+    var checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.addEventListener('click', function(event) {
+        span.classList.toggle('checked');
+    });
+
+    listItem.appendChild(span);
+    listItem.appendChild(checkbox);
+    console.log("checkbox checked: ", checkbox);
+    return listItem;
+}
+
+},{"../myapp.js":6}],5:[function(require,module,exports){
 var $ = require('jquery');
 var fb = require('../myapp.js');
 // var team = require('../myapp.js').team;
@@ -134,13 +267,19 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     }
 });
 
-},{"../../background.js":1,"../myapp.js":5,"jquery":7}],5:[function(require,module,exports){
+},{"../../background.js":1,"../myapp.js":6,"jquery":10}],6:[function(require,module,exports){
 var config = {
     apiKey: "AIzaSyDPRP1vgm6bQ7SXuVAQtgBS5ewsjJoDLzg",
     authDomain: "capstone1604gha.firebaseapp.com",
     databaseURL: "https://capstone1604gha.firebaseio.com",
     storageBucket: "https://capstone1604gha.firebaseio.com",
 };
+
+chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
+  console.log(response.farewell);
+});
+
+
 
 var $ = require('jquery');
 window.firebase = firebase; 
@@ -153,6 +292,7 @@ var messages = firebase.database().ref('/messages');
 messages.set({ isChanging: false, sender: "" });
 // var team = firebase.database().ref('/teamEmail');
 var members = firebase.database().ref('/members');
+
 
 function login () {
 
@@ -177,9 +317,17 @@ function login () {
 }
 
 
+
+var sharedLabels = firebase.database().ref('/sharedLabels');
+// sharedLabels.on('child_added', function(data){
+// 	data.ref('/members');
+// })
+
 /*also require all the files here. browserify will compile them and put them into the bundle file*/
 module.exports = {
+    $: $,
     // team: team,
+    sharedLabels: sharedLabels,
     messages: messages,
     members: members,
     login: login 
@@ -188,10 +336,17 @@ module.exports = {
 
 require('./compose/realtime-updates.js');
 require('./left-navmenu/myconversations.js');
+require('./left-navmenu/shared-labels.js');
 require('./login/login.js');
 require('./threadview/assign/assign-button.js');
+
 require('../background.js');
-},{"../background.js":1,"./compose/realtime-updates.js":2,"./left-navmenu/myconversations.js":3,"./login/login.js":4,"./threadview/assign/assign-button.js":6,"jquery":7}],6:[function(require,module,exports){
+
+require('./threadview/shared-labels-button.js');
+require('./threadview/taskhistory.js');
+
+
+},{"../background.js":1,"./compose/realtime-updates.js":2,"./left-navmenu/myconversations.js":3,"./left-navmenu/shared-labels.js":4,"./login/login.js":5,"./threadview/assign/assign-button.js":7,"./threadview/shared-labels-button.js":8,"./threadview/taskhistory.js":9,"jquery":10}],7:[function(require,module,exports){
 var members = require('../../myapp.js').members;
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
@@ -205,7 +360,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             var list = document.createElement('div');
             Promise.resolve(members.once('value', function(snapshot) {
                     var data = snapshot.val();
-                    var properties = Object.getOwnPropertyNames(data);
+                    var properties = Object.getOwnPropertyNames(data); //returns array of enumerable property names
                     properties.forEach(function(prop) {
                         emails.push(data[prop]);
                     })
@@ -222,7 +377,58 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     });
 });
 
-},{"../../myapp.js":5}],7:[function(require,module,exports){
+},{"../../myapp.js":6}],8:[function(require,module,exports){
+var sharedLabels = require('../myapp.js').sharedLabels;
+
+InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
+	sdk.Toolbars.registerToolbarButtonForThreadView({
+		title: 'Shared Labels',
+		iconUrl: 'http://i.stack.imgur.com/6Yn8V.png',
+		section: 'METADATA_STATE',
+		hasDropdown: true,
+		onClick: function(event){
+			var labels;
+			Promise.resolve(sharedLabels.once('value', function(snapshot){
+				var data = snapshot.val();
+				var properties = Object.getOwnPropertyNames(data);
+				labels = properties.map(function(prop){
+					return data[prop].label;
+				});
+			}))
+			.then(function(){
+				var list = document.createElement('div');
+				labels.forEach(function(label){
+					var p  = document.createElement('div');
+					p.classList.add(label);
+					p.innerHTML = label;
+					p.addEventListener('click', function(event){
+						// sdk.Lists.registerThreadRowViewHandler(function(threadRow){
+						// 	threadRow.addLabel({
+
+						// 	})
+						// })
+					})
+					list.appendChild(p);
+				})
+				event.dropdown.el.appendChild(list);
+			});
+		}
+	})
+});
+
+},{"../myapp.js":6}],9:[function(require,module,exports){
+InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
+	sdk.Conversations.registerThreadViewHandler(function(threadView){
+		var taskHistory = document.createElement('div');
+		taskHistory.style = "height: 200px; width: 200px";
+		threadView.addSidebarContentPanel({
+			el : taskHistory,
+			title: 'Task History',
+			iconUrl: 'https://cdn3.iconfinder.com/data/icons/website-panel-icons/128/test1-13-512.png'
+		})
+	})
+});
+},{}],10:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v3.0.0
  * https://jquery.com/
@@ -10261,4 +10467,4 @@ if ( !noGlobal ) {
 return jQuery;
 } ) );
 
-},{}]},{},[5]);
+},{}]},{},[6]);
