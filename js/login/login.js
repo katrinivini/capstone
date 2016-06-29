@@ -2,7 +2,7 @@ var $ = require('jquery');
 var fb = require('../myapp.js');
 // var team = require('../myapp.js').team;
 var members = require('../myapp.js').members;
-var getAuthToken = require('../../background.js');
+// var getAuthToken = require('../../background.js');
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     sdk.Toolbars.addToolbarButtonForApp({

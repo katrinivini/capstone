@@ -19,7 +19,7 @@ firebase.initializeApp(config);
 var rootRef = firebase.database().ref();
 
 var messages = firebase.database().ref('/messages');
-messages.set({ isChanging: false, sender: "" });
+// messages.set({ isChanging: false, sender: "" });
 // var team = firebase.database().ref('/teamEmail');
 var members = firebase.database().ref('/members');
 
@@ -70,7 +70,7 @@ require('./left-navmenu/shared-labels.js');
 require('./login/login.js');
 require('./threadview/assign/assign-button.js');
 
-require('../gapi/background.js');
+// require('../gapi/background.js');
 require('../gapi/taskhistory.js');
 require('./threadview/shared-labels-button.js');
 require('./threadview/taskhistory.js');

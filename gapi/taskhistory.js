@@ -11,17 +11,35 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         function getThread(userId, threadId, callback) {
             var req = gapi.client.gmail.users.messages.get({
                 'id': threadId,
-                'userId': userId,
-                'format': 'raw'
+                'userId': userId
+                    // 'format': 'raw'
             })
             return req.execute(callback);
         }
 
         getThread('me', request.threadId, function(jsonresp, rawresp) {
-        	// console.log('jsonresp', jsonresp);
-        	// console.log('rawResp', rawresp);
-            sendResponse(jsonresp);
+            console.log('jsonresp', jsonresp)
+            var msgId = "";
+            var senderName = "";
+            for (var i = 0; i < jsonresp.payload.headers.length; i++) {
+                if (jsonresp.payload.headers[i].name === "Message-ID") {
+                    msgId = jsonresp.payload.headers[i].value;
+                }
+                // if (jsonresp.payload.headers[i].name === "From"){
+                // 	senderName = jsonresp.payload.headers[i].value.match(/[^<]*/)[0];
+                // }
+            }
+            var msgHash = hashCode(msgId);
+
+            // console.log('rawResp', rawresp);
+            console.log("are we in here")
+            sendResponse(msgHash);
         });
     }
     return true;
 });
+
+function hashCode(s) {
+    return s.split("").reduce(function(a, b) { a = ((a << 5) - a) + b.charCodeAt(0);
+        return a & a }, 0);
+}
