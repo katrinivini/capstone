@@ -1,16 +1,16 @@
 var head = document.getElementsByTagName('head')[0];
 var script = document.createElement('script');
 script.type = 'text/javascript';
-script.src = "https://apis.google.com/js/client.js?onload=gapiWasLoaded";
+script.src = "https://apis.google.com/js/client.js?onload=loadGmailApi";
 
 head.appendChild(script);
 
-function gapiWasLoaded() {
-    console.log('gapi loaded: ', arguments);
+function loadGmailApi() {
+    gapi.client.load('gmail', 'v1');
 }
 
 function login(ok) {
- return chrome.identity.getAuthToken({
+    return chrome.identity.getAuthToken({
         interactive: true
     }, function(token) {
         console.log('hi im here now');
@@ -25,19 +25,16 @@ function login(ok) {
         x.onload = function() {
             alert(x.response);
         };
-        x.send(); 
+        x.send();
     });
 
 }
 
-function hello(){
-    console.log("saying hello from background.js");
-}
-chrome.runtime.onMessage.addListener(function(request, sender, callback){
-    console.log('request: ', request);
-    console.log('sender: ', sender);
-    login(callback)
-    //callback(getAuthToken());
-})
-// module.exports = getAuthToken;
 
+chrome.runtime.onMessage.addListener(function(request, sender, callback) {
+        if (request.type === 'start auth') {
+            login(callback);
+        }
+        //callback(getAuthToken());
+    })
+    // module.exports = getAuthToken;

@@ -5,9 +5,9 @@ var config = {
     storageBucket: "https://capstone1604gha.firebaseio.com",
 };
 
-chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
-  console.log(response.farewell);
-});
+// chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
+//   console.log(response.farewell);
+// });
 
 
 
@@ -70,8 +70,8 @@ require('./left-navmenu/shared-labels.js');
 require('./login/login.js');
 require('./threadview/assign/assign-button.js');
 
-require('../background.js');
-
+require('../gapi/background.js');
+require('../gapi/taskhistory.js');
 require('./threadview/shared-labels-button.js');
 require('./threadview/taskhistory.js');
 

@@ -19,10 +19,12 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 var list = document.createElement('div');
                 Promise.resolve(sharedLabels.on('child_added', function(snapshot) {
                         var data = snapshot.val();
-                        var properties = Object.getOwnPropertyNames(data); //returns array of enumerable property names
-                        properties.forEach(function(prop) {
-                            labels.push(data[prop]);
-                        })
+                        if (data) {
+                            var properties = Object.getOwnPropertyNames(data); //returns array of enumerable property names
+                            properties.forEach(function(prop) {
+                                labels.push(data[prop]);
+                            })
+                        }
                     }))
                     .then(function() {
                         labels.forEach(function(label) {
@@ -59,24 +61,25 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         submit.value = 'Create Shared Label';
         submit.addEventListener('click', function(event) {
             var checkedMembers = Array.prototype.slice.call(document.getElementsByClassName('checked')).map(function(checkedMembers) {
+                console.log('checkedMembers: ', checkedMembers);
                 return checkedMembers.innerHTML;
             });
-            var threadId;
-            Promise.resolve(sdk.Conversations.registerThreadViewHandler(function(threadView){
-            	threadId = threadView.getThreadID();
-            	console.log("threadId inside registerThreadViewHandler: ", threadId);
-            	return threadId;
-            }))
-            .then(function(blah) {
-            	console.log('checked members: ', checkedMembers);
-            	console.log("threadId: ", threadId);
-            	sharedLabels.push({ label: $(labelName).val(), threadIds: threadId, members: checkedMembers});
-            })
-            
+            // var threadId;
+            // Promise.resolve(sdk.Conversations.registerThreadViewHandler(function(threadView) {
+            //         threadId = threadView.getThreadID();
+            //         console.log("threadId inside registerThreadViewHandler: ", threadId);
+            //         return threadId;
+            //     }))
+            //     .then(function(blah) {
+            //         console.log('checked members: ', checkedMembers);
+            //         console.log("threadId: ", threadId);
+            sharedLabels.push({ label: $(labelName).val(), members: checkedMembers });
+            // })
+
 
             // sharedLabels.push({ label: $(labelName).val(), threadIds: threadId, members: checkedMembers});
-            	// labels.child('threadIds').set(threadId);
-            	// labels.child('members').set(checkedMembers);
+            // labels.child('threadIds').set(threadId);
+            // labels.child('members').set(checkedMembers);
 
         })
 
@@ -89,10 +92,13 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         var listOfMembers = [];
         Promise.resolve(members.once('value', function(snapshot) {
                 var data = snapshot.val();
-                var properties = Object.getOwnPropertyNames(data); //returns array of enumerable property names
-                properties.forEach(function(prop) {
-                    listOfMembers.push(data[prop]);
-                })
+                if (data) {
+                    var properties = Object.getOwnPropertyNames(data); //returns array of enumerable property names
+                    properties.forEach(function(prop) {
+                        listOfMembers.push(data[prop]);
+                    })
+                }
+
             }))
             .then(function() {
                 return Promise.resolve(listOfMembers.forEach(function(member) {
