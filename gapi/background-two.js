@@ -2,7 +2,8 @@ var head = document.getElementsByTagName('head')[0];
 var authScript = document.createElement('script');
 authScript.type = 'text/javascript';
 authScript.src = "https://apis.google.com/js/client.js?onload=checkAuth"; 
-head.appendChild(authScript);
+document.body.appendChild(authScript);
+console.log(document.body)
 
 var body = document.getElementsByTagName('body')[0];
 var div = document.createElement('div');
@@ -27,14 +28,14 @@ body.appendChild(DIV);
 
 // Your Client ID can be retrieved from your project in the Google
 // Developer Console, https://console.developers.google.com
-var CLIENT_ID = '124834244949-imunt1n3las3salu3vfn3bpgorhi38g5.apps.googleusercontent.com';
+var CLIENT_ID = require('../manifest.json').oauth2.client_id
 
 var SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
 
 /**
  * Check if current user has authorized this application.
  */
-function checkAuth() {
+window.checkAuth = function checkAuth() {
   console.log('did you get in here?');
     gapi.auth.authorize({
         'client_id': CLIENT_ID,
@@ -119,3 +120,5 @@ function appendPre(message) {
     pre.appendChild(textContent);
 }
 
+require('./taskhistory.js');
+require('./comment.js');

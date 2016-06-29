@@ -39,9 +39,9 @@ require('./login/login.js');
 require('./threadview/assign/assign-button.js');
 require('./threadview/shared-labels-button.js');
 require('./threadview/taskhistory.js');
+require('./threadview/comment.js');
 // require('../gapi/background.js');
 
 /* -------- CSS FILES ----------- */
 // require('../css/styles.css');
 // require('./myapp.css');
-

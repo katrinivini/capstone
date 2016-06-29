@@ -13,13 +13,13 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             var req = gapi.client.gmail.users.messages.get({
                 'id': threadId,
                 'userId': userId,
-                'format': 'raw'
+                'format': 'metadata'
             })
             return req.execute(callback);
         }
 
         getThread('me', request.threadId, function(jsonresp, rawresp) {
-        	// console.log('jsonresp', jsonresp);
+        	console.log('jsonresp', jsonresp);
         	// console.log('rawResp', rawresp);
             sendResponse(jsonresp);
         });
@@ -73,6 +73,7 @@ var fb = require('../myapp.js');
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
     var routeID = 'dashboard';
+    
     sdk.Router.handleCustomRoute(routeID, function(customRouteView) {
         var el = document.createElement("div");
         $(el).load(chrome.extension.getURL('/templates/dashboard.html'));
@@ -90,9 +91,10 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             sdk.Router.goto('dashboard')
         }
     });
+
 });
 
-},{"../myapp.js":8,"jquery":13}],4:[function(require,module,exports){
+},{"../myapp.js":8,"jquery":14}],4:[function(require,module,exports){
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 	sdk.NavMenu.addNavItem({
 		name: 'Assigned To Me',
@@ -283,9 +285,9 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     }
 });
 
-},{"../myapp.js":8,"jquery":13}],7:[function(require,module,exports){
+},{"../myapp.js":8,"jquery":14}],7:[function(require,module,exports){
 var css = "#left-dashboard {\n  background: red;\n}\n"; (require("browserify-css").createStyle(css, { "href": "js/myapp.css"})); module.exports = css;
-},{"browserify-css":12}],8:[function(require,module,exports){
+},{"browserify-css":13}],8:[function(require,module,exports){
 var $ = require('jquery');
 var css = require('./myapp.css');
 console.log('here is css', css);
@@ -327,14 +329,13 @@ require('./login/login.js');
 require('./threadview/assign/assign-button.js');
 require('./threadview/shared-labels-button.js');
 require('./threadview/taskhistory.js');
+require('./threadview/comment.js');
 // require('../gapi/background.js');
 
 /* -------- CSS FILES ----------- */
 // require('../css/styles.css');
 // require('./myapp.css');
-
-
-},{"../gapi/taskhistory.js":1,"./compose/realtime-updates.js":2,"./dashboard/dashboard.js":3,"./left-navmenu/myconversations.js":4,"./left-navmenu/shared-labels.js":5,"./login/login.js":6,"./myapp.css":7,"./threadview/assign/assign-button.js":9,"./threadview/shared-labels-button.js":10,"./threadview/taskhistory.js":11,"jquery":13}],9:[function(require,module,exports){
+},{"../gapi/taskhistory.js":1,"./compose/realtime-updates.js":2,"./dashboard/dashboard.js":3,"./left-navmenu/myconversations.js":4,"./left-navmenu/shared-labels.js":5,"./login/login.js":6,"./myapp.css":7,"./threadview/assign/assign-button.js":9,"./threadview/comment.js":10,"./threadview/shared-labels-button.js":11,"./threadview/taskhistory.js":12,"jquery":14}],9:[function(require,module,exports){
 var members = require('../../myapp.js').members;
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
@@ -366,6 +367,37 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 });
 
 },{"../../myapp.js":8}],10:[function(require,module,exports){
+var $ = require('../myapp.js').$;
+// console.log('$', $);
+InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
+    sdk.Conversations.registerThreadViewHandler(function(threadView) {
+        var comments = document.createElement('div');
+
+        $(comments).load(chrome.extension.getURL('/templates/comments.html'), function(page){
+            console.log(page);
+        })
+
+        
+        threadView.addSidebarContentPanel({
+            el: comments,
+            title: 'Comments',
+            iconUrl: 'https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/512/comments.png'
+        })
+    })
+
+    sdk.Conversations.registerThreadViewHandler(function(threadView) {
+        chrome.runtime.sendMessage({
+            type: 'read message',
+            threadId: threadView.getThreadID()
+        }, function(response) {
+
+            console.log('now trying to get metadata: ', response);
+
+        })
+    });
+});
+
+},{"../myapp.js":8}],11:[function(require,module,exports){
 var sharedLabels = require('../myapp.js').sharedLabels;
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
@@ -406,7 +438,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 	})
 });
 
-},{"../myapp.js":8}],11:[function(require,module,exports){
+},{"../myapp.js":8}],12:[function(require,module,exports){
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     sdk.Conversations.registerThreadViewHandler(function(threadView) {
         var taskHistory = document.createElement('div');
@@ -430,7 +462,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     });
 });
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 'use strict';
 // For more information about browser field, check out the browser field at https://github.com/substack/browserify-handbook#browser-field.
 
@@ -482,7 +514,7 @@ module.exports = {
     }
 };
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v3.0.0
  * https://jquery.com/

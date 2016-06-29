@@ -4,6 +4,7 @@ var fb = require('../myapp.js');
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
     var routeID = 'dashboard';
+    
     sdk.Router.handleCustomRoute(routeID, function(customRouteView) {
         var el = document.createElement("div");
         $(el).load(chrome.extension.getURL('/templates/dashboard.html'));
@@ -21,4 +22,5 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             sdk.Router.goto('dashboard')
         }
     });
+
 });
