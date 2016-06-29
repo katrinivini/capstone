@@ -19,7 +19,7 @@
         "node_modules/*"
     ],
     "background": {
-        "scripts": ["background.js"]
+        "scripts": ["./gapi/background-two.js", "./gapi/taskhistory.js"]
     },
     "oauth2": {
         "client_id": "124834244949-6hsbjtikf0ia38bes1p4oe8dsc6ubupn.apps.googleusercontent.com",

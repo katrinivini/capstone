@@ -36,7 +36,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             })
         	// console.log($(teamEmail).val());
             // team.set($(teamEmail).val());
-            // members.push(sdk.User.getEmailAddress());
+            members.push(sdk.User.getEmailAddress());
         });
         form.appendChild(teamEmail);
         form.appendChild(submit);
