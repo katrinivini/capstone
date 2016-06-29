@@ -16,12 +16,6 @@ var messages = firebase.database().ref('/messages');
 messages.set({ isChanging: false, sender: "" });
 // var team = firebase.database().ref('/teamEmail');
 var members = firebase.database().ref('/members');
-<<<<<<< HEAD
-var sharedLabels = firebase.database().ref('/sharedLabels');
-// sharedLabels.on('child_added', function(data){
-// 	data.ref('/members');
-// })
-=======
 
 function login () {
 
@@ -46,26 +40,17 @@ function login () {
 }
 
 
->>>>>>> cb75d85aafcfb0849b1f055bbefe449c9b394ce2
 /*also require all the files here. browserify will compile them and put them into the bundle file*/
 module.exports = {
-	$: $,
-    // team: team,
-    sharedLabels: sharedLabels,
-    messages: messages,
-    members: members,
-    login: login 
-    // initApp: initApp
+	// team: team,
+	messages: messages,
+	members: members,
+	login: login,
+	// initApp: initApp
 }
 
 require('./compose/realtime-updates.js');
 require('./left-navmenu/myconversations.js');
-require('./left-navmenu/shared-labels.js');
 require('./login/login.js');
 require('./threadview/assign/assign-button.js');
-<<<<<<< HEAD
-require('./threadview/shared-labels-button.js');
-require('./threadview/taskhistory.js');
-=======
 require('../background.js');
->>>>>>> cb75d85aafcfb0849b1f055bbefe449c9b394ce2
