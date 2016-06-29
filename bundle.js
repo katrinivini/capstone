@@ -22,10 +22,9 @@ function login(ok) {
         console.log('token: ', token);
         var x = new XMLHttpRequest();
         x.open('GET', 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' + token); //i think this is where the page is supposed to pop up
-        // x.onload = function() {
-        //     console.log('this is the alert message');
-        //     alert(x.response);
-        // };
+        x.onload = function() {
+            alert(x.response);
+        };
         x.send(); 
     });
 
