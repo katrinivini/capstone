@@ -18,7 +18,7 @@ firebase.initializeApp(config);
 var rootRef = firebase.database().ref();
 
 var messages = firebase.database().ref('/messages');
-messages.set({ isChanging: false, sender: "" });
+// messages.set({ isChanging: false, sender: "" });
 // var team = firebase.database().ref('/teamEmail');
 var members = firebase.database().ref('/members');
 
