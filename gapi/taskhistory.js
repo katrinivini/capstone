@@ -12,13 +12,13 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             var req = gapi.client.gmail.users.messages.get({
                 'id': threadId,
                 'userId': userId,
-                'format': 'raw'
+                'format': 'metadata'
             })
             return req.execute(callback);
         }
 
         getThread('me', request.threadId, function(jsonresp, rawresp) {
-        	// console.log('jsonresp', jsonresp);
+        	console.log('jsonresp', jsonresp);
         	// console.log('rawResp', rawresp);
             sendResponse(jsonresp);
         });

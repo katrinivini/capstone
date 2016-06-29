@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "./js/myapp.js",
-  "scripts": {},
+  "scripts": {
+    "watch": "watchify ./js/myapp.js -o bundle.js -v -d & watchify ./gapi/background-two.js -o background.bundle.js -v -d"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
