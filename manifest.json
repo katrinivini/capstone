@@ -1,18 +1,35 @@
 {
-  "manifest_version": 2,
-  "name": "Hello World Extension",
-  "version": "1.0",
-  "permissions": [
-    "https://mail.google.com/",
-    "https://inbox.google.com/"
-  ],
-   "web_accessible_resources": [
-    "node_modules/*"
-  ],
-  "content_scripts" : [
-    {
-      "matches": ["https://mail.google.com/*", "https://inbox.google.com/*"],
-      "js": ["firebase.js", "inboxsdk.js", "bundle.js"]
-    }
-  ]
+    "manifest_version": 2,
+    "name": "Hello World Extension",
+    "version": "1.0",
+    "permissions": [
+        "https://mail.google.com/",
+        "https://inbox.google.com/",
+        "identity"
+    ],
+    // "browser_action": {
+    //   "default_icon": {                    // optional
+    //     "19": "images/icon19.png",           // optional
+    //     "38": "images/icon38.png"            // optional
+    //   },
+    //   "default_title": "Google Mail",      // optional; shown in tooltip
+    //   "default_popup": "popup.html"        // optional
+    // }, 
+    "web_accessible_resources": [
+        "node_modules/*"
+    ],
+    "background": {
+        "scripts": ["./gapi/background-two.js", "./gapi/taskhistory.js"]
+    },
+    "oauth2": {
+        "client_id": "124834244949-6hsbjtikf0ia38bes1p4oe8dsc6ubupn.apps.googleusercontent.com",
+        "scopes": [
+          "email", "openid", "profile", "https://www.googleapis.com/auth/gmail.readonly"
+        ]
+    },
+    "content_security_policy": "script-src 'self' 'unsafe-eval' https://*.google.com https://capstone1604gha.firebaseio.com; object-src 'self' https://*.google.com https://capstone1604gha.firebaseio.com",
+    "content_scripts": [{
+        "matches": ["https://mail.google.com/*", "https://inbox.google.com/*"],
+        "js": ["firebase.js", "inboxsdk.js", "bundle.js"]
+    }]
 }
