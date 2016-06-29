@@ -43,6 +43,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     return true;
 });
 
+
+// alternatively, maybe a function that removes the non letter characters?
 function hashCode(s) {
     return s.split("").reduce(function(a, b) { a = ((a << 5) - a) + b.charCodeAt(0);
         return a & a }, 0);
