@@ -22,7 +22,6 @@ var messages = firebase.database().ref('/messages');
 // var team = firebase.database().ref('/teamEmail');
 var members = firebase.database().ref('/members');
 
-
 function login () {
 
 	chrome.identity.getAuthToken({interactive: true}, function (token){
@@ -59,7 +58,7 @@ module.exports = {
     sharedLabels: sharedLabels,
     messages: messages,
     members: members,
-    login: login,
+    login: login
     // initApp: initApp
 }
 
@@ -75,4 +74,3 @@ require('./threadview/comment.js');
 require('./threadview/shared-labels-button.js');
 require('./threadview/taskhistory.js');
 require('./dashboard/dashboard.js');
-
