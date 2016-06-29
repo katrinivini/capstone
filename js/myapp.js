@@ -1,6 +1,6 @@
 var $ = require('jquery');
 var css = require('./myapp.css');
-console.log('here is css', css);
+require('angular');
 
 var config = {
     apiKey: "AIzaSyDPRP1vgm6bQ7SXuVAQtgBS5ewsjJoDLzg",
@@ -40,6 +40,8 @@ require('./threadview/assign/assign-button.js');
 require('./threadview/shared-labels-button.js');
 require('./threadview/taskhistory.js');
 require('./threadview/comment.js');
+require('../angular/app.js');
+
 // require('../gapi/background.js');
 
 /* -------- CSS FILES ----------- */

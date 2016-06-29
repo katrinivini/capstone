@@ -1,44 +1,67 @@
-<div>
-	<h1>futureappname</h1>
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body ng-app='app'>
 
-	<div class="left-dash" id="left-dashboard">
-		<div class="col-md-3">
-			<h3>Your Name</h3>
-			<h3>Your Email</h3>
-			<ul class="nav nav-pills nav-stacked">
-				<li class="active"><a href="#">Dashboard</a></li>
-				<li><a href="#">Shared Labels</a></li>
-				<li><a href="#">Shared Contact Groups</a></li>
-				<li><a href="#">Email Templates</a></li>
-				<li><a href="#">My Settings</a></li>
-			</ul>
+	<div ng-controller='DashboardCtrl'>
+		<h1>futureappname</h1>
+		<img src="chrome-extension://nnbcemhofefipmhikmmkofondhdbjlje/node_modules/daredevil.jpg">
+
+		<div class="left-dash" id="left-dashboard">
+			<div class="col-md-3">
+				<h3>Your Name</h3>
+				<h3>Your Email</h3>
+				<ul class="nav nav-pills nav-stacked">
+					<li class="active"><a href="#">Dashboard</a></li>
+					<li><a href="#">Shared Labels</a></li>
+					<li><a href="#">Shared Contact Groups</a></li>
+					<li><a href="#">Email Templates</a></li>
+					<li><a href="#">My Settings</a></li>
+				</ul>
+			</div>
 		</div>
+
+		<div class="right-view col-md-9">
+			<div class="right-view col-md-3">
+				<i></i><span class="glyphicons glyphicons-tags"></span>
+				<p>Shared Labels</p>
+				<button>Create</button>
+				<button>View All</button>
+			</div>
+			<div class="right-view col-md-3">
+				<i></i><span class="glyphicons glyphicons-address-book"></span>
+				<p>Shared Contact Groups</p>
+				<button>Create</button>
+				<button>View All</button>
+			</div>
+			<div class="right-view col-md-3">
+				<i></i><span class="glyphicons glyphicons-newspaper"></span>
+				<p>Email Templates</p>
+				<button>Create</button>
+				<button>View All</button>
+			</div>
+			<div class="right-view col-md-3">
+				<i></i><span class="glyphicons glyphicons-cogwheel"></span>
+				<p>Settings</p>
+				<button>Edit Settings</button>
+			</div>
+		</div>
+
 	</div>
 
-	<div class="right-view col-md-9">
-		<div class="right-view col-md-3">
-			<i></i><span class="glyphicons glyphicons-tags"></span>
-			<p>Shared Labels</p>
-			<button>Create</button>
-			<button>View All</button>
-		</div>
-		<div class="right-view col-md-3">
-			<i></i><span class="glyphicons glyphicons-address-book"></span>
-			<p>Shared Contact Groups</p>
-			<button>Create</button>
-			<button>View All</button>
-		</div>
-		<div class="right-view col-md-3">
-			<i></i><span class="glyphicons glyphicons-newspaper"></span>
-			<p>Email Templates</p>
-			<button>Create</button>
-			<button>View All</button>
-		</div>
-		<div class="right-view col-md-3">
-			<i></i><span class="glyphicons glyphicons-cogwheel"></span>
-			<p>Settings</p>
-			<button>Edit Settings</button>
-		</div>
-	</div>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script> -->
+    <!-- <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> -->
+   
+    <!-- <script src="chrome-extension://nnbcemhofefipmhikmmkofondhdbjlje/node_modules/jquery/dist/jquery.js"></script>
+    <script src="chrome-extension://nnbcemhofefipmhikmmkofondhdbjlje/node_modules/bootstrap/dist/css/bootstrap.css"></script>
+    <script src="chrome-extension://nnbcemhofefipmhikmmkofondhdbjlje/node_modules/bootstrap/dist/js/bootstrap.js"></script> -->
+    <script src="chrome-extension://nnbcemhofefipmhikmmkofondhdbjlje/node_modules/angular/angular.js" defer></script>
+    <script src="chrome-extension://nnbcemhofefipmhikmmkofondhdbjlje/angular/app.js" defer></script>
+    <!-- <script src="chrome-extension://nnbcemhofefipmhikmmkofondhdbjlje/node_modules/angularfire/dist/angularfire.js" defer></script> -->
 
-</div>
+
+</body>
+</html>
