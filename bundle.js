@@ -1,118 +1,4 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var head = document.getElementsByTagName('head')[0];
-var script = document.createElement('script');
-script.type = 'text/javascript';
-script.src = "https://apis.google.com/js/client.js?onload=gapiWasLoaded";
-head.appendChild(script);
-
-function gapiWasLoaded() {
-    console.log('gapi loaded: ', arguments);
-}
-
-function login(ok) {
- return chrome.identity.getAuthToken({
-        interactive: true
-    }, function(token) {
-        console.log('hi im here now');
-        if (chrome.runtime.lastError) {
-            alert(chrome.runtime.lastError.message);
-            return;
-        }
-        ok(token)
-        console.log('token: ', token);
-        var x = new XMLHttpRequest();
-        x.open('GET', 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' + token); //i think this is where the page is supposed to pop up
-        // x.onload = function() {
-        //     console.log('this is the alert message');
-        //     alert(x.response);
-        // };
-        x.send(); 
-    });
-
-}
-
-function hello(){
-    console.log("saying hello from background.js");
-}
-chrome.runtime.onMessage.addListener(function(request, sender, callback){
-    console.log('request: ', request);
-    console.log('sender: ', sender);
-    login(callback)
-    //callback(getAuthToken());
-})
-// module.exports = getAuthToken;
-
-},{}],2:[function(require,module,exports){
-var head = document.getElementsByTagName('head')[0];
-var script = document.createElement('script');
-script.type = 'text/javascript';
-script.src = "https://apis.google.com/js/client.js?onload=loadGmailApi";
-
-head.appendChild(script);
-
-function loadGmailApi() {
-    gapi.client.load('gmail', 'v1');
-}
-
-function login(ok) {
-    return chrome.identity.getAuthToken({
-        interactive: true
-    }, function(token) {
-        console.log('hi im here now');
-        if (chrome.runtime.lastError) {
-            alert(chrome.runtime.lastError.message);
-            return;
-        }
-        ok(token)
-        console.log('token: ', token);
-        var x = new XMLHttpRequest();
-        x.open('GET', 'https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=' + token); //i think this is where the page is supposed to pop up
-        x.onload = function() {
-            alert(x.response);
-        };
-        x.send();
-    });
-
-}
-
-
-chrome.runtime.onMessage.addListener(function(request, sender, callback) {
-        if (request.type === 'start auth') {
-            login(callback);
-        }
-        //callback(getAuthToken());
-    })
-    // module.exports = getAuthToken;
-},{}],3:[function(require,module,exports){
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    if (request.type === 'read message') {
-        /**
-         * Get Thread with given ID.
-         *
-         * @param  {String} userId User's email address. The special value 'me'
-         * can be used to indicate the authenticated user.
-         * @param  {String} threadId ID of Thread to get.
-         * @param  {Function} callback Function to call when the request is complete.
-         */
-        function getThread(userId, threadId, callback) {
-            var req = gapi.client.gmail.users.messages.get({
-                'id': threadId,
-                'userId': userId,
-                'format': 'raw'
-            })
-            return req.execute(callback);
-        }
-
-        getThread('me', request.threadId, function(jsonresp, rawresp) {
-        	// console.log('jsonresp', jsonresp);
-        	// console.log('rawResp', rawresp);
-            sendResponse(jsonresp);
-        });
-    }
-    return true;
-});
-
-},{}],4:[function(require,module,exports){
 var messages = require('../myapp.js').messages;
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
@@ -151,14 +37,44 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
     });    
 });
-},{"../myapp.js":8}],5:[function(require,module,exports){
+},{"../myapp.js":6}],2:[function(require,module,exports){
+var $ = require('../myapp.js').$;
+
+InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
+    var routeID = 'dashboard';
+
+    sdk.Router.createLink('dashboard');
+
+    sdk.Toolbars.registerToolbarButtonForThreadView({
+        title: 'Go to Dashboard',
+        iconUrl: 'http://www.lifein19x19.com/forum/images/smilies/icon_batman.gif',
+        section: 'METADATA_STATE',
+        hasDropdown: false,
+        onClick: function(event) {
+            sdk.Router.goto('dashboard')
+        }
+    });
+
+    sdk.Router.handleCustomRoute(routeID, function(customRouteView) {
+        // This div version works with the div.innerHTML array above.
+        var html = document.createElement('div');
+        $(html).load(chrome.extension.getURL('/templates/dashboard.html'), function(data){
+            console.log('data here', data)
+        });
+        console.log('here is html', html)
+        customRouteView.getElement().appendChild(html);
+    });
+
+});
+
+},{"../myapp.js":6}],3:[function(require,module,exports){
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 	sdk.NavMenu.addNavItem({
 		name: 'Assigned To Me',
 		routeID: 'assignedtome'
 	})
 });
-},{}],6:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 var sharedLabels = require('../myapp.js').sharedLabels;
 var members = require('../myapp.js').members;
 var $ = require('../myapp.js').$;
@@ -295,12 +211,12 @@ function createListItem(name) {
     return listItem;
 }
 
-},{"../myapp.js":8}],7:[function(require,module,exports){
+},{"../myapp.js":6}],5:[function(require,module,exports){
 var $ = require('jquery');
 var fb = require('../myapp.js');
 // var team = require('../myapp.js').team;
 var members = require('../myapp.js').members;
-var getAuthToken = require('../../background.js');
+// var getAuthToken = require('../../background.js');
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     sdk.Toolbars.addToolbarButtonForApp({
@@ -342,7 +258,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     }
 });
 
-},{"../../background.js":1,"../myapp.js":8,"jquery":12}],8:[function(require,module,exports){
+},{"../myapp.js":6,"jquery":11}],6:[function(require,module,exports){
 var config = {
     apiKey: "AIzaSyDPRP1vgm6bQ7SXuVAQtgBS5ewsjJoDLzg",
     authDomain: "capstone1604gha.firebaseapp.com",
@@ -354,8 +270,7 @@ var config = {
 //   console.log(response.farewell);
 // });
 
-
-
+// var clientId = require('./gapi/KV-clientID.js');
 var $ = require('jquery');
 window.firebase = firebase; 
 
@@ -405,7 +320,7 @@ module.exports = {
     sharedLabels: sharedLabels,
     messages: messages,
     members: members,
-    login: login 
+    login: login,
     // initApp: initApp
 }
 
@@ -414,12 +329,16 @@ require('./left-navmenu/myconversations.js');
 require('./left-navmenu/shared-labels.js');
 require('./login/login.js');
 require('./threadview/assign/assign-button.js');
-
-require('../gapi/background.js');
-require('../gapi/taskhistory.js');
+require('./threadview/comment.js');
+// require('../gapi/background-two.js');
+// require('../gapi/taskhistory.js');
+// require('../gapi/comment.js');
 require('./threadview/shared-labels-button.js');
 require('./threadview/taskhistory.js');
-},{"../gapi/background.js":2,"../gapi/taskhistory.js":3,"./compose/realtime-updates.js":4,"./left-navmenu/myconversations.js":5,"./left-navmenu/shared-labels.js":6,"./login/login.js":7,"./threadview/assign/assign-button.js":9,"./threadview/shared-labels-button.js":10,"./threadview/taskhistory.js":11,"jquery":12}],9:[function(require,module,exports){
+require('./dashboard/dashboard.js');
+
+
+},{"./compose/realtime-updates.js":1,"./dashboard/dashboard.js":2,"./left-navmenu/myconversations.js":3,"./left-navmenu/shared-labels.js":4,"./login/login.js":5,"./threadview/assign/assign-button.js":7,"./threadview/comment.js":8,"./threadview/shared-labels-button.js":9,"./threadview/taskhistory.js":10,"jquery":11}],7:[function(require,module,exports){
 var members = require('../../myapp.js').members;
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
@@ -450,7 +369,38 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     });
 });
 
-},{"../../myapp.js":8}],10:[function(require,module,exports){
+},{"../../myapp.js":6}],8:[function(require,module,exports){
+var $ = require('../myapp.js').$;
+// console.log('$', $);
+InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
+    sdk.Conversations.registerThreadViewHandler(function(threadView) {
+        var comments = document.createElement('div');
+
+        $(comments).load(chrome.extension.getURL('/templates/comments.html'), function(page){
+            console.log(page);
+        })
+
+        
+        threadView.addSidebarContentPanel({
+            el: comments,
+            title: 'Comments',
+            iconUrl: 'https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/512/comments.png'
+        })
+    })
+
+    sdk.Conversations.registerThreadViewHandler(function(threadView) {
+        chrome.runtime.sendMessage({
+            type: 'read message',
+            threadId: threadView.getThreadID()
+        }, function(response) {
+
+            console.log('now trying to get metadata: ', response);
+
+        })
+    });
+});
+
+},{"../myapp.js":6}],9:[function(require,module,exports){
 var sharedLabels = require('../myapp.js').sharedLabels;
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
@@ -489,7 +439,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 	})
 });
 
-},{"../myapp.js":8}],11:[function(require,module,exports){
+},{"../myapp.js":6}],10:[function(require,module,exports){
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     sdk.Conversations.registerThreadViewHandler(function(threadView) {
         var taskHistory = document.createElement('div');
@@ -513,7 +463,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     });
 });
 
-},{}],12:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v3.0.0
  * https://jquery.com/
@@ -10552,4 +10502,4 @@ if ( !noGlobal ) {
 return jQuery;
 } ) );
 
-},{}]},{},[8]);
+},{}]},{},[6]);
