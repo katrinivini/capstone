@@ -15,7 +15,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             threadId: threadView.getThreadID()
         }, function(response) {
 
-            console.log('now trying to get metadata: ', response.body);
+            console.log('now trying to get metadata: ', response);
 
         })
     });
