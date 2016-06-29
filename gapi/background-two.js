@@ -27,7 +27,7 @@ body.appendChild(DIV);
 
 // Your Client ID can be retrieved from your project in the Google
 // Developer Console, https://console.developers.google.com
-var CLIENT_ID = '124834244949-6hsbjtikf0ia38bes1p4oe8dsc6ubupn.apps.googleusercontent.com';
+var CLIENT_ID = '124834244949-imunt1n3las3salu3vfn3bpgorhi38g5.apps.googleusercontent.com';
 
 var SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
 

@@ -16,13 +16,14 @@
     //   "default_popup": "popup.html"        // optional
     // }, 
     "web_accessible_resources": [
-        "node_modules/*"
+        "node_modules/*", 
+        "templates/*"
     ],
     "background": {
         "scripts": ["./gapi/background-two.js", "./gapi/taskhistory.js"]
     },
     "oauth2": {
-        "client_id": "124834244949-6hsbjtikf0ia38bes1p4oe8dsc6ubupn.apps.googleusercontent.com",
+        "client_id": "124834244949-imunt1n3las3salu3vfn3bpgorhi38g5.apps.googleusercontent.com",
         "scopes": [
           "email", "openid", "profile", "https://www.googleapis.com/auth/gmail.readonly"
         ]
