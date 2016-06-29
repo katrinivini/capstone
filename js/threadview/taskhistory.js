@@ -11,16 +11,6 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         })
     })
 
-    // sdk.Conversations.registerThreadViewHandler(function(threadView) {
-    //     chrome.runtime.sendMessage({
-    //         type: 'read message',
-    //         threadId: threadView.getThreadID()
-    //     }, function(response) {
-
-    //         console.log('now trying to get metadata: ', response);
-
-    //     })
-    // });
     sdk.Conversations.registerThreadViewHandler(function(threadView) {
         // console.log("threadid", threadView.getThreadID())
         chrome.runtime.sendMessage({
@@ -37,11 +27,8 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             // var oldfoo = messages.child(hash);
             // foo = extend(foo, oldfoo);
             // messages.child(hash).update(person + '/');
-<<<<<<< HEAD
-=======
 
             // this is the path to the node that i want to change
->>>>>>> 19768ce1834e8b3c67bf8b6feec463fa62e4c8e7
             var k = hash + '/' + person;
             foo[k] = "read";
             messages.update(foo);
@@ -50,9 +37,6 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             // }
         })
     });
-<<<<<<< HEAD
-});
-=======
 });
 
 function extend(obj, src) {
@@ -61,4 +45,3 @@ function extend(obj, src) {
     }
     return obj;
 }
->>>>>>> 19768ce1834e8b3c67bf8b6feec463fa62e4c8e7
