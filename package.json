@@ -2,13 +2,19 @@
   "name": "capstone",
   "version": "1.0.0",
   "description": "",
-  "main": "firebase.js",
+  "main": "./js/myapp.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "watch": "watchify ./js/myapp.js -o bundle.js -v -d & watchify ./gapi/background-two.js -o background.bundle.js -v -d",
+    "prettify": "browserify -t browserify-css ./js/myapp.js > bundle.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "angular": "^1.5.7",
+    "angularfire": "^2.0.1",
+    "bootstrap": "^3.3.6",
+    "browserify-css": "^0.9.1",
+    "firebase": "^3.1.0",
     "jquery": "^3.0.0"
   }
 }
