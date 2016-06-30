@@ -9,6 +9,12 @@ app.config(function($urlRouterProvider, $locationProvider, $stateProvider){
 
 	$urlRouterProvider.when('/', '/products');
 
+	$stateProvider.state('dashboardHome', {
+		url: '/dashboardHome', 
+		templateUrl: '/templates/dashboard-home.html', 
+		controller: 'DashboardCtrl'
+	})
+
 	$stateProvider.state('sharedLabels', {
 		url: '/sharedLabels', 
 		templateUrl: '/templates/shared-labels.html', 
@@ -29,7 +35,7 @@ app.config(function($urlRouterProvider, $locationProvider, $stateProvider){
 
 	$stateProvider.state('settings', {
 		url: '/settings', 
-		templateUrl: '', 
+		templateUrl: '/templates/settings.html', 
 		controller: 'DashboardCtrl'
 	})
 })

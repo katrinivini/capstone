@@ -7,7 +7,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     
     sdk.Router.handleCustomRoute(routeID, function(customRouteView) {
         var el = document.createElement("div");
-        $(el).load(chrome.extension.getURL('/templates/dashboard.html'));
+        $(el).load(chrome.extension.getURL('/templates/user-panel.html'));
         angular.element(document).ready(function(){
             angular.bootstrap(el, ['thing'])  
         })
