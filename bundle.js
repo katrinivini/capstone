@@ -1,9 +1,9 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var app = angular.module('app', ['firebase']);
-
+var app = angular.module('thing', []);
 console.log("hello from outside app.js controller");
 
 app.controller('DashboardCtrl', function($scope) {
+	$scope.kathy = "kathy yay";
 	console.log("hello from inside app.js");
 });
 },{}],2:[function(require,module,exports){
@@ -85,8 +85,11 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     sdk.Router.handleCustomRoute(routeID, function(customRouteView) {
         var el = document.createElement("div");
         $(el).load(chrome.extension.getURL('/templates/dashboard.html'));
-        console.log("url: ", chrome.extension.getURL('/templates/dashboard.html'));
+        angular.element(document).ready(function(){
+            angular.bootstrap(el, ['thing'])  
+        })
         customRouteView.getElement().appendChild(el);
+        console.log('are you ever getting here after angular bootstrap')
     });
 
     sdk.Router.createLink('dashboard');
