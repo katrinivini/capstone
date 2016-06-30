@@ -3,60 +3,60 @@ var $ = require('../myapp.js').$;
 var messages = require('../myapp.js').messages;
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
-    var dateString;
-    sdk.Conversations.registerMessageViewHandler(function(messageView) {
-        dateString = messageView.getDateString();
-    });
-
     sdk.Conversations.registerThreadViewHandler(function(threadView) {
         var comments = document.createElement('div');
         var message;
         var person;
+        var hash;
         $(comments).load(chrome.extension.getURL('/templates/comment.html'), function(page) {
             var submit = document.getElementById('submit');
             console.log(document.getElementById('addComment'));
             submit.addEventListener('click', function(event) {
                 event.preventDefault();
-                // console.log($('#comment').val());
                 chrome.runtime.sendMessage({
                     type: 'add comment',
-                    // user: sdk.User.getAccountSwitcherContactList()[0].name,
                     threadId: threadView.getThreadID()
-                        // message: $('#comment').val()
                 }, function(response) {
-                    console.log('what is the response? ', response);
                     var foo = {};
-                    var hash = response;
+                    hash = response;
                     person = sdk.User.getAccountSwitcherContactList()[0].name;
-                    // var k = hash + '/' + person;
                     Promise.resolve(messages.once('value', function(snapshot) {
                             var data = snapshot.val();
-                            console.log(data);
                             foo[hash] = data[hash];
-                            // console.log('foo[k]: ', foo[hash]);
                         }))
                         .then(function() {
                             message = $('#comment').val();
                             foo[hash][person].comments.push({
                                 message: message,
-                                date: dateString
+                                date: new Date()
                             });
                             return Promise.resolve(messages.update(foo));
+
+
                         })
                         .then(function() {
                             $('#comment').val('');
-                            messages.on('child_added', function(data){
-                                var comment = document.createElement('div');
-                                var name = person.split(' ')[0];
-                                comment.innerHTML = name + ": " + message + dateString;
-                                var addComment = document.getElementById('addComment');
-                                addComment.appendChild(comment);
-                                // var div = $('div').text(person + ': ' + message + dateString);
-                                // $('#addComment').append(div);
-                            })
+                            messages.on('child_added', function(snapshot) {
+                                console.log('child_added: ', snapshot.val());
+                                var data = snapshot.val();
+                                // console.log('data, please get here: ', data);
+                                // if (data && data[messageID]) {
+                                    var name = sdk.User.getAccountSwitcherContactList()[0].name;
+                                    // console.log('get in here please');
+                                    var last = data[name].comments[data[name].comments.length - 1];
+                                    // var comments = data[messageID][name].comments;
+                                    // comments.forEach(function(commemt) {
+                                    var comm = document.createElement('div');
+                                    var first = name.split(' ')[0];
+                                    comm.innerHTML = first + ": " + last.message + last.date;
+                                    var addComment = document.getElementById('addComment');
+                                    if (last.date) addComment.appendChild(comm);
+                                    // })
+                                // }
+                            });
                         })
                 })
-            });
+            })
         })
 
 
@@ -66,13 +66,33 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             iconUrl: 'https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/512/comments.png'
         })
     })
-
+    var messageID;
     sdk.Conversations.registerThreadViewHandler(function(threadView) {
         chrome.runtime.sendMessage({
             type: 'read message',
             threadId: threadView.getThreadID()
         }, function(response) {
-            console.log('now trying to get metadata: ', response);
+            messageID = response;
+            messages.once('value', function(snapshot) {
+
+                var data = snapshot.val();
+                console.log('data, please get here: ', data);
+                console.log(messageID);
+                if (data && data[messageID]) {
+                    var name = sdk.User.getAccountSwitcherContactList()[0].name;
+                    console.log('get in here please');
+                    // var last = data[messageID][name].comments[data[messageID][name].comments.length - 1];
+                    var comments = data[messageID][name].comments;
+                    comments.forEach(function(comment) {
+                        var comm = document.createElement('div');
+                        var first = name.split(' ')[0];
+                        comm.innerHTML = first + ": " + comment.message + comment.date;
+                        var addComment = document.getElementById('addComment');
+                        if (comment.date) addComment.appendChild(comm);
+                    })
+                }
+            });
+
         })
     });
 });

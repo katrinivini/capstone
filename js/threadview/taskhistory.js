@@ -12,7 +12,6 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     })
 
     sdk.Conversations.registerThreadViewHandler(function(threadView) {
-        // console.log("threadid", threadView.getThreadID())
         chrome.runtime.sendMessage({
             type: 'read message',
             threadId: threadView.getThreadID()
@@ -20,14 +19,10 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             var foo = {};
             var hash = response;
             var person = sdk.User.getAccountSwitcherContactList()[0].name;
+            // console.log('person in task history', sdk.User.getAccountSwitcherContactList()[0])
             var k = hash + '/' + person;
-            // foo[person] = "read";
             console.log('now trying to get metadata: ', response);
-            // if (messages.child(hash)){
-            // console.log(" we in here and ", messages.child(hash))
-            // var oldfoo = messages.child(hash);
-            // foo = extend(foo, oldfoo);
-            // messages.child(hash).update(person + '/');
+
             Promise.resolve(messages.once('value', function(snapshot) {
                     var data = snapshot.val();
                     if (data && data[hash]) { //thread exists
@@ -35,14 +30,16 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                         // console.log(data[hash][person]);
                         else { //thread exists but person doesn't
                             foo[k] = {
-                                comments: [{ message: "", date: "" }],
-                                activity: [{ action: "", date: "" }]
+                                status: 'read',
+                                comments: [{message: "", date: ""}],
+                                activity: [{action: "", date: ""}]
                             }
                         }
                     } else {
                         foo[k] = {
-                            comments: [{ message: "", date: "" }],
-                            activity: [{ action: "", date: "" }]
+                            status: 'read',
+                            comments: [{message: "", date: ""}],
+                            activity: [{action: "", date: ""}]
                         }
                     }
                     return;
@@ -50,13 +47,6 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 .then(function() {
                     messages.update(foo);
                 })
-                // this is the path to the node that i want to change
-
-            // foo[k] = {comments: [''], activity: [''] };
-
-            // } else {
-            //     messages.child(hash).set(foo)
-            // }
         })
     });
 });

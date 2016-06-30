@@ -1,4 +1,5 @@
 var sharedLabels = require('../myapp.js').sharedLabels;
+var $ = require('jquery');
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 	sdk.Toolbars.registerToolbarButtonForThreadView({
@@ -22,11 +23,6 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 					p.classList.add(label);
 					p.innerHTML = label;
 					p.addEventListener('click', function(event){
-						// sdk.Lists.registerThreadRowViewHandler(function(threadRow){
-						// 	threadRow.addLabel({
-
-						// 	})
-						// })
 					})
 					list.appendChild(p);
 				})
