@@ -1,6 +1,7 @@
 var $ = require('jquery');
 var css = require('./myapp.css');
 require('angular');
+var firebase = require('firebase');
 
 var config = {
     apiKey: "AIzaSyDPRP1vgm6bQ7SXuVAQtgBS5ewsjJoDLzg",
