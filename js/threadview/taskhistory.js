@@ -51,9 +51,9 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     });
 });
 
-function extend(obj, src) {
-    for (var key in src) {
-        if (src.hasOwnProperty(key)) obj[key] = src[key];
-    }
-    return obj;
-}
+// function extend(obj, src) {
+//     for (var key in src) {
+//         if (src.hasOwnProperty(key)) obj[key] = src[key];
+//     }
+//     return obj;
+// }
