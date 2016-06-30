@@ -1,6 +1,27 @@
 // var $ = require('jquery');
 var app = angular.module('thing', ['firebase', 'ui.router']);
 
+app.controller('DashboardCtrl', function($scope) {
+	$scope.kathy = "kathy yay";
+	console.log("hello from inside app.js DashboardCtrl");
+});
+
+var assignapp = angular.module('shazzam', ['firebase']);
+console.log("hello from outside app.js AssignCtrl");
+
+assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
+	console.log("hello from inside assignapp.js AssignCtrl");
+
+	var ref = firebase.database().ref('/members'); 
+	// $scope.members = ['Belinda', 'Katrina', 'Rina', 'Kathy'];
+	$scope.members = $firebaseArray(ref);
+	console.log("$scope.members: ", $scope.members);
+	console.log("$scope.members length: ", $scope.members.length);
+	$scope.assignsubmit = function() {
+		console.log("you assignsubmitted something but not really");
+	}
+});
+
 // var insert = '';
 // // var el = document.createElement("div");
 // fetch(chrome.extension.getURL('/templates/dashboard-home.html'))
