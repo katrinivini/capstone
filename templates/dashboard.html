@@ -1,43 +1,20 @@
-<div ng-controller='DashboardCtrl'>
-	<h1>hi {{kathy}}</h1>
-	<div class="left-dash" id="left-dashboard">
-		<div class="col-md-3">
-			<h3>Your Name</h3>
-			<h3>Your Email</h3>
-			<ul class="nav nav-pills nav-stacked">
-				<li class="active"><a href="#">Dashboard</a></li>
-				<li><a href="#">Shared Labels</a></li>
-				<li><a href="#">Shared Contact Groups</a></li>
-				<li><a href="#">Email Templates</a></li>
-				<li><a href="#">My Settings</a></li>
-			</ul>
-		</div>
+<div>
+	<h1>futureofappnamehere</h1>
+
+	<div class="left-dash col-md-3" id="left-dashboard">
+		<h3>Your Name</h3>
+		<h3>Your Email</h3>
+		<ul class="nav nav-pills nav-stacked">
+			<li class="active"><a href="#">Dashboard</a></li>
+			<li><a href="#">Shared Labels</a></li>
+			<li><a href="#">Shared Contact Groups</a></li>
+			<li><a href="#">Email Templates</a></li>
+			<li><a href="#">My Settings</a></li>
+		</ul>
 	</div>
 
-	<div class="right-view col-md-9">
-		<div class="right-view col-md-3">
-			<i></i><span class="glyphicons glyphicons-tags"></span>
-			<p>Shared Labels</p>
-			<button>Create</button>
-			<button>View All</button>
-		</div>
-		<div class="right-view col-md-3">
-			<i></i><span class="glyphicons glyphicons-address-book"></span>
-			<p>Shared Contact Groups</p>
-			<button>Create</button>
-			<button>View All</button>
-		</div>
-		<div class="right-view col-md-3">
-			<i></i><span class="glyphicons glyphicons-newspaper"></span>
-			<p>Email Templates</p>
-			<button>Create</button>
-			<button>View All</button>
-		</div>
-		<div class="right-view col-md-3">
-			<i></i><span class="glyphicons glyphicons-cogwheel"></span>
-			<p>Settings</p>
-			<button>Edit Settings</button>
-		</div>
+	<div class="col-md-9">
+		<ui-view></ui-view>
 	</div>
 
 </div>
