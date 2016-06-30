@@ -1,3 +1,7 @@
+var $ = require('jquery');
+var css = require('./myapp.css');
+require('angular');
+
 var config = {
     apiKey: "AIzaSyDPRP1vgm6bQ7SXuVAQtgBS5ewsjJoDLzg",
     authDomain: "capstone1604gha.firebaseapp.com",
@@ -5,22 +9,14 @@ var config = {
     storageBucket: "https://capstone1604gha.firebaseio.com",
 };
 
-// chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
-//   console.log(response.farewell);
-// });
-
-// var clientId = require('./gapi/KV-clientID.js');
-var $ = require('jquery');
-window.firebase = firebase; 
-
 firebase.initializeApp(config);
+
 /*myapp.js is the file where we should create the 'tables' in our database, the rest go in the js folder*/
 var rootRef = firebase.database().ref();
-
 var messages = firebase.database().ref('/messages');
-messages.set({ isChanging: false, sender: "" });
-// var team = firebase.database().ref('/teamEmail');
+// messages.set({ isChanging: false, sender: "" });
 var members = firebase.database().ref('/members');
+<<<<<<< HEAD
 
 
 function login () {
@@ -47,6 +43,8 @@ function login () {
 
 
 
+=======
+>>>>>>> 08adeb8c2074478596c0fbe966d4da398d6cafe6
 var sharedLabels = firebase.database().ref('/sharedLabels');
 // sharedLabels.on('child_added', function(data){
 //     data.ref('/members');
@@ -55,24 +53,26 @@ var sharedLabels = firebase.database().ref('/sharedLabels');
 /*also require all the files here. browserify will compile them and put them into the bundle file*/
 module.exports = {
     $: $,
-    // team: team,
     sharedLabels: sharedLabels,
     messages: messages,
-    members: members,
-    login: login,
-    // initApp: initApp
+    members: members
 }
 
+/* -------- JS FILES ----------- */
+require('../gapi/taskhistory.js');
 require('./compose/realtime-updates.js');
+require('./dashboard/dashboard.js');
 require('./left-navmenu/myconversations.js');
 require('./left-navmenu/shared-labels.js');
 require('./login/login.js');
 require('./threadview/assign/assign-button.js');
-require('./threadview/comment.js');
-// require('../gapi/background-two.js');
-// require('../gapi/taskhistory.js');
-// require('../gapi/comment.js');
 require('./threadview/shared-labels-button.js');
 require('./threadview/taskhistory.js');
-require('./dashboard/dashboard.js');
+require('./threadview/comment.js');
+require('../angular/app.js');
 
+// require('../gapi/background.js');
+
+/* -------- CSS FILES ----------- */
+// require('../css/styles.css');
+// require('./myapp.css');
