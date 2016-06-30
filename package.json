@@ -4,11 +4,17 @@
   "description": "",
   "main": "./js/myapp.js",
   "scripts": {
-    "watch": "watchify ./js/myapp.js -o bundle.js -v -d & watchify ./gapi/background-two.js -o background.bundle.js -v -d"
+    "watch": "watchify ./js/myapp.js -o bundle.js -v -d & watchify ./gapi/background-two.js -o background.bundle.js -v -d",
+    "prettify": "browserify -t browserify-css ./js/myapp.js > bundle.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "angular": "^1.5.7",
+    "angularfire": "^2.0.1",
+    "bootstrap": "^3.3.6",
+    "browserify-css": "^0.9.1",
+    "firebase": "^3.1.0",
     "jquery": "^3.0.0"
   }
 }
