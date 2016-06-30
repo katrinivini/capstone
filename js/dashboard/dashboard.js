@@ -3,7 +3,7 @@ var fb = require('../myapp.js');
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
-    var routeID = 'dashboard';
+    var routeID = '/user-panel';
     
     sdk.Router.handleCustomRoute(routeID, function(customRouteView) {
         var el = document.createElement("div");
@@ -22,7 +22,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         section: 'METADATA_STATE',
         hasDropdown: false,
         onClick: function(event) {
-            sdk.Router.goto('dashboard')
+            sdk.Router.goto('/user-panel')
         }
     });
 

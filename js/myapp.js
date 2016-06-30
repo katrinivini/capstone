@@ -1,8 +1,8 @@
 var $ = require('jquery');
 var css = require('./myapp.css');
-require('angular');
-require('angularfire');
-require('angular-ui-router');
+var angular = require('angular');
+var angularfire = require('angularfire');
+var uiRouter = require('angular-ui-router');
 
 var config = {
     apiKey: "AIzaSyDPRP1vgm6bQ7SXuVAQtgBS5ewsjJoDLzg",
