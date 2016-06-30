@@ -20,6 +20,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             var foo = {};
             var hash = response;
             var person = sdk.User.getAccountSwitcherContactList()[0].name;
+            var k = hash + '/' + person;
             // foo[person] = "read";
             console.log('now trying to get metadata: ', response);
             // if (messages.child(hash)){
@@ -27,11 +28,27 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             // var oldfoo = messages.child(hash);
             // foo = extend(foo, oldfoo);
             // messages.child(hash).update(person + '/');
+            Promise.resolve(messages.once('value', function(snapshot) {
+                    var data = snapshot.val();
+                    if (data && data[hash][person]) {
+                        foo[k] = data[hash][person];
+                        console.log(data[hash][person]);
+                    }
+                    else {
+                        foo[k] = {
+                            comments: [{message: "", date: ""}],
+                            activity: [{action: "", date: ""}]
+                        }
+                    }
+                    return;
+                }))
+                .then(function() {
+                    messages.update(foo);
+                })
+                // this is the path to the node that i want to change
 
-            // this is the path to the node that i want to change
-            var k = hash + '/' + person;
-            foo[k] = "read";
-            messages.update(foo);
+            // foo[k] = {comments: [''], activity: [''] };
+
             // } else {
             //     messages.child(hash).set(foo)
             // }

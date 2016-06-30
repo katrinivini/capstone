@@ -1,5 +1,5 @@
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    if (request.type === 'read message') {
+    if (request.type === 'read message' || request.type === 'add comment') {
         /**
          * Get Thread with given ID.
          *
