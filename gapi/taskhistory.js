@@ -23,7 +23,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             var msgId = "";
             var senderName = "";
             for (var i = 0; i < jsonresp.payload.headers.length; i++) {
-                if (jsonresp.payload.headers[i].name === "Message-ID") {
+                if (jsonresp.payload.headers[i].name.toUpperCase() === "MESSAGE-ID") {
                     msgId = jsonresp.payload.headers[i].value;
                 }
                 // if (jsonresp.payload.headers[i].name === "From"){
@@ -33,7 +33,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             var msgHash = hashCode(msgId);
 
             // console.log('rawResp', rawresp);
-            console.log("are we in here")
+            // console.log("are we in here??!!!!???")
             sendResponse(msgHash);
             console.log('jsonresp', jsonresp);
             // console.log('rawResp', rawresp);
@@ -46,6 +46,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 // alternatively, maybe a function that removes the non letter characters?
 function hashCode(s) {
-    return s.split("").reduce(function(a, b) { a = ((a << 5) - a) + b.charCodeAt(0);
-        return a & a }, 0);
+    // return s.split("").reduce(function(a, b) { a = ((a << 5) - a) + b.charCodeAt(0);
+    //     return a & a }, 0);
+    return s.replace(/[^\w\s]/gi, '');
 }
+
