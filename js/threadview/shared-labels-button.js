@@ -1,6 +1,8 @@
 var sharedLabels = require('../myapp.js').sharedLabels;
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
+
+
 	sdk.Toolbars.registerToolbarButtonForThreadView({
 		title: 'Shared Labels',
 		iconUrl: 'http://i.stack.imgur.com/6Yn8V.png',
