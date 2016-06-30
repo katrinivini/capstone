@@ -78,7 +78,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             var msgId = "";
             var senderName = "";
             for (var i = 0; i < jsonresp.payload.headers.length; i++) {
-                if (jsonresp.payload.headers[i].name === "Message-ID") {
+                if (jsonresp.payload.headers[i].name.toUpperCase() === "MESSAGE-ID") {
                     msgId = jsonresp.payload.headers[i].value;
                 }
                 // if (jsonresp.payload.headers[i].name === "From"){
@@ -88,7 +88,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             var msgHash = hashCode(msgId);
 
             // console.log('rawResp', rawresp);
-            console.log("are we in here")
+            // console.log("are we in here??!!!!???")
             sendResponse(msgHash);
             console.log('jsonresp', jsonresp);
             // console.log('rawResp', rawresp);
@@ -101,9 +101,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 // alternatively, maybe a function that removes the non letter characters?
 function hashCode(s) {
-    return s.split("").reduce(function(a, b) { a = ((a << 5) - a) + b.charCodeAt(0);
-        return a & a }, 0);
+    // return s.split("").reduce(function(a, b) { a = ((a << 5) - a) + b.charCodeAt(0);
+    //     return a & a }, 0);
+    return s.replace(/[^\w\s]/gi, '');
 }
+
+
 },{}],3:[function(require,module,exports){
 var messages = require('../myapp.js').messages;
 
@@ -603,53 +606,68 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         })
     })
 
+    // thread > activity and comments
+    // activity > [{person: person, action: action, date: date}]
+    // comment > [{person:person , comment:comment , date:date}]
+
     sdk.Conversations.registerThreadViewHandler(function(threadView) {
         chrome.runtime.sendMessage({
             type: 'read message',
             threadId: threadView.getThreadID()
         }, function(response) {
+            // foo is {path: content}
             var foo = {};
             var hash = response;
             var person = sdk.User.getAccountSwitcherContactList()[0].name;
             // console.log('person in task history', sdk.User.getAccountSwitcherContactList()[0])
-            var k = hash + '/' + person;
+            var k = hash + '/activity' // + person;
             console.log('now trying to get metadata: ', response);
-
             Promise.resolve(messages.once('value', function(snapshot) {
                     var data = snapshot.val();
-                    if (data && data[hash]) { //thread exists
-                        if (data[hash][person]) foo[k] = data[hash][person];
-                        // console.log(data[hash][person]);
-                        else { //thread exists but person doesn't
-                            foo[k] = {
-                                status: 'read',
-                                comments: [{message: "", date: ""}],
-                                activity: [{action: "", date: ""}]
+                    if (data && data[hash]) {
+                        if (data[hash].activity) {
+                            // if there is an activity already there
+                            // this for loop prevents duplicate action
+                            for (var i = 0; i < data[hash].activity.length; i++) {
+                                if (data[hash].activity[i].person === person && data[hash].activity[i].action === "read") {
+                                    return;
+                                }
                             }
-                        }
-                    } else {
-                        foo[k] = {
-                            status: 'read',
-                            comments: [{message: "", date: ""}],
-                            activity: [{action: "", date: ""}]
+                            // otherwise proceed...
+                            var arr = data[hash].activity;
+                            foo[k] = eventObj(person, "read");
+                            var arr = data[hash].activity;
+                            arr.push(foo[k]);
+                            foo[k] = arr;
+                            messages.update(foo);
+                            // arr.push(foo[k])
+                            // foo[k] = arr;
+                        } else {
+                            // if this is the first activity, initialize the array
+                            foo[k] = [eventObj(person, "read")];
+                            messages.update(foo);
                         }
                     }
+                    else if (data) {
+                        foo[k] = [eventObj(person, "read")];
+                        messages.update(foo);
+                    }
                     return;
-                }))
-                .then(function() {
-                    messages.update(foo);
-                })
+            }))
+            // .then(function() {
+            //     messages.update(foo);
+            // })
         })
     });
 });
 
-function extend(obj, src) {
-    for (var key in src) {
-        if (src.hasOwnProperty(key)) obj[key] = src[key];
+function eventObj(p, a){
+    return {
+        person: p,
+        action: a,
+        date: new Date()
     }
-    return obj;
 }
-
 },{"../myapp.js":9}],14:[function(require,module,exports){
 /**
  * State-based routing for AngularJS
