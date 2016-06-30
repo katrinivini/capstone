@@ -1,9 +1,8 @@
 var messages = require('../myapp.js').messages;
-
+var taskHistory;
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     sdk.Conversations.registerThreadViewHandler(function(threadView) {
-        var taskHistory = document.createElement('div');
-        taskHistory.style = "height: 200px; width: 200px";
+        taskHistory = document.createElement('div');
         threadView.addSidebarContentPanel({
             el: taskHistory,
             title: 'Task History',
@@ -59,11 +58,19 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                     }
                     return;
             }))
-            // .then(function() {
-            //     messages.update(foo);
-            // })
+            .then(function(){
+                messages.once('value', function(snapshot){
+                    var data = snapshot.val();
+                    data[hash].activity.forEach(function(act){
+                        createActivity(act.person, act.action, act.date);
+                    });
+                });
+            })
         })
     });
+    messages.on('child_changed', function(snapshot){
+        console.log('someone please read my email: ', snapshot.val());
+    })
 });
 
 function eventObj(p, a){
@@ -72,4 +79,10 @@ function eventObj(p, a){
         action: a,
         date: new Date()
     }
+}
+
+function createActivity(person, action, date){
+    var act = document.createElement('div');
+    act.innerHTML = person + " " + action + " " + date;
+    taskHistory.appendChild(act);
 }
