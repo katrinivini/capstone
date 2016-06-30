@@ -89,7 +89,6 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             angular.bootstrap(el, ['thing'])  
         })
         customRouteView.getElement().appendChild(el);
-        console.log('are you ever getting here after angular bootstrap')
     });
 
     sdk.Router.createLink('dashboard');
