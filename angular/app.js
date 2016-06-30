@@ -1,19 +1,19 @@
 // var $ = require('jquery');
 var app = angular.module('thing', ['firebase', 'ui.router']);
 
-var insert = '';
-// var el = document.createElement("div");
-fetch(chrome.extension.getURL('/templates/dashboard-home.html'))
-.then(function(response){
-	return response.text();
-})
-.then(function(html){
-	console.log('here is the html', html)
-	insert = html; 
-	// el.innerHTML = html;
-	// console.log('what is el now', el);
+// var insert = '';
+// // var el = document.createElement("div");
+// fetch(chrome.extension.getURL('/templates/dashboard-home.html'))
+// .then(function(response){
+// 	return response.text();
+// })
+// .then(function(html){
+// 	console.log('here is the html', html)
+// 	insert = html; 
+// 	// el.innerHTML = html;
+// 	// console.log('what is el now', el);
 
-})
+// })
 
 app.config(function($urlRouterProvider, $locationProvider, $stateProvider){
 // 	// This turns off hashbang urls (/#about) and changes it to something normal (/about)
@@ -21,33 +21,65 @@ app.config(function($urlRouterProvider, $locationProvider, $stateProvider){
 // 	// If we go to a URL that ui-router doesn't have registered, go to the "/" url.
 	// $urlRouterProvider.otherwise('/userpanel');
 
-	$urlRouterProvider.when('/thing', '/userpanel');
+	// $urlRouterProvider.when('/thing', '/userpanel');
 
 	$stateProvider.state('userpanel', {
 		url: '/userpanel', 
-		template: '<h1>NOWORKNOWORKNOWORK</h1>', 
-		// template: 'insert', 
-		controller: 'DashboardCtrl'
+		controller: 'UserPanelCtrl'
 	})
 
 	$stateProvider.state('dashboard', {
 		url: '/dashboard',
-		// templateUrl: 'chrome-extension://nnbcemhofefipmhikmmkofondhdbjlje/templates/dashboard-home.html'
-		template: '<h1>WORK WORK WORK WORK WORK</h1>', 
-		controller: 'TestCtrl'
+		controller: 'DashboardCtrl'
+	})
+
+	$stateProvider.state('shared-labels', {
+		url: '/shared-labels',
+		controller: 'LabelsCtrl'
+	})
+
+	$stateProvider.state('shared-contacts', {
+		url: '/shared-contacts',
+		controller: 'ContactsCtrl'
+	})
+
+	$stateProvider.state('email-templates', {
+		url: '/email-templates',
+		controller: 'TemplatesCtrl'
+	})
+
+	$stateProvider.state('email-templates.create', {
+		url: '/create',
+		controller: 'TemplatesCtrl'
+	})
+
+	$stateProvider.state('settings', {
+		url: '/settings',
+		controller: 'SettingsCtrl'
 	})
 
 })
 
-app.controller('DashboardCtrl', function($scope, $firebaseArray, $state) {
-	$scope.current = $state.current; 
-	console.log('current state in ctrl', $scope.current)
-	var ref = firebase.database().ref('/templates');
-	$scope.templates = $firebaseArray(ref);
+app.controller('UserPanelCtrl', function($scope, $firebaseArray, $state) {
 	
 });
-app.controller('TestCtrl', function($scope, $firebaseArray, $state) {
-	$scope.current = $state.current; 
-	console.log('current state in ctrl', $scope.current)
+
+app.controller('DashboardCtrl', function($scope, $firebaseArray, $state) {
+	
+});
+
+app.controller('LabelsCtrl', function($scope, $firebaseArray, $state) {
+	
+});
+
+app.controller('ContactsCtrl', function($scope, $firebaseArray, $state) {
+	
+});
+
+app.controller('TemplatesCtrl', function($scope, $firebaseArray, $state) {
+	
+});
+
+app.controller('SettingsCtrl', function($scope, $firebaseArray, $state) {
 	
 });

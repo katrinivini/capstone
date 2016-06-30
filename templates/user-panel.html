@@ -1,16 +1,19 @@
 <div>
-	<h1>futureofappnamehere</h1>
+	<h1>AppName</h1>
 
 	<div class="left-dash col-md-3" id="left-dashboard">
 		<h3>Your Name</h3>
 		<h3>Your Email</h3>
-		<ul class="nav nav-pills nav-stacked">
-			<li><a ui-sref="dashboard">Dashboard</a></li>
-			<li><a ui-sref="userpanel.sharedLabels">Shared Labels</a></li>
-			<li><a ui-sref="userpanel.sharedContacts">Shared Contact Groups</a></li>
-			<li><a ui-sref="userpanel.emailTemplates">Email Templates</a></li>
-			<li><a ui-sref="userpanel.settings">My Settings</a></li>
+
+		<!-- <ul class="nav nav-pills nav-stacked"> -->
+		<ul class="nav nav-tabs">
+		  <li ui-sref-active="active"><a ui-sref="dashboard">Dashboard</a></li>
+		  <li ui-sref-active="active"><a ui-sref="shared-labels">Shared Labels</a></li>
+		  <li ui-sref-active="active"><a ui-sref="shared-contacts">Shared Contact Groups</a></li>
+		  <li ui-sref-active="active"><a ui-sref="email-templates">Email Templates</a></li>
+		  <li ui-sref-active="active"><a ui-sref="settings">My Settings</a></li>    
 		</ul>
+
 	</div>
 
 	<div class="col-md-9">

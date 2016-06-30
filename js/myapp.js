@@ -1,8 +1,11 @@
-var $ = require('jquery');
+// var $ = require('jquery');
+window.$ = window.jQuery = require('jquery');
+var bootstrap = require('bootstrap');
 var css = require('./myapp.css');
 var angular = require('angular');
 var angularfire = require('angularfire');
 var uiRouter = require('angular-ui-router');
+// var bootstrap = require('bootstrap');
 
 var config = {
     apiKey: "AIzaSyDPRP1vgm6bQ7SXuVAQtgBS5ewsjJoDLzg",
@@ -37,7 +40,7 @@ require('./compose/realtime-updates.js');
 require('./dashboard/dashboard.js');
 require('./left-navmenu/myconversations.js');
 require('./left-navmenu/shared-labels.js');
-require('./login/login.js');
+// require('./login/login.js');
 require('./threadview/assign/assign-button.js');
 require('./threadview/shared-labels-button.js');
 require('./threadview/taskhistory.js');
