@@ -54,7 +54,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 var foo = {};
                 // hash = response;
                 person = sdk.User.getAccountSwitcherContactList()[0].name;
-                Promise.resolve(messages.on('value', function(snapshot) {
+                Promise.resolve(messages.once('value', function(snapshot) {
                         var data = snapshot.val();
                         foo[messageID] = data[messageID];
                     }))
