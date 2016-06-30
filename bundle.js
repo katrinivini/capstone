@@ -1,1 +1,1 @@
-console.error("Error: Parsing file /Users/daianachang/capstone/js/myapp.js: Unexpected token (19:0)");
+console.error("\n/Users/daianachang/capstone/js/myapp.css:1\n@import url(\"../css/styles.css\");\n^\nParseError: Unexpected character '@'");

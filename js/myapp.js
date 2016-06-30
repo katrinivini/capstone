@@ -16,38 +16,9 @@ var rootRef = firebase.database().ref();
 var messages = firebase.database().ref('/messages');
 // messages.set({ isChanging: false, sender: "" });
 var members = firebase.database().ref('/members');
-<<<<<<< HEAD
-
-
-function login () {
-
-    chrome.identity.getAuthToken({interactive: true}, function (token){
-        console.log('success, not sure what this returns', token)
-    })
-    
-    // console.log('in the login function');
-    // var auth = firebase.auth();
-    // var provider = new firebase.auth.GoogleAuthProvider();
-    // //signInWithPopup gives me the screen where it asks for permissions, but hangs indefinitely and does not ever consolelog either a success or result
-    // auth.signInWithPopup(provider).then(function(result) {
-    // // auth.signInWithCredential("teamidkgha@gmail.com").then(function(result) {
-    // //signInWithRedirect gives me the screen where it asks for permissions, but consolelogs undefined in the .then and also console logs my error message
-    // console.log(window.open(""));
-    // // auth.signInWithRedirect(provider).then(function(result) {
-    //     console.log('success: ', result)
-    //     console.log(arguments);
-    // }).catch(function(error) {
-    //     console.log('you died of dysentery', error);
-    // });
-}
-
-
-
-=======
->>>>>>> 08adeb8c2074478596c0fbe966d4da398d6cafe6
 var sharedLabels = firebase.database().ref('/sharedLabels');
 // sharedLabels.on('child_added', function(data){
-//     data.ref('/members');
+//  data.ref('/members');
 // })
 
 /*also require all the files here. browserify will compile them and put them into the bundle file*/
