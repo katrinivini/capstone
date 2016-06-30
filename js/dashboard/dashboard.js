@@ -1,20 +1,21 @@
 var $ = require('jquery');
+var router = require('angular-ui-router');
 var fb = require('../myapp.js');
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
-    var routeID = '/user-panel';
+    var routeID = '/thing';
     
     sdk.Router.handleCustomRoute(routeID, function(customRouteView) {
         var el = document.createElement("div");
-        $(el).load(chrome.extension.getURL('/templates/user-panel.html'));
+        $(el).load(chrome.extension.getURL('/templates/test.html'));
         angular.element(document).ready(function(){
-            angular.bootstrap(el, ['thing'])  
+            angular.bootstrap(el, ['thing'])
         })
         customRouteView.getElement().appendChild(el);
     });
 
-    sdk.Router.createLink('dashboard');
+    sdk.Router.createLink('thing');
 
     sdk.Toolbars.registerToolbarButtonForThreadView({
         title: 'Go to Dashboard',
@@ -22,7 +23,8 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         section: 'METADATA_STATE',
         hasDropdown: false,
         onClick: function(event) {
-            sdk.Router.goto('/user-panel')
+            router.$state.go('userpanel');  
+            // sdk.Router.goto('/thing')
         }
     });
 

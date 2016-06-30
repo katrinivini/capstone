@@ -1,49 +1,43 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+// var $ = require('jquery');
 var app = angular.module('thing', ['firebase', 'ui.router']);
+
+var insert = '';
+// var el = document.createElement("div");
+fetch(chrome.extension.getURL('/templates/dashboard-home.html'))
+.then(function(response){
+	return response.text();
+})
+.then(function(html){
+	console.log('here is the html', html)
+	insert = html; 
+	// el.innerHTML = html;
+	// console.log('what is el now', el);
+
+})
 
 app.config(function($urlRouterProvider, $locationProvider, $stateProvider){
 // 	// This turns off hashbang urls (/#about) and changes it to something normal (/about)
 	// $locationProvider.html5Mode(true);
 // 	// If we go to a URL that ui-router doesn't have registered, go to the "/" url.
-	// $urlRouterProvider.otherwise('/user-panel');
+	// $urlRouterProvider.otherwise('/userpanel');
 
-	$urlRouterProvider.when('/', '/user-panel');
+	$urlRouterProvider.when('/thing', '/userpanel');
 
-	$stateProvider.state('user-panel', {
-		url: '/user-panel', 
-		// templateUrl: '/templates/user-panel.html', 
+	$stateProvider.state('userpanel', {
+		url: '/userpanel', 
+		template: '<h1>NOWORKNOWORKNOWORK</h1>', 
+		// template: 'insert', 
 		controller: 'DashboardCtrl'
 	})
 
-	$stateProvider.state('user-panel.dashboard', {
-		url: '/dashboard', 
-		templateUrl: '/templates/dashboard-home.html', 
-		controller: 'DashboardCtrl'
+	$stateProvider.state('dashboard', {
+		url: '/dashboard',
+		// templateUrl: 'chrome-extension://nnbcemhofefipmhikmmkofondhdbjlje/templates/dashboard-home.html'
+		template: '<h1>WORK WORK WORK WORK WORK</h1>', 
+		controller: 'TestCtrl'
 	})
 
-	$stateProvider.state('user-panel.sharedLabels', {
-		url: '/sharedLabels', 
-		// templateUrl: '/templates/shared-labels.html', 
-		controller: 'DashboardCtrl'
-	})
-
-	$stateProvider.state('user-panel.sharedContacts', {
-		url: '/sharedContacts', 
-		// templateUrl: '/templates/shared-contacts.html', 
-		controller: 'DashboardCtrl'
-	})
-
-	$stateProvider.state('user-panel.emailTemplates', {
-		url: '/emailTemplates', 
-		// templateUrl: '/templates/email-templates.html', 
-		controller: 'DashboardCtrl'
-	})
-
-	$stateProvider.state('user-panel.settings', {
-		url: '/settings', 
-		// templateUrl: '/templates/settings.html', 
-		controller: 'DashboardCtrl'
-	})
 })
 
 app.controller('DashboardCtrl', function($scope, $firebaseArray, $state) {
@@ -51,6 +45,11 @@ app.controller('DashboardCtrl', function($scope, $firebaseArray, $state) {
 	console.log('current state in ctrl', $scope.current)
 	var ref = firebase.database().ref('/templates');
 	$scope.templates = $firebaseArray(ref);
+	
+});
+app.controller('TestCtrl', function($scope, $firebaseArray, $state) {
+	$scope.current = $state.current; 
+	console.log('current state in ctrl', $scope.current)
 	
 });
 },{}],2:[function(require,module,exports){
@@ -146,22 +145,23 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 });
 },{"../myapp.js":9}],4:[function(require,module,exports){
 var $ = require('jquery');
+var router = require('angular-ui-router');
 var fb = require('../myapp.js');
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
-    var routeID = '/user-panel';
+    var routeID = '/thing';
     
     sdk.Router.handleCustomRoute(routeID, function(customRouteView) {
         var el = document.createElement("div");
-        $(el).load(chrome.extension.getURL('/templates/user-panel.html'));
+        $(el).load(chrome.extension.getURL('/templates/test.html'));
         angular.element(document).ready(function(){
-            angular.bootstrap(el, ['thing'])  
+            angular.bootstrap(el, ['thing'])
         })
         customRouteView.getElement().appendChild(el);
     });
 
-    sdk.Router.createLink('dashboard');
+    sdk.Router.createLink('thing');
 
     sdk.Toolbars.registerToolbarButtonForThreadView({
         title: 'Go to Dashboard',
@@ -169,13 +169,14 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         section: 'METADATA_STATE',
         hasDropdown: false,
         onClick: function(event) {
-            sdk.Router.goto('/user-panel')
+            router.$state.go('userpanel');  
+            // sdk.Router.goto('/thing')
         }
     });
 
 });
 
-},{"../myapp.js":9,"jquery":22}],5:[function(require,module,exports){
+},{"../myapp.js":9,"angular-ui-router":14,"jquery":22}],5:[function(require,module,exports){
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 	sdk.NavMenu.addNavItem({
 		name: 'Assigned To Me',
