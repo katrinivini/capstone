@@ -11,12 +11,21 @@ console.log("hello from outside app.js AssignCtrl");
 
 assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 	console.log("hello from inside assignapp.js AssignCtrl");
+	var membersArray;
+	$scope.members = [];
 
 	var ref = firebase.database().ref('/members'); 
 	// $scope.members = ['Belinda', 'Katrina', 'Rina', 'Kathy'];
-	$scope.members = $firebaseArray(ref);
-	console.log("$scope.members: ", $scope.members);
-	console.log("$scope.members length: ", $scope.members.length);
+	var arr = $firebaseArray(ref);
+	arr.$loaded().then(function(data) {
+		console.log("data from $loaded(): ", data);
+		angular.forEach(arr, function(item) {
+			$scope.members.push(item.$value);
+		})
+		console.log("$scope.members: ", $scope.members);
+	});
+	
+	
 	$scope.assignsubmit = function() {
 		console.log("you assignsubmitted something but not really");
 	}
