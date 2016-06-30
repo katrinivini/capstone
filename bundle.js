@@ -83,7 +83,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                     msgId = jsonresp.payload.headers[i].value;
                 }
                 // if (jsonresp.payload.headers[i].name === "From"){
-                // 	senderName = jsonresp.payload.headers[i].value.match(/[^<]*/)[0];
+                //  senderName = jsonresp.payload.headers[i].value.match(/[^<]*/)[0];
                 // }
             }
             var msgHash = hashCode(msgId);
@@ -91,8 +91,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             // console.log('rawResp', rawresp);
             console.log("are we in here")
             sendResponse(msgHash);
-        	console.log('jsonresp', jsonresp);
-        	// console.log('rawResp', rawresp);
+            console.log('jsonresp', jsonresp);
+            // console.log('rawResp', rawresp);
             // sendResponse(jsonresp);
         });
     }
@@ -105,7 +105,6 @@ function hashCode(s) {
     return s.split("").reduce(function(a, b) { a = ((a << 5) - a) + b.charCodeAt(0);
         return a & a }, 0);
 }
-
 },{}],3:[function(require,module,exports){
 var messages = require('../myapp.js').messages;
 
@@ -456,36 +455,105 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 },{"../../myapp.js":9}],11:[function(require,module,exports){
 var $ = require('../myapp.js').$;
 // console.log('$', $);
+var messages = require('../myapp.js').messages;
+var comments = document.createElement('div');
+var message;
+var person;
+var hash;
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     sdk.Conversations.registerThreadViewHandler(function(threadView) {
-        var comments = document.createElement('div');
-
-        $(comments).load(chrome.extension.getURL('/templates/comments.html'), function(page){
-            console.log(page);
-        })
-
-        
+        //make the comments sidebar content panel
         threadView.addSidebarContentPanel({
             el: comments,
             title: 'Comments',
             iconUrl: 'https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/512/comments.png'
         })
-    })
-
-    sdk.Conversations.registerThreadViewHandler(function(threadView) {
+        var messageID;
         chrome.runtime.sendMessage({
             type: 'read message',
             threadId: threadView.getThreadID()
         }, function(response) {
+            messageID = response;
+            messages.once('value', function(snapshot) {
 
-            console.log('now trying to get metadata: ', response);
+                var data = snapshot.val();
+                console.log('data, please get here: ', data);
+                console.log(messageID);
+                if (data && data[messageID]) {
+                    var name = sdk.User.getAccountSwitcherContactList()[0].name;
+                    console.log('get in here please');
+                    // var last = data[messageID][name].comments[data[messageID][name].comments.length - 1];
+                    var comments = data[messageID][name].comments;
+                    comments.forEach(function(comment) {
+                        var comm = document.createElement('div');
+                        var first = name.split(' ')[0];
+                        comm.innerHTML = first + ": " + comment.message + comment.date;
+                        var addComment = document.getElementById('addComment');
+                        if (comment.date) addComment.appendChild(comm);
+                    })
+                }
+            });
 
         })
-    });
-});
+
+        $(comments).load(chrome.extension.getURL('/templates/comment.html'), function(page) {
+            var submit = document.getElementById('submit');
+            console.log(document.getElementById('addComment'));
+            console.log('comments page: ', page);
+            submit.addEventListener('click', function(event) {
+                event.preventDefault();
+                // chrome.runtime.sendMessage({
+                //     type: 'add comment',
+                //     threadId: threadView.getThreadID()
+                // }, function(response) {
+                var foo = {};
+                // hash = response;
+                person = sdk.User.getAccountSwitcherContactList()[0].name;
+                Promise.resolve(messages.once('value', function(snapshot) {
+                        var data = snapshot.val();
+                        foo[messageID] = data[messageID];
+                    }))
+                    .then(function() {
+                        message = $('#comment').val();
+                        foo[messageID][person].comments.push({
+                            message: message,
+                            date: new Date()
+                        });
+                        return Promise.resolve(messages.update(foo));
+
+
+                    })
+                    .then(function() {
+                        $('#comment').val('');
+                    })
+                    // })
+            })
+        })
+        messages.on('child_changed', function(snapshot) {
+            console.log('value ', snapshot.val());
+            var data = snapshot.val();
+            console.log('snapshot: ', snapshot.val());
+            // console.log('data, please get here: ', data);
+            // if (data && data[messageID]) {
+            var name = sdk.User.getAccountSwitcherContactList()[0].name;
+            // console.log('get in here please');
+            var last = data[name].comments[data[name].comments.length - 1];
+            // var comments = data[messageID][name].comments;
+            // comments.forEach(function(commemt) {
+            var comm = document.createElement('div');
+            var first = name.split(' ')[0];
+            comm.innerHTML = first + ": " + last.message + last.date;
+            var addComment = document.getElementById('addComment');
+            if (last.date) addComment.appendChild(comm);
+            // })
+            // }
+        });
+    })
+})
 
 },{"../myapp.js":9}],12:[function(require,module,exports){
 var sharedLabels = require('../myapp.js').sharedLabels;
+var $ = require('jquery');
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
@@ -511,11 +579,6 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 					p.classList.add(label);
 					p.innerHTML = label;
 					p.addEventListener('click', function(event){
-						// sdk.Lists.registerThreadRowViewHandler(function(threadRow){
-						// 	threadRow.addLabel({
-
-						// 	})
-						// })
 					})
 					list.appendChild(p);
 				})
@@ -525,7 +588,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 	})
 });
 
-},{"../myapp.js":9}],13:[function(require,module,exports){
+},{"../myapp.js":9,"jquery":22}],13:[function(require,module,exports){
 var messages = require('../myapp.js').messages;
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
@@ -540,7 +603,6 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     })
 
     sdk.Conversations.registerThreadViewHandler(function(threadView) {
-        // console.log("threadid", threadView.getThreadID())
         chrome.runtime.sendMessage({
             type: 'read message',
             threadId: threadView.getThreadID()
@@ -548,21 +610,34 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             var foo = {};
             var hash = response;
             var person = sdk.User.getAccountSwitcherContactList()[0].name;
-            // foo[person] = "read";
-            console.log('now trying to get metadata: ', response);
-            // if (messages.child(hash)){
-            // console.log(" we in here and ", messages.child(hash))
-            // var oldfoo = messages.child(hash);
-            // foo = extend(foo, oldfoo);
-            // messages.child(hash).update(person + '/');
-
-            // this is the path to the node that i want to change
+            // console.log('person in task history', sdk.User.getAccountSwitcherContactList()[0])
             var k = hash + '/' + person;
-            foo[k] = "read";
-            messages.update(foo);
-            // } else {
-            //     messages.child(hash).set(foo)
-            // }
+            console.log('now trying to get metadata: ', response);
+
+            Promise.resolve(messages.once('value', function(snapshot) {
+                    var data = snapshot.val();
+                    if (data && data[hash]) { //thread exists
+                        if (data[hash][person]) foo[k] = data[hash][person];
+                        // console.log(data[hash][person]);
+                        else { //thread exists but person doesn't
+                            foo[k] = {
+                                status: 'read',
+                                comments: [{message: "", date: ""}],
+                                activity: [{action: "", date: ""}]
+                            }
+                        }
+                    } else {
+                        foo[k] = {
+                            status: 'read',
+                            comments: [{message: "", date: ""}],
+                            activity: [{action: "", date: ""}]
+                        }
+                    }
+                    return;
+                }))
+                .then(function() {
+                    messages.update(foo);
+                })
         })
     });
 });
@@ -573,6 +648,7 @@ function extend(obj, src) {
     }
     return obj;
 }
+
 },{"../myapp.js":9}],14:[function(require,module,exports){
 /**
  * State-based routing for AngularJS

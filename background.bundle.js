@@ -2,7 +2,7 @@
 var head = document.getElementsByTagName('head')[0];
 var authScript = document.createElement('script');
 authScript.type = 'text/javascript';
-authScript.src = "https://apis.google.com/js/client.js?onload=checkAuth"; 
+authScript.src = "https://apis.google.com/js/client.js?onload=checkAuth";
 document.body.appendChild(authScript);
 console.log(document.body)
 
@@ -15,8 +15,8 @@ span.innerHTML = "Authorize access to Gmail API";
 var button = document.createElement('button');
 button.id = "authorize-button";
 button.innerHTML = "Authorize";
-button.addEventListener('click', function(event){
-  handleAuthClick(event);
+button.addEventListener('click', function(event) {
+    handleAuthClick(event);
 })
 var pre = document.createElement('pre');
 pre.id = "output"
@@ -37,7 +37,7 @@ var SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
  * Check if current user has authorized this application.
  */
 window.checkAuth = function checkAuth() {
-  console.log('did you get in here?');
+    console.log('did you get in here?');
     gapi.auth.authorize({
         'client_id': CLIENT_ID,
         'scope': SCOPES,
@@ -51,7 +51,7 @@ window.checkAuth = function checkAuth() {
  * @param {Object} authResult Authorization result.
  */
 function handleAuthResult(authResult) {
-  console.log('authResult: ', authResult);
+    console.log('authResult: ', authResult);
     var authorizeDiv = document.getElementById('authorize-div');
     if (authResult && !authResult.error) {
         // Hide auth UI, then load client library.
@@ -70,7 +70,7 @@ function handleAuthResult(authResult) {
  * @param {Event} event Button click event.
  */
 function handleAuthClick(event) {
-  console.log('event: ', event);
+    console.log('event: ', event);
     gapi.auth.authorize({ client_id: CLIENT_ID, scope: SCOPES, immediate: false },
         handleAuthResult);
     return false;
@@ -94,7 +94,7 @@ function listLabels() {
     });
 
     request.execute(function(resp) {
-      console.log('resp: ', resp);
+        console.log('resp: ', resp);
         var labels = resp.labels;
         appendPre('Labels:');
 
@@ -107,6 +107,9 @@ function listLabels() {
             appendPre('No Labels found.');
         }
     });
+}
+module.exports = {
+    getThread: getThread
 }
 
 /**
@@ -121,10 +124,44 @@ function appendPre(message) {
     pre.appendChild(textContent);
 }
 
+
+var getThread = function(userId, threadId, callback) {
+    return gapi.client.gmail.users.messages.get({
+        'id': threadId,
+        'userId': userId,
+        'format': 'metadata'
+    })
+    .then(function(resp){
+        return resp;
+    })
+    // return req.execute(callback);
+}
+
 require('./taskhistory.js');
 require('./comment.js');
 
 },{"../manifest.json":4,"./comment.js":2,"./taskhistory.js":3}],2:[function(require,module,exports){
+// var getThread = function(userId, threadId, callback) {
+//     var  req = gapi.client.gmail.users.messages.get({
+//             'id': threadId,
+//             'userId': userId,
+//             'format': 'metadata'
+//         })
+//         return req.execute(callback);
+// }
+
+// chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+// 	request.user.name;
+//     if (request.type === 'add comment') {
+//         getThread('me', request.threadId, function(jsonresp) {
+//             jsonresp.payload.headers.forEach(function(header){
+//             	if (header.name === 'Message-ID') {
+            		
+//             	}
+//             })
+//         })
+//     }
+// })
 
 },{}],3:[function(require,module,exports){
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
@@ -156,7 +193,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                     msgId = jsonresp.payload.headers[i].value;
                 }
                 // if (jsonresp.payload.headers[i].name === "From"){
-                // 	senderName = jsonresp.payload.headers[i].value.match(/[^<]*/)[0];
+                //  senderName = jsonresp.payload.headers[i].value.match(/[^<]*/)[0];
                 // }
             }
             var msgHash = hashCode(msgId);
@@ -164,8 +201,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             // console.log('rawResp', rawresp);
             console.log("are we in here")
             sendResponse(msgHash);
-        	console.log('jsonresp', jsonresp);
-        	// console.log('rawResp', rawresp);
+            console.log('jsonresp', jsonresp);
+            // console.log('rawResp', rawresp);
             // sendResponse(jsonresp);
         });
     }
@@ -178,7 +215,6 @@ function hashCode(s) {
     return s.split("").reduce(function(a, b) { a = ((a << 5) - a) + b.charCodeAt(0);
         return a & a }, 0);
 }
-
 },{}],4:[function(require,module,exports){
 module.exports={
     "manifest_version": 2,
