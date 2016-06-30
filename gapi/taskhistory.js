@@ -27,7 +27,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                     msgId = jsonresp.payload.headers[i].value;
                 }
                 // if (jsonresp.payload.headers[i].name === "From"){
-                // 	senderName = jsonresp.payload.headers[i].value.match(/[^<]*/)[0];
+                //  senderName = jsonresp.payload.headers[i].value.match(/[^<]*/)[0];
                 // }
             }
             var msgHash = hashCode(msgId);
@@ -35,8 +35,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             // console.log('rawResp', rawresp);
             console.log("are we in here")
             sendResponse(msgHash);
-        	console.log('jsonresp', jsonresp);
-        	// console.log('rawResp', rawresp);
+            console.log('jsonresp', jsonresp);
+            // console.log('rawResp', rawresp);
             // sendResponse(jsonresp);
         });
     }

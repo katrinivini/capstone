@@ -1,1 +1,6 @@
 node_modules
+background.bundle.js
+bundle.js
+firebase.js
+inboxsdk.js
+popup.html
