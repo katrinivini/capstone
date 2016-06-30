@@ -20,14 +20,10 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         }, function(response) {
             messageID = response;
             messages.once('value', function(snapshot) {
-
                 var data = snapshot.val();
-                console.log('data, please get here: ', data);
-                console.log(messageID);
                 if (data && data[messageID]) {
+                    console.log('data: messageID', snapshot.val());
                     var name = sdk.User.getAccountSwitcherContactList()[0].name;
-                    console.log('get in here please');
-                    // var last = data[messageID][name].comments[data[messageID][name].comments.length - 1];
                     var comments = data[messageID][name].comments;
                     comments.forEach(function(comment) {
                         var comm = document.createElement('div');
@@ -43,18 +39,11 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
         $(comments).load(chrome.extension.getURL('/templates/comment.html'), function(page) {
             var submit = document.getElementById('submit');
-            console.log(document.getElementById('addComment'));
-            console.log('comments page: ', page);
             submit.addEventListener('click', function(event) {
                 event.preventDefault();
-                // chrome.runtime.sendMessage({
-                //     type: 'add comment',
-                //     threadId: threadView.getThreadID()
-                // }, function(response) {
                 var foo = {};
-                // hash = response;
                 person = sdk.User.getAccountSwitcherContactList()[0].name;
-                Promise.resolve(messages.once('value', function(snapshot) {
+                Promise.resolve(messages.on('value', function(snapshot) {
                         var data = snapshot.val();
                         foo[messageID] = data[messageID];
                     }))
@@ -65,33 +54,22 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                             date: new Date()
                         });
                         return Promise.resolve(messages.update(foo));
-
-
                     })
                     .then(function() {
                         $('#comment').val('');
                     })
-                    // })
             })
         })
         messages.on('child_changed', function(snapshot) {
-            console.log('value ', snapshot.val());
             var data = snapshot.val();
             console.log('snapshot: ', snapshot.val());
-            // console.log('data, please get here: ', data);
-            // if (data && data[messageID]) {
             var name = sdk.User.getAccountSwitcherContactList()[0].name;
-            // console.log('get in here please');
             var last = data[name].comments[data[name].comments.length - 1];
-            // var comments = data[messageID][name].comments;
-            // comments.forEach(function(commemt) {
             var comm = document.createElement('div');
             var first = name.split(' ')[0];
             comm.innerHTML = first + ": " + last.message + last.date;
             var addComment = document.getElementById('addComment');
             if (last.date) addComment.appendChild(comm);
-            // })
-            // }
         });
     })
 })
