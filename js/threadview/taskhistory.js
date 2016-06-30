@@ -31,71 +31,45 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                     var data = snapshot.val();
                     if (data && data[hash]) {
                         if (data[hash].activity) {
+                            // if there is an activity already there
+                            // this for loop prevents duplicate action
+                            for (var i = 0; i < data[hash].activity.length; i++) {
+                                if (data[hash].activity[i].person === person && data[hash].activity[i].action === "read") {
+                                    return;
+                                }
+                            }
+                            // otherwise proceed...
                             var arr = data[hash].activity;
-                            foo[k] = {
-                                person: person,
-                                action: "read again",
-                                date: new Date()
-                            };
-                            arr.push(foo[k])
+                            foo[k] = eventObj(person, "read");
+                            var arr = data[hash].activity;
+                            arr.push(foo[k]);
                             foo[k] = arr;
+                            messages.update(foo);
+                            // arr.push(foo[k])
+                            // foo[k] = arr;
                         } else {
-                            foo[k] = [{
-                                person: person,
-                                action: "read",
-                                date: new Date()
-                            }];
+                            // if this is the first activity, initialize the array
+                            foo[k] = [eventObj(person, "read")];
+                            messages.update(foo);
                         }
+                    }
+                    else if (data) {
+                        foo[k] = [eventObj(person, "read")];
+                        messages.update(foo);
                     }
                     return;
             }))
-            .then(function() {
-                messages.update(foo);
-
-            })
-
-            // Promise.resolve(messages.on('value', function(snapshot) {
-            //     console.log('wooooot')
-            //     console.log(snapshot.val()[hash], "<<--SNAPSHOT")
-            //         var data = snapshot.val();
-            //         if (data && data[hash]) { //thread exists
-            //             if (data[hash]) {
-            //                 foo[k].push({person: person, action: "read", date: new Date()})
-            //             }
-            //             else {
-            //                 foo[k] = [{person: person, action: "read", date: new Date()}]
-            //             }
-            //             //foo[k] is messages>hash>activity
-            //             //we want it to be an array of objects
-
-            //             // if (data[hash][person]) foo[k] = data[hash][person];
-            //             // // console.log(data[hash][person]);
-            //             // else { //thread exists but person doesn't
-            //             //     foo[k] = {
-            //             //         status: 'read',
-            //             //         comments: [{message: "", date: ""}],
-            //             //         activity: [{action: "", date: ""}]
-            //             //     }
-            //             // }
-            //         } else {
-            //             // foo[k] = {
-            //             //     status: 'read',
-            //             //     comments: [{message: "", date: ""}],
-            //             //     activity: [{action: "", date: ""}]
-            //             // }
-            //         }
-            //         return;
-            // }))
             // .then(function() {
             //     messages.update(foo);
-            // }); // end Promise
+            // })
         })
     });
 });
 
-// function extend(obj, src) {
-//     for (var key in src) {
-//         if (src.hasOwnProperty(key)) obj[key] = src[key];
-//     }
-//     return obj;
-// }
+function eventObj(p, a){
+    return {
+        person: p,
+        action: a,
+        date: new Date()
+    }
+}
