@@ -30,14 +30,19 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             // messages.child(hash).update(person + '/');
             Promise.resolve(messages.once('value', function(snapshot) {
                     var data = snapshot.val();
-                    if (data && data[hash][person]) {
-                        foo[k] = data[hash][person];
-                        console.log(data[hash][person]);
-                    }
-                    else {
+                    if (data && data[hash]) { //thread exists
+                        if (data[hash][person]) foo[k] = data[hash][person];
+                        // console.log(data[hash][person]);
+                        else { //thread exists but person doesn't
+                            foo[k] = {
+                                comments: [{ message: "", date: "" }],
+                                activity: [{ action: "", date: "" }]
+                            }
+                        }
+                    } else {
                         foo[k] = {
-                            comments: [{message: "", date: ""}],
-                            activity: [{action: "", date: ""}]
+                            comments: [{ message: "", date: "" }],
+                            activity: [{ action: "", date: "" }]
                         }
                     }
                     return;
