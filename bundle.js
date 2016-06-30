@@ -20,6 +20,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         function getThread(userId, threadId, callback) {
             var req = gapi.client.gmail.users.messages.get({
                 'id': threadId,
+
                 'userId': userId,
                 'format': 'metadata'
             })
@@ -27,13 +28,36 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         }
 
         getThread('me', request.threadId, function(jsonresp, rawresp) {
+            console.log('jsonresp', jsonresp)
+            var msgId = "";
+            var senderName = "";
+            for (var i = 0; i < jsonresp.payload.headers.length; i++) {
+                if (jsonresp.payload.headers[i].name === "Message-ID") {
+                    msgId = jsonresp.payload.headers[i].value;
+                }
+                // if (jsonresp.payload.headers[i].name === "From"){
+                // 	senderName = jsonresp.payload.headers[i].value.match(/[^<]*/)[0];
+                // }
+            }
+            var msgHash = hashCode(msgId);
+
+            // console.log('rawResp', rawresp);
+            console.log("are we in here")
+            sendResponse(msgHash);
         	console.log('jsonresp', jsonresp);
         	// console.log('rawResp', rawresp);
-            sendResponse(jsonresp);
+            // sendResponse(jsonresp);
         });
     }
     return true;
 });
+
+
+// alternatively, maybe a function that removes the non letter characters?
+function hashCode(s) {
+    return s.split("").reduce(function(a, b) { a = ((a << 5) - a) + b.charCodeAt(0);
+        return a & a }, 0);
+}
 
 },{}],3:[function(require,module,exports){
 var messages = require('../myapp.js').messages;
@@ -54,21 +78,21 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         function applyChanges() {
             try {
                 // this will always fire on page load if there is a draft with text in it
-                if (oldtext !== composeView.getTextContent()) {
-                    oldtext = composeView.getTextContent();
-                    messages.update({ isChanging: true });
-                    messages.update({ sender: composeView.getFromContact().name })
+                // if (oldtext !== composeView.getTextContent()) {
+                //     oldtext = composeView.getTextContent();
+                //     messages.update({ isChanging: true });
+                //     messages.update({ sender: composeView.getFromContact().name })
 
-                    //should not be using 'value' to update this - but child_changed doesn't work? 
-                    messages.on('value', function(data) {
-                        statusbar.el.innerHTML = data.val().sender + "<b> is typing right now.</b>"
+                //     //should not be using 'value' to update this - but child_changed doesn't work? 
+                //     messages.on('value', function(data) {
+                //         statusbar.el.innerHTML = data.val().sender + "<b> is typing right now.</b>"
 
-                    })
+                //     })
 
-                } else {
-                    messages.update({ isChanging: false });
-                    messages.update({ sender: "" })
-                }
+                // } else {
+                //     messages.update({ isChanging: false });
+                //     messages.update({ sender: "" })
+                // }
             } catch (err) {}
         }
 
@@ -348,6 +372,7 @@ require('../angular/app.js');
 /* -------- CSS FILES ----------- */
 // require('../css/styles.css');
 // require('./myapp.css');
+
 },{"../angular/app.js":1,"../gapi/taskhistory.js":2,"./compose/realtime-updates.js":3,"./dashboard/dashboard.js":4,"./left-navmenu/myconversations.js":5,"./left-navmenu/shared-labels.js":6,"./login/login.js":7,"./myapp.css":8,"./threadview/assign/assign-button.js":10,"./threadview/comment.js":11,"./threadview/shared-labels-button.js":12,"./threadview/taskhistory.js":13,"angular":15,"jquery":17}],10:[function(require,module,exports){
 var members = require('../../myapp.js').members;
 
@@ -452,6 +477,8 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 });
 
 },{"../myapp.js":9}],13:[function(require,module,exports){
+var messages = require('../myapp.js').messages;
+
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     sdk.Conversations.registerThreadViewHandler(function(threadView) {
         var taskHistory = document.createElement('div');
@@ -464,18 +491,40 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     })
 
     sdk.Conversations.registerThreadViewHandler(function(threadView) {
+        // console.log("threadid", threadView.getThreadID())
         chrome.runtime.sendMessage({
             type: 'read message',
             threadId: threadView.getThreadID()
         }, function(response) {
-
+            var foo = {};
+            var hash = response;
+            var person = sdk.User.getAccountSwitcherContactList()[0].name;
+            // foo[person] = "read";
             console.log('now trying to get metadata: ', response);
+            // if (messages.child(hash)){
+            // console.log(" we in here and ", messages.child(hash))
+            // var oldfoo = messages.child(hash);
+            // foo = extend(foo, oldfoo);
+            // messages.child(hash).update(person + '/');
 
+            // this is the path to the node that i want to change
+            var k = hash + '/' + person;
+            foo[k] = "read";
+            messages.update(foo);
+            // } else {
+            //     messages.child(hash).set(foo)
+            // }
         })
     });
 });
 
-},{}],14:[function(require,module,exports){
+function extend(obj, src) {
+    for (var key in src) {
+        if (src.hasOwnProperty(key)) obj[key] = src[key];
+    }
+    return obj;
+}
+},{"../myapp.js":9}],14:[function(require,module,exports){
 /**
  * @license AngularJS v1.5.7
  * (c) 2010-2016 Google, Inc. http://angularjs.org
