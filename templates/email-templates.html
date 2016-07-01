@@ -1,42 +1,48 @@
-<div>
-	<h1>AppName</h1>
-
-	<div class="left-dash col-md-3" id="left-dashboard">
-		<h3>Your Name</h3>
-		<h3>Your Email</h3>
-
-		<!-- <ul class="nav nav-pills nav-stacked"> -->
-		<ul class="nav nav-tabs">
-		  <li ui-sref-active="active"><a ui-sref="dashboard">Dashboard</a></li>
-		  <li ui-sref-active="active"><a ui-sref="shared-labels">Shared Labels</a></li>
-		  <li ui-sref-active="active"><a ui-sref="shared-contacts">Shared Contact Groups</a></li>
-		  <li ui-sref-active="active"><a ui-sref="email-templates">Email Templates</a></li>
-		  <li ui-sref-active="active"><a ui-sref="settings">My Settings</a></li>    
-		</ul>
-		
-	</div>
-
-	<h1>EMAIL TEMPLATES</h1>
-
-	<button>Create a new template</button>
-
-	<div class="col-md-9">
-		<div class="template-list col-md-9">
-			<ul ng-repeat="template in templates">
-				<li>{{template.title}}</li>
-			</ul>
-		</div>
-
-		<div>
-			<p>Subject:</p>
-			<input type="text"></input>
-			<p>Body:</p>
-			<textarea rows=10 cols="100%"></textarea>
-			<p>Shared With:</p>
-			<input type="text"></input>
-
-			<button>Save</button>
-		</div>
-	</div>
-
+<div class="container-fluid">
+    <div class="row" id="appname">
+        <h1>AppName</h1>
+    </div>
+    <div class="row" id="paneldiv">
+        <div class="left-dash col-md-3" id="left-dashboard">
+            <h3 class="dash-user">Your Name</h3>
+            <h3 class="dash-email">Your Email</h3>
+            <!-- <ul class="nav nav-pills nav-stacked dash-nav"> -->
+            <!-- <ul class="nav nav-tabs dash-nav"> -->
+            <ul class="nav navbar-nav dash-nav">
+                <a ui-sref="dashboard">
+                    <li ui-sref-active="active">Dashboard</li>
+                </a>
+                <a ui-sref="shared-labels">
+                    <li>Shared Labels</li>
+                </a>
+                <a ui-sref="shared-contacts">
+                    <li>Contacts Groups</li>
+                </a>
+                <a ui-sref="email-templates">
+                    <li>Email Templates</li>
+                </a>
+                <a ui-sref="settings">
+                    <li>My Settings</li>
+                </a>
+            </ul>
+        </div>
+        <div class="col-md-9">
+            <h1>EMAIL TEMPLATES</h1>
+            <button>Create a new template</button>
+            <div class="template-list">
+                <ul ng-repeat="template in templates">
+                    <li>{{template.title}}</li>
+                </ul>
+            </div>
+            <div>
+                <p>Subject:</p>
+                <input type="text"></input>
+                <p>Body:</p>
+                <textarea rows=10 cols="100%"></textarea>
+                <p>Shared With:</p>
+                <input type="text"></input>
+                <button>Save</button>
+            </div>
+        </div>
+    </div>
 </div>

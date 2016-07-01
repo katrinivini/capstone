@@ -18,6 +18,8 @@
     "jquery": "^3.0.0"
   },
   "browserify": {
-    "transform": ["browserify-css"]
+    "transform": [
+      "browserify-css"
+    ]
   }
 }
