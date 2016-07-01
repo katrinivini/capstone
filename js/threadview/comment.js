@@ -37,7 +37,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             messages.update(data);
         })
 
-                
+        // Why is this here? ~ ak
         sdk.Conversations.registerThreadViewHandler(function(threadView) {
             //make the comments sidebar content panel
             // threadId = threadView.getThreadID();
@@ -54,8 +54,15 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             }, function(response) {
                 messageID = response;
                 console.log('messageID from comment.js: ', messageID);
+                // <ak> Don't you actually want this?
+                messages.child(messageID).child(comments).on('child_added', function (snap) {
+                    const comment = snap.val()
+                    craeteComment(comment.person, comment.comment, comment.date)
+                })
+                // </ak>
+
                 messages.once('value', function(snapshot) {
-                    $('#addComment').children().remove();
+                    $('#addComment').children().remove();  // Shouldn't this happen earlier? ~ ak
                     data = snapshot.val();
                     console.log('snapshot of once the page loads: ', data);
                     if (data[messageID].comments) {
