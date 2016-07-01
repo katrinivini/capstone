@@ -14,9 +14,23 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         console.log('page: ', page);
         return Promise.resolve(parser.parseFromString(page, "text/html"))
             .then(function(dom) {
-                submit = dom.getElementById('submitComment');
                 form = dom.getElementById('commentForm');
                 addComment = dom.getElementById('submitComment');
+                
+                submit = dom.getElementById('submitComment');
+                submit.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    console.log("i submitted a comment");
+                    //update the database, then update the dom with a listener
+                    var person = sdk.User.getAccountSwitcherContactList()[0].name;
+                    var newComment = { person: person, comment: $('#comment').val(), date: new Date() };
+                    console.log('what does data[messageID look like?: ', data[messageID]);
+                    if (!data[messageID].comments) data[messageID].comments = [newComment];
+                    else data[messageID].comments.push(newComment);
+                    messages.update(data);
+                })
+
+                
                 sdk.Conversations.registerThreadViewHandler(function(threadView) {
                     //make the comments sidebar content panel
                     // threadId = threadView.getThreadID();
@@ -48,17 +62,6 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                     })
                 });
             })
-        // array[1].addEventListener('click', function(event) {
-        //     event.preventDefault();
-        //     console.log("i submitted a comment");
-        //     //update the database, then update the dom with a listener
-        //     var person = sdk.User.getAccountSwitcherContactList()[0].name;
-        //     var newComment = { person: person, comment: $('#comment').val(), date: new Date() };
-        //     console.log('what does data[messageID look like?: ', data[messageID]);
-        //     if (!data[messageID].comments) data[messageID].comments = [newComment];
-        //     else data[messageID].comments.push(newComment);
-        //     messages.update(data);
-        // })
     })
 });
 
