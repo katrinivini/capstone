@@ -2,6 +2,8 @@
 window.$ = window.jQuery = require('jquery');
 var bootstrap = require('bootstrap');
 var css = require('./myapp.css');
+require('angular');
+var firebase = require('firebase');
 var angular = require('angular');
 var angularfire = require('angularfire');
 var uiRouter = require('angular-ui-router');
@@ -23,7 +25,7 @@ var messages = firebase.database().ref('/messages');
 var members = firebase.database().ref('/members');
 var sharedLabels = firebase.database().ref('/sharedLabels');
 // sharedLabels.on('child_added', function(data){
-// 	data.ref('/members');
+//  data.ref('/members');
 // })
 
 /*also require all the files here. browserify will compile them and put them into the bundle file*/
