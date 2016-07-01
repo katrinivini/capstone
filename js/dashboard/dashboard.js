@@ -3,13 +3,22 @@ var router = require('angular-ui-router');
 var fb = require('../myapp.js');
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
-
+    var boo = true;
     sdk.Toolbars.addToolbarButtonForApp({
         title: 'Dashboard',
         iconUrl: 'http://www.lifein19x19.com/forum/images/smilies/icon_batman.gif',
         iconClass: 'dashboard-button',
         onClick: function(event) {
-            sdk.Router.goto('/userpanel');
+            // if (sdk.Router.getCurrentRouteView().getRouteID() === '/userpanel') {
+            //     // sdk.Router.goto('/inbox');
+            //     // $('.nh').hide();
+            //     // $('.nh').show();
+            //     // $( ".nH" ).find( ":hidden" ).show();
+            //     // sdk.Router.exit();
+            //     // console.log('router', sdk.Router)
+            // } else {
+                sdk.Router.goto('/userpanel');
+            // }
         }
     });
     
