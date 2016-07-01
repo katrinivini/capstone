@@ -22,18 +22,17 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                         var readMessages = snapshot.val();
                         if (readMessages && readMessages[hash]) { //we have readMessages and the thread
                             var people = Array.prototype.slice.call(readMessages[hash].people)
-                            var index = people.indexOf(person);
-                            console.log('index: ', index); //{
-                            if (index !== -1 && people[index].status == 'read') return;
-                            // }
-                            console.log('do i get in here???');
-
+                            // var index = people.indexOf(person);
+                            var returnee = people.filter(function(personobj){
+                                return personobj.person === person;
+                            });
+                            if (returnee && returnee.length > 0 && returnee[0].status === 'read') return;
                             readMessages[hash].activity.push(eventObj(person, "read"));
                             readMessages[hash].people.push({
                                 person: person,
                                 status: 'read'
                             })
-                            if ($(taskHistory).children()) $(taskHistory).children().remove();
+                            // if ($(taskHistory).children()) $(taskHistory).children().remove();
                             readMessages[hash].activity.forEach(function(task) {
                                     var date = new Date(task.date).getTime();
                                     createActivity(task.person, task.action, date)
