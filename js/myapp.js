@@ -20,6 +20,8 @@ var sharedLabels = firebase.database().ref('/sharedLabels');
 // sharedLabels.on('child_added', function(data){
 // 	data.ref('/members');
 // })
+// firebase.set({'/rinaTestBranch', []})
+// var rinaTestBranch = firebase.database().ref('/rinaTestBranch');
 
 /*also require all the files here. browserify will compile them and put them into the bundle file*/
 module.exports = {
@@ -27,6 +29,7 @@ module.exports = {
     sharedLabels: sharedLabels,
     messages: messages,
     members: members
+    // rinaTestBranch: rinaTestBranch
 }
 
 /* -------- JS FILES ----------- */
