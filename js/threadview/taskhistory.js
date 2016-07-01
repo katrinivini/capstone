@@ -1,5 +1,6 @@
 var messages = require('../myapp.js').messages;
 var taskHistory;
+var messageId;
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     sdk.Conversations.registerThreadViewHandler(function(threadView) {
         taskHistory = document.createElement('div');
@@ -12,6 +13,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             type: 'read message',
             threadId: threadView.getThreadID()
         }, function(hash) {
+            messageId = hash;
             var person = sdk.User.getAccountSwitcherContactList()[0].name;
             console.log('now trying to get metadata: ', hash);
             Promise.resolve(messages.once('value', function(snapshot) {
