@@ -4,8 +4,10 @@
   "description": "",
   "main": "./js/myapp.js",
   "scripts": {
-    "watch": "watchify ./js/myapp.js -o bundle.js -v -d & watchify ./gapi/background-two.js -o background.bundle.js -v -d",
-    "prettify": "browserify -t browserify-css ./js/myapp.js > bundle.js"
+    "watch": "watchify ./js/myapp.js -o bundle.js -v -d & watchify ./gapi/background-two.js -o background.bundle.js -v -d"
+  },
+  "browserify": {
+    "transform": ["browserify-css"]
   },
   "author": "",
   "license": "ISC",
