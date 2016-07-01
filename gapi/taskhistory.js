@@ -1,23 +1,5 @@
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.type === 'read message') {
-        /**
-         * Get Thread with given ID.
-         *
-         * @param  {String} userId User's email address. The special value 'me'
-         * can be used to indicate the authenticated user.
-         * @param  {String} threadId ID of Thread to get.
-         * @param  {Function} callback Function to call when the request is complete.
-         */
-        function getThread(userId, threadId, callback) {
-            var req = gapi.client.gmail.users.messages.get({
-                'id': threadId,
-
-                'userId': userId,
-                'format': 'metadata'
-            })
-            return req.execute(callback);
-        }
-
         getThread('me', request.threadId, function(jsonresp, rawresp) {
             console.log('jsonresp', jsonresp)
             var msgId = "";
@@ -35,9 +17,31 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     return true;
 });
 
+/**
+ * Get Thread with given ID.
+ *
+ * @param  {String} userId User's email address. The special value 'me'
+ * can be used to indicate the authenticated user.
+ * @param  {String} threadId ID of Thread to get.
+ * @param  {Function} callback Function to call when the request is complete.
+ */
+function getThread(userId, threadId, callback) {
+    var req = gapi.client.gmail.users.messages.get({
+        'id': threadId,
+        'userId': userId,
+        'format': 'metadata'
+    })
+    return req.execute(callback);
+}
 
-// alternatively, maybe a function that removes the non letter characters?
-function hashCode(s) {
+
+/** sanitize(s: String) -> String
+ *
+ * Returns s with non-space and non-word characters removed.
+ *
+ * @param  {String} s Input string
+ */
+function sanitize(s) {
     // return s.split("").reduce(function(a, b) { a = ((a << 5) - a) + b.charCodeAt(0);
     //     return a & a }, 0);
     return s.replace(/[^\w\s]/gi, '');
