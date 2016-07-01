@@ -22,14 +22,13 @@ pre.id = "output"
 var DIV = document.createElement('div');
 div.appendChild(span);
 div.appendChild(button);
-DIV.appendChild(div);
+DIV.appendChild(div);  // This naming scheme is questionable. ~ ak
 DIV.appendChild(pre);
 body.appendChild(DIV);
 
 // Your Client ID can be retrieved from your project in the Google
 // Developer Console, https://console.developers.google.com
 var CLIENT_ID = require('../manifest.json').oauth2.client_id
-
 var SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
 
 /**

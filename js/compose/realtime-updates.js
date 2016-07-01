@@ -12,7 +12,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         var oldtext = '';
         setInterval(applyChanges, interval);
         var statusbar = composeView.addStatusBar();
-
+        
         function applyChanges() {
             try {
                 // this will always fire on page load if there is a draft with text in it

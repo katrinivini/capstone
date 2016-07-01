@@ -17,29 +17,32 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             onClick: function(event) {
                 var labels = [];
                 var list = document.createElement('div');
+                // Promise.resolve on a Promise is pointless. ~ ak.
                 Promise.resolve(sharedLabels.on('child_added', function(snapshot) {
                         var data = snapshot.val();
-                        if (data) {
-                            var properties = Object.getOwnPropertyNames(data); //returns array of enumerable property names
-                            properties.forEach(function(prop) {
-                                labels.push(data[prop]);
-                            })
-                        }
-                    }))
-                    .then(function() {
-                        labels.forEach(function(label) {
-                            var lb = document.createElement('div');
-                            lb.innerHTML = label;
-                            list.appendChild(lb);
-                        });
-
-                        list.appendChild(create);
-                        event.dropdown.el.appendChild(list);
+                    if (data) {
+                        //returns array of enumerable property names
+                        // No, it doesn't. Object.getOwnPropertyNames is different from Object.keys
+                        // in that it specifically includes non-enumerable properties. ~ ak.
+                        var properties = Object.keys(data);
+                        properties.forEach(function(prop) {
+                            labels.push(data[prop]);
+                        })
+                    }
+                })).then(function() {
+                    labels.forEach(function(label) {
+                        var lb = document.createElement('div');
+                        lb.innerHTML = label;
+                        list.appendChild(lb);
                     });
+                    
+                    list.appendChild(create);
+                    event.dropdown.el.appendChild(list);
+                });
             }
         }
     })
-
+    
     create.addEventListener('click', function(event) {
         var mainDiv = document.createElement('div');
 

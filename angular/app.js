@@ -31,6 +31,8 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 	}
 });
 
+// Blocks of commented code make ashibear sad :(
+//
 // var insert = '';
 // // var el = document.createElement("div");
 // fetch(chrome.extension.getURL('/templates/dashboard-home.html'))
