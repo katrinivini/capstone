@@ -14,6 +14,12 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             threadId: threadView.getThreadID()
         }, function(hash) {
             var person = sdk.User.getAccountSwitcherContactList()[0].name;
+            var messageId = hash
+            
+            const thread = messages.child(messageId)
+            thread.child('activity').push(eventObj(person, 'read'))
+            thread.child('status/people').child(person).set('read')
+            
             console.log('now trying to get metadata: ', hash);
             // You don't need to Promise.resolve a promise. ~ ak
             messages.once('value', function(snapshot) {
