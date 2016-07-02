@@ -1,203 +1,103 @@
 var messages = require('../myapp.js').messages;
-var taskHistory = document.createElement('div');
+
+
 var messageID;
 var Firebase = require('firebase');
 $ = require('jquery');
 // console.log('Firebase: ', Firebase);
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     sdk.Conversations.registerThreadViewHandler(function(threadView) {
+        var taskHistory = document.createElement('div');
+        taskHistory.classList.add('taskHistory');
+        // thread > activity and comments
+        // activity > [{person: person, action: action, date: date}]
+        // comment > [{person:person , comment:comment , date:date}]
+        function eventObj(p, a) {
+            return {
+                person: p,
+                action: a,
+                date: Firebase.database.ServerValue.TIMESTAMP
+            }
+        }
+
+        function createActivity(person, action, date) {
+            var act = document.createElement('div');
+            act.innerHTML = person + " " + action + " " + date;
+            taskHistory.appendChild(act);
+        }
         threadView.addSidebarContentPanel({
             el: taskHistory,
             title: 'Task History',
             iconUrl: 'https://cdn3.iconfinder.com/data/icons/website-panel-icons/128/test1-13-512.png'
         })
         chrome.runtime.sendMessage({
-                type: 'read message',
-                threadId: threadView.getThreadID()
-            }, function(hash) {
-                messageID = hash;
-                var person = sdk.User.getAccountSwitcherContactList()[0].name;
-                messages.once('value', function(snapshot) { //this is a promise
-                        console.log('this is when you read the message: ', snapshot.val());
-                        var readMessages = snapshot.val();
-                        if (readMessages && readMessages[hash]) { //we have readMessages and the thread
-                            var people = Array.prototype.slice.call(readMessages[hash].people)
-                            var index = people.indexOf(person);
-                            console.log('index: ', index); //{
-                            if (index !== -1 && people[index].status == 'read') return;
-                            // }
-                            console.log('do i get in here???');
+            type: 'read message',
+            threadId: threadView.getThreadID()
+        }, function(hash) {
+            messageID = hash;
+            var person = sdk.User.getAccountSwitcherContactList()[0].name;
+            messages.once('value', function(snapshot) { //this is a promise
+                    console.log('we are in messages.once', snapshot.val());
+                    var readMessages = snapshot.val();
+                    if (readMessages && readMessages[hash]) { //we have readMessages and the thread
+                        // readMessages[hash].activity.forEach(function(task) {
+                        //     var date = new Date(task.date);
+                        //     createActivity(task.person, task.action, date)
+                        // })
+                        var people = Array.prototype.slice.call(readMessages[hash].people)
+                            // var index = people.indexOf(person);
+                        var returnee = people.filter(function(personobj) {
+                            return personobj.person === person;
+                        });
+                        if (returnee && returnee.length > 0 && returnee[0].status === 'read') return;
 
-                            readMessages[hash].activity.push(eventObj(person, "read"));
-                            readMessages[hash].people.push({
+                        readMessages[hash].activity.push(eventObj(person, "read"));
+                        readMessages[hash].people.push({
                                 person: person,
                                 status: 'read'
                             })
-                            if ($(taskHistory).children()) $(taskHistory).children().remove();
-                            readMessages[hash].activity.forEach(function(task) {
-                                    var date = new Date(task.date).getTime();
-                                    createActivity(task.person, task.action, date)
-                            })
-                        } else { //we either don't have the readMessages or dont have the thread
-                            if (!readMessages) readMessages = {};
-                            // messages.ref('/' + hash);
-                            readMessages[hash] = {
-                                activity: [eventObj(person, "read")],
-                                people: [{
-                                    person: person,
-                                    status: 'read'
-                                }]
-                            };
-                        }
-                        return messages.update(readMessages);
-                    })
-                    .then(function() {
-                        messages.child(messageID).child('activity').on('child_added', function(snapshot) {
-                            var task = snapshot.val();
-                            console.log('new task from task history: ', task);
-                            // data[hash].activity.forEach(function(act) {
-                            var date = new Date(task.date).getTime();
-                            createActivity(task.person, task.action, date);
-                            // });
-                        });
-                    })
+                            // if ($(taskHistory).children()) $(taskHistory).children().remove();
+                    } else { //we either don't have the readMessages or dont have the thread
+                        if (!readMessages) readMessages = {};
+                        // messages.ref('/' + hash);
+                        readMessages[hash] = {
+                            activity: [eventObj(person, "read")],
+                            people: [{
+                                person: person,
+                                status: 'read'
+                            }]
+                        };
+                    }
+                    return messages.update(readMessages);
+                })
+                .then(function() {
+                    messages.child(messageID).child('activity').on('child_changed', function(snapshot) {
+                        console.log('on snapshot of child_changed in taskhistory', snapshot.val());
+                        // var task = snapshot.val();
+                        // var last = task[task.length-1];
+                        // var date = new Date(last.date);
+                        // createActivity(last.person, last.action, date);
+                        // task.forEach(function(t) {
 
+                        //         createActivity(t.person, t.action, date);
+                        //     })
+                        // console.log('new task from task history: ', task);
+                        // console.log('activities:  ', task.activity);
+                        // data[hash].activity.forEach(function(act) {
+                        // var date = new Date(task[task.length-1].date);
+                        // createActivity(task[task.length-1].person, task[task.length-1].action, date);
+                    });
+                })
+            messages.child(messageID).child('activity').on('child_added', function(snapshot) {
+                console.log('on snapshot of child_added in taskhistory', snapshot.val());
+                var task = snapshot.val();
+                // task.forEach(function(t) {
+                    var date = new Date(task.date);
+                    createActivity(task.person, task.action, date);
+                // })
             })
-            // messages.child(messageID).on('child_added', function(snapshot) {
-            //     console.log('this is when you want to listen for an addition to the task history: ', snapshot.val());
-            //     var data = snapshot.val();
-            //     // var last = data.activity[data.activity.length - 1];
-            //     // if (last.date) createActivity(last.person, last.action, last.date);
-            // })
+        });
+
     });
+
 });
-
-// thread > activity and comments
-// activity > [{person: person, action: action, date: date}]
-// comment > [{person:person , comment:comment , date:date}]
-function eventObj(p, a) {
-    return {
-        person: p,
-        action: a,
-        date: Firebase.database.ServerValue.TIMESTAMP
-    }
-}
-
-function createActivity(person, action, date) {
-    var act = document.createElement('div');
-    act.innerHTML = person + " " + action + " " + date;
-    taskHistory.appendChild(act);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// // OLD VERSION
-
-// var messages = require('../myapp.js').messages;
-// var taskHistory;
-// InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
-//     sdk.Conversations.registerThreadViewHandler(function(threadView) {
-//         taskHistory = document.createElement('div');
-//         threadView.addSidebarContentPanel({
-//             el: taskHistory,
-//             title: 'Task History',
-//             iconUrl: 'https://cdn3.iconfinder.com/data/icons/website-panel-icons/128/test1-13-512.png'
-//         })
-//         chrome.runtime.sendMessage({
-//             type: 'read message',
-//             threadId: threadView.getThreadID()
-//         }, function(hash) {
-//             var person = sdk.User.getAccountSwitcherContactList()[0].name;
-//             console.log('now trying to get metadata: ', hash);
-//             Promise.resolve(messages.once('value', function(snapshot) {
-//                     var data = snapshot.val();
-//                     if (data && data[hash]) { //we have data and the thread
-//                         for (var i = 0; i < data[hash].activity.length; i++) {
-//                             if (data[hash].activity[i].person === person && data[hash].activity[i].action === "read") {
-//                                 return;
-//                             }
-//                         }
-//                         data[hash].activity.push(eventObj(person, "read"));
-//                         messages.update(data);
-//                     } else { //we either don't have the data or dont have the thread
-//                         if (!data) data = {};
-//                         // messages.ref('/' + hash);
-//                         data[hash] = {};
-//                         data[hash].activity = [eventObj(person, "read")];
-//                         messages.update(data);
-//                     }
-//                 }))
-//                 .then(function() {
-//                     messages.once('value', function(snapshot) {
-//                         var data = snapshot.val();
-//                         data[hash].activity.forEach(function(act) {
-//                             createActivity(act.person, act.action, act.date);
-//                         });
-//                     });
-//                 })
-
-//         })
-//         messages.on('child_changed', function(snapshot) {
-//             var data = snapshot.val();
-//             var last = data.activity[data.activity.length - 1];
-//             if (last.date) createActivity(last.person, last.action, last.date);
-//             console.log('someone please read my email: ', snapshot.val());
-//         })
-//     });
-// });
-
-// // thread > activity and comments
-// // activity > [{person: person, action: action, date: date}]
-// // comment > [{person:person , comment:comment , date:date}]
-// function eventObj(p, a) {
-//     return {
-//         person: p,
-//         action: a,
-//         date: new Date()
-//     }
-// }
-
-// function createActivity(person, action, date) {
-//     var act = document.createElement('div');
-//     act.innerHTML = person + " " + action + " " + date;
-//     taskHistory.appendChild(act);
-// }
