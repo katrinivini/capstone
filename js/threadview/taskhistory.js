@@ -83,11 +83,5 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 })
 
         })
-        messages.once('child_added', function(snapshot) {
-            console.log('this is when you want to listen for an addition to the task history: ', snapshot.val());
-            var data = snapshot.val();
-            // var last = data.activity[data.activity.length - 1];
-            // if (last.date) createActivity(last.person, last.action, last.date);
-        })
     });
 });
