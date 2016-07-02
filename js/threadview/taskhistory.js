@@ -37,7 +37,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             messageID = hash;
             var person = sdk.User.getAccountSwitcherContactList()[0].name;
             messages.once('value', function(snapshot) { //this is a promise
-                    console.log('this is when you read the message: ', snapshot.val());
+                    // console.log('this is when you read the message: ', snapshot.val());
                     var readMessages = snapshot.val();
                     if (readMessages && readMessages[hash]) { //we have readMessages and the thread
                         readMessages[hash].activity.forEach(function(task) {
@@ -55,8 +55,6 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                             person: person,
                             status: 'read'
                         })
-                        $('.taskHistory').children().remove();
-                        console.log($('.taskHistory').children());
                         // if ($(taskHistory).children()) $(taskHistory).children().remove();
                     } else { //we either don't have the readMessages or dont have the thread
                         if (!readMessages) readMessages = {};
@@ -74,7 +72,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 .then(function() {
                     messages.child(messageID).child('activity').on('child_changed', function(snapshot) {
                         var task = snapshot.val();
-                        console.log('new task from task history: ', task);
+                        // console.log('new task from task history: ', task);
                         // console.log('activities:  ', task.activity);
                         // data[hash].activity.forEach(function(act) {
                         var date = new Date(task.date);
