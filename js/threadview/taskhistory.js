@@ -41,7 +41,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                     var readMessages = snapshot.val();
                     if (readMessages && readMessages[hash]) { //we have readMessages and the thread
                         readMessages[hash].activity.forEach(function(task) {
-                            var date = new Date(task.date).getTime();
+                            var date = new Date(task.date);
                             createActivity(task.person, task.action, date)
                         })
                         var people = Array.prototype.slice.call(readMessages[hash].people)
@@ -77,7 +77,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                         console.log('new task from task history: ', task);
                         // console.log('activities:  ', task.activity);
                         // data[hash].activity.forEach(function(act) {
-                        var date = new Date(task.date).getTime();
+                        var date = new Date(task.date);
                         createActivity(task.person, task.action, date);
                     });
                 })
