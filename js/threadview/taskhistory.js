@@ -37,25 +37,26 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             messageID = hash;
             var person = sdk.User.getAccountSwitcherContactList()[0].name;
             messages.once('value', function(snapshot) { //this is a promise
-                    // console.log('this is when you read the message: ', snapshot.val());
+                    console.log('we are in messages.once', snapshot.val());
                     var readMessages = snapshot.val();
                     if (readMessages && readMessages[hash]) { //we have readMessages and the thread
-                        readMessages[hash].activity.forEach(function(task) {
-                            var date = new Date(task.date);
-                            createActivity(task.person, task.action, date)
-                        })
+                        // readMessages[hash].activity.forEach(function(task) {
+                        //     var date = new Date(task.date);
+                        //     createActivity(task.person, task.action, date)
+                        // })
                         var people = Array.prototype.slice.call(readMessages[hash].people)
                             // var index = people.indexOf(person);
                         var returnee = people.filter(function(personobj) {
                             return personobj.person === person;
                         });
                         if (returnee && returnee.length > 0 && returnee[0].status === 'read') return;
+
                         readMessages[hash].activity.push(eventObj(person, "read"));
                         readMessages[hash].people.push({
-                            person: person,
-                            status: 'read'
-                        })
-                        // if ($(taskHistory).children()) $(taskHistory).children().remove();
+                                person: person,
+                                status: 'read'
+                            })
+                            // if ($(taskHistory).children()) $(taskHistory).children().remove();
                     } else { //we either don't have the readMessages or dont have the thread
                         if (!readMessages) readMessages = {};
                         // messages.ref('/' + hash);
@@ -71,15 +72,32 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 })
                 .then(function() {
                     messages.child(messageID).child('activity').on('child_changed', function(snapshot) {
-                        var task = snapshot.val();
+                        console.log('on snapshot of child_changed in taskhistory', snapshot.val());
+                        // var task = snapshot.val();
+                        // var last = task[task.length-1];
+                        // var date = new Date(last.date);
+                        // createActivity(last.person, last.action, date);
+                        // task.forEach(function(t) {
+
+                        //         createActivity(t.person, t.action, date);
+                        //     })
                         // console.log('new task from task history: ', task);
                         // console.log('activities:  ', task.activity);
                         // data[hash].activity.forEach(function(act) {
-                        var date = new Date(task.date);
-                        createActivity(task.person, task.action, date);
+                        // var date = new Date(task[task.length-1].date);
+                        // createActivity(task[task.length-1].person, task[task.length-1].action, date);
                     });
                 })
+            messages.child(messageID).child('activity').on('child_added', function(snapshot) {
+                console.log('on snapshot of child_added in taskhistory', snapshot.val());
+                var task = snapshot.val();
+                // task.forEach(function(t) {
+                    var date = new Date(task.date);
+                    createActivity(task.person, task.action, date);
+                // })
+            })
+        });
 
-        })
     });
+
 });
