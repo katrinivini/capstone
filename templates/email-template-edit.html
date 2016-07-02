@@ -1,0 +1,37 @@
+<div>
+	<h1>AppName</h1>
+
+	<div class="left-dash col-md-3" id="left-dashboard">
+		<h3>Your Name</h3>
+		<h3>Your Email</h3>
+
+		<ul class="nav nav-pills nav-stacked">
+		  <li ui-sref-active="active"><a ui-sref="dashboard">Dashboard</a></li>
+		  <li ui-sref-active="active"><a ui-sref="sharedlabels">Shared Labels</a></li>
+		  <li ui-sref-active="active"><a ui-sref="emailtemplates">Email Templates</a></li>
+		  <li ui-sref-active="active"><a ui-sref="snoozed">Snoozed Items</a></li>
+		</ul>
+		
+	</div>
+
+	<h2>EMAIL TEMPLATES</h2>
+	
+	<div class="col-md-9">
+
+		<p>Edit this template</p>
+
+		<form class="template-form">
+			<p>Subject:</p></br>
+			<input type="text">{{template.title}}</br>
+			<p>Body:</p></br>
+			<textarea rows=5>{{template.body}}</textarea></br>
+			<p>Shared With:</p></br>
+			<input type="text"></br>
+		</form>
+
+		<button ng-click="updateTemplate()">Update</button>
+
+		<button ng-click="discardTemplate()">Discard</button>
+	</div>
+
+</div>

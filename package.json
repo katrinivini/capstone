@@ -4,8 +4,7 @@
   "description": "",
   "main": "./js/myapp.js",
   "scripts": {
-    "watch": "watchify ./js/myapp.js -o bundle.js -v -d & watchify ./gapi/background-two.js -o background.bundle.js -v -d",
-    "prettify": "browserify -t browserify-css ./js/myapp.js > bundle.js"
+    "watch": "watchify ./js/myapp.js -o bundle.js -v -d & watchify ./gapi/background-two.js -o background.bundle.js -v -d"
   },
   "author": "",
   "license": "ISC",
@@ -17,5 +16,8 @@
     "browserify-css": "^0.9.1",
     "firebase": "^3.1.0",
     "jquery": "^3.0.0"
+  }, 
+  "browserify": {
+      "transform": ["browserify-css"]
   }
 }

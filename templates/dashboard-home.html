@@ -1,45 +1,37 @@
 <div>
-	<h1>futureofappnamehere</h1>
+	<h1>AppName</h1>
 
 	<div class="left-dash col-md-3" id="left-dashboard">
 		<h3>Your Name</h3>
 		<h3>Your Email</h3>
 
-		<!-- <ul class="nav nav-pills nav-stacked"> -->
-		<ul class="nav nav-tabs">
-		  <li ui-sref-active="active"><a ui-sref="dashboard">Dashboard</a></li>
-		  <li ui-sref-active="active"><a ui-sref="shared-labels">Shared Labels</a></li>
-		  <li ui-sref-active="active"><a ui-sref="shared-contacts">Shared Contact Groups</a></li>
-		  <li ui-sref-active="active"><a ui-sref="email-templates">Email Templates</a></li>
-		  <li ui-sref-active="active"><a ui-sref="settings">My Settings</a></li>    
+		<ul class="nav nav-pills nav-stacked">
+		  <li><a ui-sref="dashboard">Dashboard</a></li>
+		  <li><a ui-sref="sharedlabels">Shared Labels</a></li>
+		  <li><a ui-sref="emailtemplates">Email Templates</a></li>
+		  <li><a ui-sref="snoozed">Snoozed Items</a></li>
 		</ul>
 		
 	</div>
 
 	<div class="col-md-9">
 		<div class="right-view col-md-9">
-			<div class="right-view col-md-3">
+			<div class="right-view col-md-4" id="labels-box">
 				<span class="glyphicon glyphicon-tags"></span>
 				<p>Shared Labels</p>
 				<button>Create</button>
 				<button>View All</button>
 			</div>
-			<div class="right-view col-md-3">
-				<span class="glyphicon glyphicon-address-book"></span>
-				<p>Shared Contact Groups</p>
-				<button>Create</button>
-				<button>View All</button>
-			</div>
-			<div class="right-view col-md-3">
+			<div class="right-view col-md-4" id="templates-box">
 				<span class="glyphicon glyphicon-newspaper"></span>
 				<p>Email Templates</p>
 				<button>Create</button>
 				<button>View All</button>
 			</div>
-			<div class="right-view col-md-3">
+			<div class="right-view col-md-4" id="snoozed-box">
 				<span class="glyphicon glyphicon-cogwheel"></span>
-				<p>Settings</p>
-				<button>Edit Settings</button>
+				<p>Snoozed Items</p>
+				<button>View All</button>
 			</div>
 		</div>
 	</div>

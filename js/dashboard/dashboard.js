@@ -40,39 +40,38 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         customRouteView.getElement().appendChild(el);
     });
     
-    sdk.Router.handleCustomRoute("/shared-contacts", function(customRouteView) {
+    sdk.Router.handleCustomRoute("/email-templates", function(customRouteView) {
         var el = document.createElement("div");
-        $(el).load(chrome.extension.getURL('/templates/shared-contacts.html'));
+        $(el).load(chrome.extension.getURL('/templates/email-template.html'));
         angular.element(document).ready(function(){
             angular.bootstrap(el, ['thing'])
         })
         customRouteView.getElement().appendChild(el);
-    });
+    });   
     
-    sdk.Router.handleCustomRoute("/email-templates", function(customRouteView) {
+    sdk.Router.handleCustomRoute("/email-templates/create", function(customRouteView) {
         var el = document.createElement("div");
-        $(el).load(chrome.extension.getURL('/templates/email-templates.html'));
+        $(el).load(chrome.extension.getURL('/templates/email-template-create.html'));
+        angular.element(document).ready(function(){
+            angular.bootstrap(el, ['thing'])
+        })
+        customRouteView.getElement().appendChild(el);
+    });   
+    
+    sdk.Router.handleCustomRoute("/email-templates/edit", function(customRouteView) {
+        var el = document.createElement("div");
+        $(el).load(chrome.extension.getURL('/templates/email-template-edit.html'));
         angular.element(document).ready(function(){
             angular.bootstrap(el, ['thing'])
         })
         customRouteView.getElement().appendChild(el);
     });   
 
-    sdk.Router.handleCustomRoute("/settings", function(customRouteView) {
-        var el = document.createElement("div");
-        $(el).load(chrome.extension.getURL('/templates/settings.html'));
-        angular.element(document).ready(function(){
-            angular.bootstrap(el, ['thing'])
-        })
-        customRouteView.getElement().appendChild(el);
-    });
-
     sdk.Router.createLink('userpanel');
     sdk.Router.createLink('dashboard');
     sdk.Router.createLink('shared-labels');
-    sdk.Router.createLink('shared-contacts');
     sdk.Router.createLink('email-templates');
     sdk.Router.createLink('email-templates/create');
-    sdk.Router.createLink('settings');
+    sdk.Router.createLink('email-templates/edit');
 
 });

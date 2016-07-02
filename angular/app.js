@@ -1,10 +1,4 @@
-// var $ = require('jquery');
 var app = angular.module('thing', ['firebase', 'ui.router']);
-
-app.controller('DashboardCtrl', function($scope) {
-	$scope.kathy = "kathy yay";
-	console.log("hello from inside app.js DashboardCtrl");
-});
 
 var assignapp = angular.module('shazzam', ['firebase']);
 console.log("hello from outside app.js AssignCtrl");
@@ -31,18 +25,15 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 	}
 });
 
-// var insert = '';
+// use to fetch html templates???? 
 // // var el = document.createElement("div");
 // fetch(chrome.extension.getURL('/templates/dashboard-home.html'))
 // .then(function(response){
 // 	return response.text();
 // })
 // .then(function(html){
-// 	console.log('here is the html', html)
 // 	insert = html; 
 // 	// el.innerHTML = html;
-// 	// console.log('what is el now', el);
-
 // })
 
 app.config(function($urlRouterProvider, $locationProvider, $stateProvider){
@@ -50,8 +41,7 @@ app.config(function($urlRouterProvider, $locationProvider, $stateProvider){
 	// $locationProvider.html5Mode(true);
 // 	// If we go to a URL that ui-router doesn't have registered, go to the "/" url.
 	// $urlRouterProvider.otherwise('/userpanel');
-
-	// $urlRouterProvider.when('/thing', '/userpanel');
+	$urlRouterProvider.when('/userpanel', '/dashboard');
 
 	$stateProvider.state('userpanel', {
 		url: '/userpanel', 
@@ -63,29 +53,33 @@ app.config(function($urlRouterProvider, $locationProvider, $stateProvider){
 		controller: 'DashboardCtrl'
 	})
 
-	$stateProvider.state('shared-labels', {
+	$stateProvider.state('sharedlabels', {
 		url: '/shared-labels',
 		controller: 'LabelsCtrl'
 	})
 
-	$stateProvider.state('shared-contacts', {
-		url: '/shared-contacts',
-		controller: 'ContactsCtrl'
+	$stateProvider.state('sharedlabels.create', {
+		url: '/create',
+		controller: 'LabelsCtrl'
 	})
 
-	$stateProvider.state('email-templates', {
+	$stateProvider.state('emailtemplates', {
 		url: '/email-templates',
 		controller: 'TemplatesCtrl'
 	})
 
-	$stateProvider.state('email-templates.create', {
+	$stateProvider.state('emailtemplates.create', {
 		url: '/create',
 		controller: 'TemplatesCtrl'
 	})
+	$stateProvider.state('emailtemplates.edit', {
+		url: '/edit',
+		controller: 'TemplatesCtrl'
+	})
 
-	$stateProvider.state('settings', {
-		url: '/settings',
-		controller: 'SettingsCtrl'
+	$stateProvider.state('snoozed', {
+		url: '/snoozed',
+		controller: 'SnoozeCtrl'
 	})
 
 })
@@ -102,14 +96,27 @@ app.controller('LabelsCtrl', function($scope, $firebaseArray, $state) {
 	
 });
 
-app.controller('ContactsCtrl', function($scope, $firebaseArray, $state) {
-	
-});
-
 app.controller('TemplatesCtrl', function($scope, $firebaseArray, $state) {
-	
-});
+	console.log('in the templates controller now', $state.current);
+	$scope.templates = [];
 
-app.controller('SettingsCtrl', function($scope, $firebaseArray, $state) {
-	
+	var ref = firebase.database().ref('/templates'); 
+	var arr = $firebaseArray(ref);
+	arr.$loaded().then(function(data) {
+		angular.forEach(arr, function(item) {
+			// console.log('what is this item', item)
+			$scope.templates.push({id: item.$id, body: item.body, title: item.title, sharedWith: item.members});
+		})
+		console.log("$scope.templates: ", $scope.templates);
+	});
+
+	$scope.saveTemplate = function(){
+		
+	}
+
+
+
+
+
+
 });
