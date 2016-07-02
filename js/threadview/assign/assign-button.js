@@ -1,8 +1,8 @@
 var $ = require('jquery');
-var members = require('../../myapp.js').members;
+// var members = require('../../myapp.js').members;
 // This is brfs fs, not Node's fs. Need to npm install brfs.
 var fs = require('fs');
-var path = require('path')
+var path = require('path');
 
 
 // // This is modeled after BL's dashboard. Works with data retrieval from Firebase sometimes.
@@ -28,32 +28,60 @@ var path = require('path')
 //     });
 
 // });
+var parser = new DOMParser();
+
 
 
 
 var html = fs.readFileSync(path.resolve(__dirname + '/../../../templates/assign-button.html'), 'utf8');
+// html = parser.parseFromString(html, 'text/html');
 
-$('assign').html(html);
+Promise.resolve(parser.parseFromString(html, 'text/html'))
+    .then(function(dom) {
+        html = dom.getElementsByClassName('assign')[0];
+        angular.element(document).ready(function() {
+            angular.bootstrap(html, ['shazzam'])
+        });
+        InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
-angular.element(document).ready(function() {
-    angular.bootstrap(html, ['shazzam'])
-});
+            sdk.Toolbars.registerToolbarButtonForThreadView({
+                title: 'Assign',
+                iconUrl: 'https://cdn3.iconfinder.com/data/icons/box-and-shipping-supplies-icons/447/Clipboard_With_Pencil-512.png',
+                section: 'METADATA_STATE',
+                hasDropdown: false,
+                onClick: function(event) {
+                    sdk.Widgets.showModalView({
+                        title: 'Well hello there beautiful',
+                        el: html
+                    })
+                }
+            });
+
+        });
+
+
+    })
+    // $('assign').html(html);
+
+
 
 // console.log("html: ", html);
 
-InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
-    sdk.Toolbars.registerToolbarButtonForThreadView({
-        title: 'Assign',
-        iconUrl: 'https://cdn3.iconfinder.com/data/icons/box-and-shipping-supplies-icons/447/Clipboard_With_Pencil-512.png',
-        section: 'METADATA_STATE',
-        hasDropdown: false,
-        onClick: function(event) {
-            sdk.Widgets.showModalView({
-                title: 'Well hello there beautiful',
-                el: html
-            })
-        }
-    });
 
-});
+// InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
+
+//     sdk.Toolbars.registerToolbarButtonForThreadView({
+//         title: 'Assign',
+//         iconUrl: 'https://cdn3.iconfinder.com/data/icons/box-and-shipping-supplies-icons/447/Clipboard_With_Pencil-512.png',
+//         section: 'METADATA_STATE',
+//         hasDropdown: false,
+//         onClick: function(event) {
+//             sdk.Widgets.showModalView({
+//                 title: 'Well hello there beautiful',
+//                 el: html
+//             })
+//         }
+//     });
+
+// });
