@@ -9,7 +9,7 @@
   },
 
   "browserify": {
-    "transform": ["browserify-css"]
+    "transform": ["browserify-css", "brfs"]
   },
 
   "author": "",
