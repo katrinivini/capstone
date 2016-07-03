@@ -56,7 +56,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                     event.preventDefault();
                     //update the database, then update the dom with a listener
                     person = sdk.User.getAccountSwitcherContactList()[0].name;
-                    var newComment = { person: person, comment: $('#comment').val(), date: Firebase.database.ServerValue.TIMESTAMP };
+                    var newComment = { person: person, comment: $('#comment').val(), date: new Date() };
                     if (!thread[messageID].comments) {
                         thread[messageID].comments = [newComment];
                         messages.child(messageID).update(thread[messageID]);
