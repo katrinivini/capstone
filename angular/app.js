@@ -12,6 +12,7 @@ app.controller('DashboardCtrl', function($scope) {
 
 
 
+// Eventually need to refactor so that there's only one angular.module.
 var assignapp = angular.module('shazzam', ['firebase']);
 
 assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
@@ -21,10 +22,11 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 	var messageID;
 	var threadID;
 	var readMessages;
-	var taskHistory = document.getElementsByClassName('taskHistory')[0];
 	var messages = firebase.database().ref('/messages');
-	var ref = firebase.database().ref('/members');
+	var members = firebase.database().ref('/members');
 
+
+	// This came from taskhistory.js.
 	function eventObj(p, a) {
 		return {
 			person: p,
@@ -33,78 +35,62 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
         }
     }
 
-    function createActivity(person, action, date) {
-        var act = document.createElement('div');
-        act.innerHTML = person + " " + action + " " + date;
-        taskHistory.appendChild(act);
-    }
-
-    console.log("taskHistory: ", taskHistory);
-
-
+    // Load InboxSDK.
 	InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
+
+		// Get name of user who's viewing thread.
 		member = sdk.User.getAccountSwitcherContactList()[0].name;
 
+		// Register ThreadViewHandler to get threadID.
 		sdk.Conversations.registerThreadViewHandler(function(threadView) {
+
 			threadID = threadView.getThreadID();
 
+			// Use threadID to call gapi in background script to get messageID.
+			// Because messageID can only come from gapi.
 			chrome.runtime.sendMessage({
 				type: 'read message',
-				threadId: threadID
+				threadId: threadID    // Watch out. Case-sensitive.
 	        }, function(hash) { 
+	        	// Hash function in background gets rid of characters Firebase doesn't like.
 	        	messageID = hash;
-	        	console.log("AssignCtrl member name: ", member);
-				console.log("AssignCtrl threadID: ", threadID);
-				console.log("AssignCtrl messageID: ", messageID);
 
+	        	// Get all messageIDs (messages get added to Firebase when they're read).
 				messages.once('value', function(snapshot) {
 					readMessages = snapshot.val();
-		        })
-				.then(function() {
-			console.log("messageID: ", messageID);
-			messages.child(messageID).child('activity').on('child_added', function(snapshot) {
-				var task = snapshot.val();
-				var date = new Date(task.date);
-				createActivity(task.person, task.action, date);
-		    });
-		})
-	        
+		        });
 
-
-	        })
-	        })
-
-	})
+	        })    // closes sendMessage
+	    })    // closes registerThreadViewHandler
+	})    // closes InboxSDK then
 
 
 
-
-
-
-	
+	// Add members from Firebase to Angular scope.
+	// $loaded is a Firebase thing.
 	$scope.members = [];
-	var arr = $firebaseArray(ref);
-	arr.$loaded().then(function(data) {
-		angular.forEach(arr, function(item) {
+	var membersArray = $firebaseArray(members);
+	membersArray.$loaded().then(function(data) {
+		angular.forEach(membersArray, function(item) {
 			$scope.members.push(item.$value);
 		})
 	});
 
-
-
+	// *** FIX: This isn't getting overwritten by radio input value on submit. ***
 	$scope.member = 'Elmo';
 
-	$scope.assignsubmit = function() {
+	// Adds assignment activity to Firebase.
+	// DOM updates via whatever's in taskhistory.js.
+	$scope.submitassignment = function() {
 
 		console.log("assignee: ", $scope.member);
 
-
+		// *** FIX: Isn't submitting value of radio input. ***
 		readMessages[messageID].activity.push(eventObj(member, "assigned to " + $scope.member));
 		readMessages[messageID].people.push({person: member, status: "assigned"});
 
 		messages.update(readMessages);
 
-		console.log("you maybe assignsubmitted something");
 	}
 });    // end of controller
 
