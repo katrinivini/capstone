@@ -4,6 +4,7 @@ var path = require('path')
 
 var commentTemplate = fs.readFileSync(path.resolve(__dirname + '/../../templates/comment.html'), 'utf8');
 
+var person;
 var messageID;
 var Firebase = require('firebase');
 $ = require('jquery');
@@ -11,8 +12,26 @@ var thread;
 var form;
 var addComment;
 
+
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     var parser = new DOMParser();
+
+    function createActivity(person, action, date) {
+        var act = document.createElement('div');
+        act.className = 'activity';
+        if (action === 'read') act.classList.add('read_activity');
+        if (action === 'started draft') act.classList.add('draft_activity')
+        act.innerHTML = person + " " + action + " on " + date;
+        $('.taskHistory').prepend(act);
+    }
+
+    function eventObj(p, a) {
+        return {
+            person: p,
+            action: a,
+            date: Firebase.database.ServerValue.TIMESTAMP
+        }
+    }
 
     sdk.Conversations.registerThreadViewHandler(function(threadView) {
         var taskHistory = document.createElement('div');
@@ -26,21 +45,8 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             iconUrl: 'https://cdn3.iconfinder.com/data/icons/website-panel-icons/128/test1-13-512.png'
         })
 
-        function eventObj(p, a) {
-            return {
-                person: p,
-                action: a,
-                date: Firebase.database.ServerValue.TIMESTAMP
-            }
-        }
 
-        function createActivity(person, action, date) {
-            var act = document.createElement('div');
-            act.className = 'activity';
-            if (action === 'read') act.classList.add('read_activity');
-            act.innerHTML = person + " " + action + " on " + date;
-            $('.taskHistory').prepend(act);
-        }
+        
         Promise.resolve(parser.parseFromString(commentTemplate, 'text/html'))
             .then(function(dom) {
                 form = dom.getElementById('commentForm');
@@ -49,7 +55,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 submit.addEventListener('click', function(event) {
                     event.preventDefault();
                     //update the database, then update the dom with a listener
-                    var person = sdk.User.getAccountSwitcherContactList()[0].name;
+                    person = sdk.User.getAccountSwitcherContactList()[0].name;
                     var newComment = { person: person, comment: $('#comment').val(), date: Firebase.database.ServerValue.TIMESTAMP };
                     if (!thread[messageID].comments) {
                         thread[messageID].comments = [newComment];
@@ -72,7 +78,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             threadId: threadView.getThreadID()
         }, function(hash) {
             messageID = hash;
-            var person = sdk.User.getAccountSwitcherContactList()[0].name;
+            person = sdk.User.getAccountSwitcherContactList()[0].name;
             messages.once('value', function(snapshot) { //this is a promise
                 thread = snapshot.val()
                 // console.log('we are in messages.once', snapshot.val());
@@ -138,6 +144,40 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             // comm.innerHTML = person + " " + comment + " " + time;
             addComment.appendChild(comm);
             $('#comment').val('');
+        }
+    });
+
+    sdk.Compose.registerComposeViewHandler(function(composeView) {
+        // once compose view opens, we will get inside here
+
+        // i think we can assume that there is messageid and person already
+        // so im not fetching it again
+
+        if (messageID && person && thread) {
+            // need to check status of person
+            messages.once('value', function(snap){
+                var people = Array.prototype.slice.call(thread[messageID].activity);
+                var returnee = people.filter(function(personobj) {
+                    return personobj.person === person;
+                }); 
+                if (returnee && returnee.length > 0) {
+                    for (var i = 0; i < returnee.length; i++) {
+                        console.log('returnee i', returnee[i])
+                        if (returnee[i].action === 'started draft') return;
+                    };
+                }
+                thread[messageID].activity.push(eventObj(person, "started draft"));
+                draftPromise = Promise.resolve(messages.update(thread));
+            })
+
+
+            messages.child(messageID).child('activity').on('child_added', function(snapshot) {
+                // console.log('on snapshot of child_added in taskhistory', snapshot.val());
+                var task = snapshot.val();
+                var date = new Date(task.date);
+                console.log("task", task)
+                // createActivity(task.person, task.action, date);
+            });
         }
     });
 
