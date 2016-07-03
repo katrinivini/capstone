@@ -62,7 +62,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                         messages.child(messageID).update(thread[messageID]);
                     } else {
                         thread[messageID].comments.push(newComment);
-                        messages.child(messageID).child('comments').set(thread[messageID].comments);
+                        messages.child(messageID).child('comments').update(thread[messageID].comments);
                     }
 
                 })
