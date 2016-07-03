@@ -6,27 +6,22 @@ app.controller('DashboardCtrl', function($scope) {
 	console.log("hello from inside app.js DashboardCtrl");
 });
 
+
+
+
 var assignapp = angular.module('shazzam', ['firebase']);
-console.log("hello from outside app.js AssignCtrl");
 
 assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
-	console.log("hello from inside assignapp.js AssignCtrl");
-
-	$scope.greeting = "WASSUP ";
-	$scope.members = ['Belinda', 'Katrina', 'Rina', 'Kathy'];
-	console.log("$scope.members: ", $scope.members);
+	console.log("inside assignapp.js AssignCtrl");
 
 	$scope.members = [];
 	var ref = firebase.database().ref('/members'); 
-	// var arr = $firebaseArray(ref);
-	// arr.$loaded().then(function(data) {
-	// 	console.log("data from $loaded(): ", data);
-	// 	angular.forEach(arr, function(item) {
-	// 		$scope.members.push(item.$value);
-	// 	})
-	// 	console.log("$scope.members: ", $scope.members);
-	// });
-	
+	var arr = $firebaseArray(ref);
+	arr.$loaded().then(function(data) {
+		angular.forEach(arr, function(item) {
+			$scope.members.push(item.$value);
+		})
+	});
 	
 	$scope.assignsubmit = function() {
 		console.log("you assignsubmitted something but not really");
