@@ -54,7 +54,7 @@
 //                                     createComment(comment.person, comment.comment, comment.date);
 //                                 })
 //                             }
-//                             $('#comment').val('');
+//                             // $('#comment').val('');
 //                         });
 //                     })
 //                 });
