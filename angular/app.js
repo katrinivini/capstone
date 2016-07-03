@@ -76,19 +76,19 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 		})
 	});
 
-	// *** FIX: This isn't getting overwritten by radio input value on submit. ***
-	$scope.member = 'Elmo';
-
 	// Adds assignment activity to Firebase.
 	// DOM updates via whatever's in taskhistory.js.
-	$scope.submitassignment = function() {
+	$scope.submitAssignment = function() {
 
-		console.log("assignee: ", $scope.member);
+		// Gets radio input value. Used jquery because I gave up on Angular.
+		// Although you need ng-value (not just value) in the template for this to work. Life's a mystery.
+		var assignee = $('input[name=radioMember]:checked', '#assignForm').val();
 
-		// *** FIX: Isn't submitting value of radio input. ***
-		readMessages[messageID].activity.push(eventObj(member, "assigned to " + $scope.member));
+		// Adds assignment to Firebase.
+		readMessages[messageID].activity.push(eventObj(member, "assigned to " + assignee));
 		readMessages[messageID].people.push({person: member, status: "assigned"});
 
+		// Saves updates.
 		messages.update(readMessages);
 
 	}

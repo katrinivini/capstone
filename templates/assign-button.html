@@ -2,8 +2,8 @@
 
 <h1>Assign Task To:</h1>
 
-<form ng-submit="submitassignment()">
-  <div ng-repeat="member in members"><label><input type="radio" name="member" ng-model="member" ng-value="member"> {{member}}</label></div>
+<form id='assignForm' ng-submit="submitAssignment()">
+  <div ng-repeat="member in members"><label><input type="radio" name="radioMember" ng-value="member"> {{member}}</label></div>
   <input type="submit" id="submit" value="ASSIGN IT BABY!" />
 </form>
 
