@@ -1,11 +1,9 @@
-<div>
-	<h1>AppName</h1>
+<div id="my-app">
 
-	<div class="left-dash col-md-3" id="left-dashboard">
-		<h3>Your Name</h3>
-		<h3>Your Email</h3>
-
+	<div id="left-dashboard">
+		<h1 class="nav-header">AppName</h1>
 		<ul class="nav nav-pills nav-stacked">
+		  <li>Your Name<br />Your Email</li>
 		  <li><a ui-sref="dashboard">Dashboard</a></li>
 		  <li><a ui-sref="sharedlabels">Shared Labels</a></li>
 		  <li><a ui-sref="emailtemplates">Email Templates</a></li>
@@ -14,21 +12,22 @@
 		
 	</div>
 
-	<div class="col-md-9">
-		<div class="right-view col-md-9">
-			<div class="right-view col-md-4" id="labels-box">
+	<div id="right-dashboard">
+		<div class="nav-header-bar"></div>
+		<div class="right-view">
+			<div class="right-view-item col-md-4" id="labels-box">
 				<span class="glyphicon glyphicon-tags"></span>
 				<p>Shared Labels</p>
 				<button>Create</button>
 				<button>View All</button>
 			</div>
-			<div class="right-view col-md-4" id="templates-box">
+			<div class="right-view-item col-md-4" id="templates-box">
 				<span class="glyphicon glyphicon-newspaper"></span>
 				<p>Email Templates</p>
 				<button>Create</button>
 				<button>View All</button>
 			</div>
-			<div class="right-view col-md-4" id="snoozed-box">
+			<div class="right-view-item col-md-4" id="snoozed-box">
 				<span class="glyphicon glyphicon-cogwheel"></span>
 				<p>Snoozed Items</p>
 				<button>View All</button>
