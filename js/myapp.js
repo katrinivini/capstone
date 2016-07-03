@@ -16,7 +16,7 @@ var config = {
     storageBucket: "https://capstone1604gha.firebaseio.com",
 };
 
-firebase.initializeApp(config);
+var Firebase = firebase.initializeApp(config);
 
 /*myapp.js is the file where we should create the 'tables' in our database, the rest go in the js folder*/
 var rootRef = firebase.database().ref();
@@ -33,7 +33,8 @@ module.exports = {
     $: $,
     sharedLabels: sharedLabels,
     messages: messages,
-    members: members
+    members: members,
+    Firebase: Firebase,
 }
 
 /* -------- JS FILES ----------- */

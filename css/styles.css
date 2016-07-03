@@ -1,4 +1,54 @@
+#appname {
+	background-color: yellow;	
+}
+
 #left-dashboard {
-	width: 20%;
-	border: 1px solid black;
+	/*float: left;*/
+	/*min-width: 170px;*/
+	/*border: 1px solid black;*/
+	/*background-color: red;*/
+	/*display: inline-block;*/
+	border-right: 1px solid #e5e5e5;
+}
+
+.dash-user {
+	margin-top: 0;
+	margin-bottom: 0;
+	padding-left: 10px;
+}
+
+.dash-email {
+	padding: 0;
+	padding-left: 10px;
+	font-size: small;
+	margin-top: 0;
+	font-weight: normal;
+	color: #808080;
+	margin-bottom: 10px;
+}
+
+.dash-nav {
+	margin-top: 0px;
+	list-style: none;
+	padding-left: 0;
+}
+
+.dash-nav a {
+	text-decoration: none;
+	color: black;
+	font-size: smaller;
+}
+
+.dash-nav a li {
+	min-width: 150px;
+	padding: 10px;
+	/*background-color: coral;*/
+}
+
+.dash-nav a li:hover {
+	background-color: #e5e5e5;
+}
+
+.template-left {
+	width: 100%;
 }

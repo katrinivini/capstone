@@ -1,100 +1,71 @@
-var $ = require('../myapp.js').$;
-// console.log('$', $);
-var messages = require('../myapp.js').messages;
+// var $ = require('../myapp.js').$;
+// var messages = require('../myapp.js').messages;
+// var comments = document.createElement('div');
+// var messageID;
+// var addComment;
+// InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
+//     var parser = new DOMParser();
+//     var submit;
+//     var form;
+//     var template;
+//     var data;
+//     $(comments).load(chrome.extension.getURL('/templates/comment.html'), function(page) {
+//         return Promise.resolve(parser.parseFromString(page, "text/html"))
+//             .then(function(dom) {
+//                 form = dom.getElementById('commentForm');
+//                 addComment = dom.getElementById('submitComment');
 
-InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
-    sdk.Conversations.registerThreadViewHandler(function(threadView) {
-        var comments = document.createElement('div');
-        var message;
-        var person;
-        var hash;
-        $(comments).load(chrome.extension.getURL('/templates/comment.html'), function(page) {
-            var submit = document.getElementById('submit');
-            console.log(document.getElementById('addComment'));
-            submit.addEventListener('click', function(event) {
-                event.preventDefault();
-                chrome.runtime.sendMessage({
-                    type: 'add comment',
-                    threadId: threadView.getThreadID()
-                }, function(response) {
-                    // var foo = {};
-                    var data;
-                    hash = response;
-                    person = sdk.User.getAccountSwitcherContactList()[0].name;
-                    Promise.resolve(messages.once('value', function(snapshot) {
-                            data = snapshot.val();
-                            // foo[hash] = data[hash];
-                        }))
-                        .then(function() {
-                            message = $('#comment').val();
-                            data[hash].comments.push({
-                                person: person,
-                                comment: message,
-                                date: new Date()
-                            });
-                            return Promise.resolve(messages.update(data));
+//                 function createComment(person, comment, date) {
+//                     console.log("create the comment");
+//                     var comm = document.createElement('div');
+//                     comm.innerHTML = person + " " + comment + " " + date;
+//                     addComment.appendChild(comm);
+//                 }
 
+//                 submit = dom.getElementById('submitComment');
+//                 submit.addEventListener('click', function(event) {
+//                     event.preventDefault();
+//                     //update the database, then update the dom with a listener
+//                     var person = sdk.User.getAccountSwitcherContactList()[0].name;
+//                     var newComment = { person: person, comment: $('#comment').val(), date: new Date() };
+//                     if (!data[messageID].comments) data[messageID].comments = [newComment];
+//                     else data[messageID].comments.push(newComment);
+//                     messages.update(data);
+//                 })
 
-                        })
-                        .then(function() {
-                            $('#comment').val('');
-                            messages.on('child_added', function(snapshot) {
-                                console.log('child_added: ', snapshot.val());
-                                var data = snapshot.val();
-                                // console.log('data, please get here: ', data);
-                                // if (data && data[messageID]) {
-                                    var name = sdk.User.getAccountSwitcherContactList()[0].name;
-                                    // console.log('get in here please');
-                                    var last = data.comments[data.comments.length - 1];
-                                    // var comments = data[messageID][name].comments;
-                                    // comments.forEach(function(commemt) {
-                                    var comm = document.createElement('div');
-                                    var first = name.split(' ')[0];
-                                    comm.innerHTML = first + ": " + last.comment + last.date;
-                                    var addComment = document.getElementById('addComment');
-                                    if (last.date) addComment.appendChild(comm);
-                                    // })
-                                // }
-                            });
-                        })
-                })
-            })
-        })
+//                 sdk.Conversations.registerThreadViewHandler(function(threadView) {
+//                     //make the comments sidebar content panel
+//                     threadView.addSidebarContentPanel({
+//                         el: form,
+//                         title: 'Comments',
+//                         iconUrl: 'https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/512/comments.png'
+//                     })
+//                     chrome.runtime.sendMessage({
+//                         type: 'read message',
+//                         threadId: threadView.getThreadID(),
+//                     }, function(response) {
+//                         messageID = response;
+//                         messages.once('value', function(snapshot) {
+//                             // $('#addComment').children().remove();
+//                             data = snapshot.val();
+//                             // console.log('snapshot of once the page loads: ', data);
+//                             if (data[messageID].comments) {
+//                                 comments.forEach(function(comment) {
+//                                     createComment(comment.person, comment.comment, comment.date);
+//                                 })
+//                             }
+//                             $('#comment').val('');
+//                         });
+//                     })
+//                 });
+//             })
+//     })
+// });
+// //new task, update dom in real time
 
-
-        threadView.addSidebarContentPanel({
-            el: comments,
-            title: 'Comments',
-            iconUrl: 'https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/512/comments.png'
-        })
-    })
-    var messageID;
-    sdk.Conversations.registerThreadViewHandler(function(threadView) {
-        chrome.runtime.sendMessage({
-            type: 'read message',
-            threadId: threadView.getThreadID()
-        }, function(response) {
-            messageID = response;
-            messages.once('value', function(snapshot) {
-
-                var data = snapshot.val();
-                console.log('data, please get here: ', data);
-                console.log(messageID);
-                if (data && data[messageID]) {
-                    var name = sdk.User.getAccountSwitcherContactList()[0].name;
-                    console.log('get in here please');
-                    // var last = data[messageID][name].comments[data[messageID][name].comments.length - 1];
-                    var comments = data[messageID].comments;
-                    comments.forEach(function(comment) {
-                        var comm = document.createElement('div');
-                        var first = name.split(' ')[0];
-                        comm.innerHTML = first + ": " + comment.comment + comment.date;
-                        var addComment = document.getElementById('addComment');
-                        if (comment.date) addComment.appendChild(comm);
-                    })
-                }
-            });
-
-        })
-    });
-});
+// // messages.child(messageID).on('child_added', function(snapshot) {
+// //     console.log('did you get here?', snapshot.val());
+// //     // var thread = snapshot.val();
+// //     // var last = thread.comments[thread.comments.length - 1];
+// //     // createComment(last.person, last.comment, last.date);
+// // });
