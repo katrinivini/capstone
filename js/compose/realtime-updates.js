@@ -10,29 +10,29 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         //see if user has changed their text input
         var interval = 1000/30; //30fps
         var oldtext = '';
-        setInterval(applyChanges, interval);
-        var statusbar = composeView.addStatusBar();
+        // setInterval(applyChanges, interval);
+        // var statusbar = composeView.addStatusBar();
 
-        function applyChanges() {
-            try {
-                // this will always fire on page load if there is a draft with text in it
-                // if (oldtext !== composeView.getTextContent()) {
-                //     oldtext = composeView.getTextContent();
-                //     messages.update({ isChanging: true });
-                //     messages.update({ sender: composeView.getFromContact().name })
+        // function applyChanges() {
+        //     try {
+        //         // this will always fire on page load if there is a draft with text in it
+        //         // if (oldtext !== composeView.getTextContent()) {
+        //         //     oldtext = composeView.getTextContent();
+        //         //     messages.update({ isChanging: true });
+        //         //     messages.update({ sender: composeView.getFromContact().name })
 
-                //     //should not be using 'value' to update this - but child_changed doesn't work? 
-                //     messages.on('value', function(data) {
-                //         statusbar.el.innerHTML = data.val().sender + "<b> is typing right now.</b>"
+        //         //     //should not be using 'value' to update this - but child_changed doesn't work? 
+        //         //     messages.on('value', function(data) {
+        //         //         statusbar.el.innerHTML = data.val().sender + "<b> is typing right now.</b>"
 
-                //     })
+        //         //     })
 
-                // } else {
-                //     messages.update({ isChanging: false });
-                //     messages.update({ sender: "" })
-                // }
-            } catch (err) {}
-        }
+        //         // } else {
+        //         //     messages.update({ isChanging: false });
+        //         //     messages.update({ sender: "" })
+        //         // }
+        //     } catch (err) {}
+        // }
 
     });    
 });

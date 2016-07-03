@@ -36,7 +36,9 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
         function createActivity(person, action, date) {
             var act = document.createElement('div');
-            act.innerHTML = person + " " + action + " " + date;
+            act.className = 'activity';
+            if (action === 'read') act.classList.add('read_activity');
+            act.innerHTML = person + " " + action + " on " + date;
             $('.taskHistory').prepend(act);
         }
         Promise.resolve(parser.parseFromString(commentTemplate, 'text/html'))
@@ -124,8 +126,16 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         function createComment(person, comment, date) {
             console.log("create the comment");
             var comm = document.createElement('div');
-            var time = new Date(date);
-            comm.innerHTML = person + " " + comment + " " + time;
+            comm.className = 'comment';
+            var d = new Date(date);
+            var time = document.createElement('p');
+            time.className = 'date';
+            time.innerHTML = d;
+            comm.appendChild(time);
+            var person_comment = document.createElement('p');
+            person_comment.innerHTML = '<b>' + person + '</b>' + ": " + comment;
+            comm.appendChild(person_comment);
+            // comm.innerHTML = person + " " + comment + " " + time;
             addComment.appendChild(comm);
             $('#comment').val('');
         }
