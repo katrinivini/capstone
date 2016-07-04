@@ -6,7 +6,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
 	sdk.Toolbars.registerToolbarButtonForThreadView({
 		title: 'Shared Labels',
-		iconUrl: 'http://i.stack.imgur.com/6Yn8V.png',
+		iconUrl: 'https://cdn0.iconfinder.com/data/icons/cosmo-layout/40/share-512.png',
 		section: 'METADATA_STATE',
 		hasDropdown: true,
 		onClick: function(event){

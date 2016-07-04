@@ -42,7 +42,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         threadView.addSidebarContentPanel({
             el: taskHistory,
             title: 'Task History',
-            iconUrl: 'https://cdn3.iconfinder.com/data/icons/website-panel-icons/128/test1-13-512.png'
+            iconUrl: 'http://downloadicons.net/sites/default/files/notebook-icon-47856.png'
         })
 
 
@@ -69,7 +69,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 threadView.addSidebarContentPanel({
                         el: form,
                         title: 'Comments',
-                        iconUrl: 'https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/512/comments.png'
+                        iconUrl: 'https://image.freepik.com/free-icon/comment-solid-rectangular-shape-of-speech-bubble_318-32178.png'
                     })
             })
 
@@ -107,7 +107,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                         }]
                     };
                 }
-                readPromise = Promise.resolve(messages.update(thread));
+                messages.update(thread);
             })
 
             messages.child(messageID).child('activity').on('child_added', function(snapshot) {
@@ -167,7 +167,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                     };
                 }
                 thread[messageID].activity.push(eventObj(person, "started draft"));
-                draftPromise = Promise.resolve(messages.update(thread));
+                messages.update(thread);
             })
 
 
