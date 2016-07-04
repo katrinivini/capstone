@@ -24,6 +24,7 @@ var messages = firebase.database().ref('/messages');
 // messages.set({ isChanging: false, sender: "" });
 var members = firebase.database().ref('/members');
 var sharedLabels = firebase.database().ref('/sharedLabels');
+var assignedHistory = firebase.database().ref('/assigned');
 // sharedLabels.on('child_added', function(data){
 //  data.ref('/members');
 // })
@@ -35,6 +36,7 @@ module.exports = {
     messages: messages,
     members: members,
     Firebase: Firebase,
+    assignedHistory: assignedHistory
 }
 
 /* -------- JS FILES ----------- */
