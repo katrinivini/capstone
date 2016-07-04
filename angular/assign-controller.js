@@ -65,7 +65,7 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
             $scope.members.push(item.$value);
         })
     });
-
+    var assignee;
     // Adds assignment activity to Firebase.
     // DOM updates via whatever's in taskhistory.js.
     $scope.submitAssignment = function() {
@@ -75,32 +75,31 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
             .then(function() {
                 // Gets radio input value. Used jquery because I gave up on Angular.
                 // Although you need ng-value (not just value) in the template for this to work. Life's a mystery.
-                var assignee = $('input[name=radioMember]:checked', '#assignForm').val();
+                assignee = $('input[name=radioMember]:checked', '#assignForm').val();
 
                 // Adds assignment to Firebase.
                 readMessages[messageID].activity.push(eventObj(member, "assigned to " + assignee));
                 readMessages[messageID].people.push({ person: member, status: "assigned" });
 
                 // Saves updates.
-                messages.child(messageID).child('activity').update(readMessages[messageID].activity);
-            })
-
-
-        //this is getting the assigned history so that they can appear as labels on the thread row
-        assignedHistory.once('value', function(snapshot) {
-                assignedHist = snapshot.val();
+                return messages.child(messageID).child('activity').update(readMessages[messageID].activity);
             })
             .then(function() {
-                if (!assignedHist) assignedHist = [];
-                var newassign = { signer: member, assignee: assignee, threadId: threadID };
-                if (assignedHist.includes(newassign)) return;
-                var thread = assignedHist.filter(function(a) {
-                    return a.threadId === threadID;
-                })
-                if (!thread.length) assignedHist.push(newassign);
-                else assignedHist[assignedHist.indexOf(thread[0])] = newassign;
-                assignedHistory.update(assignedHist);
+                //this is getting the assigned history so that they can appear as labels on the thread row
+                assignedHistory.once('value', function(snapshot) {
+                        assignedHist = snapshot.val();
+                    })
+                    .then(function() {
+                        if (!assignedHist) assignedHist = [];
+                        var newassign = { signer: member, assignee: assignee, threadId: threadID };
+                        if (assignedHist.includes(newassign)) return;
+                        var thread = assignedHist.filter(function(a) {
+                            return a.threadId === threadID;
+                        })
+                        if (!thread.length) assignedHist.push(newassign);
+                        else assignedHist[assignedHist.indexOf(thread[0])] = newassign;
+                        assignedHistory.update(assignedHist);
+                    })
             })
-
     }
 }); // end of controller

@@ -14,36 +14,40 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         }
     })
     var assignedHist;
-    // var threadRows;
     sdk.Lists.registerThreadRowViewHandler(function(threadRowView) {
-    	// threadRows = threadRowView;
-        assignedHistory.once('value', function(snapshot) {
-                assignedHist = snapshot.val();
-            })
-            .then(function() {
-                assignedHist.forEach(function(a) {
-                    if (a.threadId === threadRowView.getThreadID()) {
-                        threadRowView.addLabel({
-                            title: a.assignee,
-                            foregroundColor: 'white',
-                            backgroundColor: 'pink',
-                            iconUrl: 'http://1klb.com/projects/assign/icon.png'
-                        })
-                    }
+        assignedHistory.on('child_added', function(snapshot) {
+            var newassign = snapshot.val();
+            console.log('new assign child_added threadrowview: ', snapshot.val());
+            // assignedHist.forEach(function(a) {
+            if (newassign.threadId === threadRowView.getThreadID()) {
+                threadRowView.addLabel({
+                    title: newassign.assignee,
+                    foregroundColor: 'white',
+                    backgroundColor: 'pink',
+                    iconUrl: 'http://1klb.com/projects/assign/icon.png'
                 })
+            }
+            // })	
+        })
+        // assignedHistory.once('value', function(snapshot) {
+        //         assignedHist = snapshot.val();
+        //     })
+        //     .then(function() {
+        //         if (assignedHist) {
+        //             assignedHist.forEach(function(a) {
+        //                 if (a.threadId === threadRowView.getThreadID()) {
+        //                     threadRowView.addLabel({
+        //                         title: a.assignee,
+        //                         foregroundColor: 'white',
+        //                         backgroundColor: 'pink',
+        //                         iconUrl: 'http://1klb.com/projects/assign/icon.png'
+        //                     })
+        //                 }
+        //             })
 
-            })
+        //         }
+
+        //     })
 
     });
-    // assignedHistory.on('child_added', function(snapshot) {
-    //     var newAssign = snapshot.val();
-    //     if (newAssign.threadId === threadRowView.getThreadID()) {
-    //         threadRowView.addLabel({
-    //             title: a.assignee,
-    //             foregroundColor: 'white',
-    //             backgroundColor: 'pink',
-    //             iconUrl: 'http://1klb.com/projects/assign/icon.png'
-    //         })
-    //     }
-    // })
 });
