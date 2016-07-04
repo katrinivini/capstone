@@ -107,7 +107,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                         }]
                     };
                 }
-                readPromise = Promise.resolve(messages.update(thread));
+                messages.update(thread);
             })
 
             messages.child(messageID).child('activity').on('child_added', function(snapshot) {
@@ -167,7 +167,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                     };
                 }
                 thread[messageID].activity.push(eventObj(person, "started draft"));
-                draftPromise = Promise.resolve(messages.update(thread));
+                messages.update(thread);
             })
 
 
