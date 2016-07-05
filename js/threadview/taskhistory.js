@@ -130,7 +130,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         })
 
         function createComment(person, comment, date) {
-            console.log("create the comment");
+            // console.log("create the comment");
             var comm = document.createElement('div');
             comm.className = 'comment';
             var d = new Date(date);
@@ -164,7 +164,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 }); 
                 if (returnee && returnee.length > 0) {
                     for (var i = 0; i < returnee.length; i++) {
-                        console.log('returnee i', returnee[i])
+                        // console.log('returnee i', returnee[i])
                         if (returnee[i].action === 'started draft') return;
                     };
                 }
@@ -198,7 +198,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         var oldtext = '' + composeView.getTextContent();
 
         function keyDown(e) {
-            // ignore R, T, Q, W
+            // ignore R, T, Q, W and command keys
             var keycode = e.keyCode;
             var valid = 
             (keycode > 47 && keycode < 58)   || // number keys
@@ -209,7 +209,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             (keycode > 218 && keycode < 223);   // [\]' (in order)
             if (valid && e.which !== 82 && e.which !== 84 && e.which !== 81 && e.which !== 87) {
                 try {
-                    console.log('typing')
+                    // console.log('typing')
                     clearTimeout(typingTimer);
                     if (!thread[messageID].realtime) {
                         thread[messageID].realtime = person;
@@ -235,14 +235,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         }
 
         (function checkForNewIframe(doc) {
-            if (!doc) return; // document does not exist. Cya
-
-            // Note: It is important to use "true", to bind events to the capturing
-            // phase. If omitted or set to false, the event listener will be bound
-            // to the bubbling phase, where the event is not visible any more when
-            // Gmail calls event.stopPropagation().
-            // Calling addEventListener with the same arguments multiple times bind
-            // the listener only once, so we don't have to set a guard for that.
+            if (!doc) return; // document does not exist.
             doc.addEventListener('keydown', keyDown, true);
             doc.addEventListener('keyup', keyUp, true);
             doc.hasSeenDocument = true;
@@ -250,15 +243,14 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 try {
                     contentDocument = iframes[i].document;
                 } catch (e) {
-                    continue; // Same-origin policy violation?
+                    continue;
                 }
                 if (contentDocument && !contentDocument.hasSeenDocument) {
-                    // Add poller to the new iframe
                     checkForNewIframe(iframes[i].contentDocument);
                 }
             }
             setTimeout(checkForNewIframe, 250, doc); // <-- delay of 1/4 second
-        })(document); // Initiate recursive function for the document.
+        })(document);
 
     }); // end composeview
 
