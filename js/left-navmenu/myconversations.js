@@ -17,9 +17,11 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     sdk.Lists.registerThreadRowViewHandler(function(threadRowView) {
         assignedHistory.on('child_added', function(snapshot) {
             var newassign = snapshot.val();
-            console.log('new assign child_added threadrowview: ', snapshot.val());
+            console.log('childadded for threadrowview');
+            // console.log('new assign child_added threadrowview: ', snapshot.val());
             // assignedHist.forEach(function(a) {
             if (newassign.threadId === threadRowView.getThreadID()) {
+            	console.log('lets see if you get here');
                 threadRowView.addLabel({
                     title: newassign.assignee,
                     foregroundColor: 'white',
