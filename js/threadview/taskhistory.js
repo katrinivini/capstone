@@ -116,7 +116,6 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                     var task = snapshot.val();
                     var date = new Date(task.date);
                     createActivity(task.person, task.action, date);
-
                 })
             messages.child(messageID).child('comments').on('value', function(snapshot) {
                 $('#addComment').children().remove();
@@ -181,13 +180,13 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             });
 
 
-            messages.child(messageID).child('activity').on('child_added', function(snapshot) {
-                // console.log('on snapshot of child_added in taskhistory', snapshot.val());
-                var task = snapshot.val();
-                var date = new Date(task.date);
-                console.log("task", task)
-                // createActivity(task.person, task.action, date);
-            });
+            // messages.child(messageID).child('activity').on('child_added', function(snapshot) {
+            //     // console.log('on snapshot of child_added in taskhistory', snapshot.val());
+            //     var task = snapshot.val();
+            //     var date = new Date(task.date);
+            //     console.log("task", task)
+            //     // createActivity(task.person, task.action, date);
+            // });
 
             messages.child(messageID).child('realtime').on('value', function (snapshot) {
                 var persontyping = snapshot.val();
