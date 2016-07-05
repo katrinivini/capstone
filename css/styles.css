@@ -81,3 +81,84 @@
 	padding: 5px;
 
 }
+
+
+
+/*#appname {
+	background-color: yellow;	
+}
+
+#left-dashboard {
+	border-right: 1px solid #e5e5e5;
+	width: 20%;
+	max-width: 200px;
+}
+
+.dash-user {
+	margin-top: 0;
+	margin-bottom: 0;
+	padding-left: 10px;
+}
+
+.dash-email {
+	padding: 0;
+	padding-left: 10px;
+	font-size: small;
+	margin-top: 0;
+	font-weight: normal;
+	color: #808080;
+	margin-bottom: 10px;
+}
+
+.dash-nav {
+	margin-top: 0px;
+	list-style: none;
+	padding-left: 0;
+}
+
+.dash-nav a {
+	text-decoration: none;
+	color: black;
+	font-size: smaller;
+}
+
+.dash-nav a li {
+	padding: 10px;
+}
+
+.dash-nav a li:hover {
+	background-color: #e5e5e5;
+}*/
+
+.template-left {
+	width: 100%;
+}
+
+.activity {
+	border: 1px solid #d3d3d3;
+	padding: 5px;
+	margin: 5px 0;
+}
+
+.read_activity {
+	background-color: #ffc6bf;
+}
+
+.draft_activity {
+	background-color: #B3D0FB;
+}
+
+.comment {
+	border: 1px solid #d3d3d3;
+	padding: 5px;
+	margin: 5px 0;
+}
+
+.comment .date {
+	font-size: smaller;
+	/*color: #d3d3d3;*/
+}
+
+.comment p {
+	margin: 0;
+}

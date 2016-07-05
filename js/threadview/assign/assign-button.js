@@ -1,87 +1,41 @@
 var $ = require('jquery');
-// var members = require('../../myapp.js').members;
-// This is brfs fs, not Node's fs. Need to npm install brfs.
+// brfs fs, not Node fs. Need to npm install brfs.
 var fs = require('fs');
-var path = require('path');
+// Need path because brfs fs works at runtime, so it only understands statically analyzable paths (no variables or relative paths).
+var path = require('path');  
 
-
-// // This is modeled after BL's dashboard. Works with data retrieval from Firebase sometimes.
-// InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
-
-//     var el = document.createElement("div");
-//     $(el).load(chrome.extension.getURL('/templates/assign-button.html'));
-//     angular.element(document).ready(function() {
-//         angular.bootstrap(el, ['shazzam'])
-//     });
-
-//     sdk.Toolbars.registerToolbarButtonForThreadView({
-//         title: 'Assign',
-//         iconUrl: 'https://cdn3.iconfinder.com/data/icons/box-and-shipping-supplies-icons/447/Clipboard_With_Pencil-512.png',
-//         section: 'METADATA_STATE',
-//         hasDropdown: false,
-//         onClick: function(event) {
-//             sdk.Widgets.showModalView({
-//                 title: 'Well hello there beautiful',
-//                 el: el
-//             })
-//         }
-//     });
-
-// });
 var parser = new DOMParser();
 
 
-
-
+// Gets html as string.
 var html = fs.readFileSync(path.resolve(__dirname + '/../../../templates/assign-button.html'), 'utf8');
-// html = parser.parseFromString(html, 'text/html');
 
-Promise.resolve(parser.parseFromString(html, 'text/html'))
-    .then(function(dom) {
-        html = dom.getElementsByClassName('assign')[0];
-        angular.element(document).ready(function() {
-            angular.bootstrap(html, ['shazzam'])
-        });
-        InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
+// Parses string into full html doc (with html & body tags).
+html = parser.parseFromString(html, 'text/html');
 
-            sdk.Toolbars.registerToolbarButtonForThreadView({
-                title: 'Assign',
-                iconUrl: 'https://cdn3.iconfinder.com/data/icons/box-and-shipping-supplies-icons/447/Clipboard_With_Pencil-512.png',
-                section: 'METADATA_STATE',
-                hasDropdown: false,
-                onClick: function(event) {
-                    sdk.Widgets.showModalView({
-                        title: 'Well hello there beautiful',
-                        el: html
-                    })
-                }
-            });
+// Gets only the html part (assign div) we need for the toolbar button modal InboxSDK makes because the modal won't render the full html doc.
+var el = html.getElementsByClassName('assign')[0];
 
-        });
+// Hooks up Angular with html. AssignCtrl is in app.js.
+angular.element(document).ready(function() {
+    angular.bootstrap(html, ['shazzam'])
+});
 
+// Makes Assign button that shows modal on click.
+InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
-    })
-    // $('assign').html(html);
+    sdk.Toolbars.registerToolbarButtonForThreadView({
+        title: 'Assign',
+        iconUrl: 'https://cdn3.iconfinder.com/data/icons/box-and-shipping-supplies-icons/447/Clipboard_With_Pencil-512.png',
+        section: 'METADATA_STATE',
+        hasDropdown: false,
+        onClick: function(event) {
+            sdk.Widgets.showModalView({
+                title: 'Well hello there beautiful',
+                el: el
+            })
+        }
+    });
 
+});
 
-
-// console.log("html: ", html);
-
-
-
-// InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
-
-//     sdk.Toolbars.registerToolbarButtonForThreadView({
-//         title: 'Assign',
-//         iconUrl: 'https://cdn3.iconfinder.com/data/icons/box-and-shipping-supplies-icons/447/Clipboard_With_Pencil-512.png',
-//         section: 'METADATA_STATE',
-//         hasDropdown: false,
-//         onClick: function(event) {
-//             sdk.Widgets.showModalView({
-//                 title: 'Well hello there beautiful',
-//                 el: html
-//             })
-//         }
-//     });
-
-// });
