@@ -17,12 +17,13 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     var parser = new DOMParser();
 
     function createActivity(person, action, date) {
+        var d = new Date(date);
         var act = document.createElement('div');
         act.className = 'activity';
         if (action === 'read') act.classList.add('read_activity');
         if (action === 'started draft') act.classList.add('draft_activity');
         if (action === 'sent a response') act.classList.add('sent_activity');
-        act.innerHTML = person + " " + action + " on " + date;
+        act.innerHTML = person + " " + action + " on " + d;
         $('.taskHistory').prepend(act);
     }
 
@@ -111,11 +112,14 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 readPromise = Promise.resolve(messages.update(thread));
             })
 
-            messages.child(messageID).child('activity').on('child_added', function(snapshot) {
-                    // console.log('on snapshot of child_added in taskhistory', snapshot.val());
+            messages.child(messageID).child('activity').on('value', function(snapshot) {
+                    console.log('on snapshot of child_added in taskhistory', snapshot.val());
                     var task = snapshot.val();
                     var date = new Date(task.date);
-                    createActivity(task.person, task.action, date);
+                    $('.taskHistory').empty();
+                    task.forEach(function(t){
+                        createActivity(t.person, t.action, t.date);
+                    })
                 })
             messages.child(messageID).child('comments').on('value', function(snapshot) {
                 $('#addComment').children().remove();
