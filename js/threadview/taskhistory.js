@@ -115,8 +115,8 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             messages.child(messageID).child('activity').on('value', function(snapshot) {
                     console.log('on snapshot of child_added in taskhistory', snapshot.val());
                     var task = snapshot.val();
-                    var date = new Date(task.date);
-                    $('.taskHistory').empty();
+                    // var date = new Date(task.date);
+                    $('.taskHistory').children().remove();
                     task.forEach(function(t){
                         createActivity(t.person, t.action, t.date);
                     })
