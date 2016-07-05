@@ -20,7 +20,8 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         var act = document.createElement('div');
         act.className = 'activity';
         if (action === 'read') act.classList.add('read_activity');
-        if (action === 'started draft') act.classList.add('draft_activity')
+        if (action === 'started draft') act.classList.add('draft_activity');
+        if (action === 'sent a response') act.classList.add('sent_activity');
         act.innerHTML = person + " " + action + " on " + date;
         $('.taskHistory').prepend(act);
     }
@@ -154,6 +155,13 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         // so im not fetching it again
 
         if (messageID && person && thread) {
+
+            // fires after 'sent' button is pressed
+            composeView.on('presending', function(){
+                thread[messageID].activity.push(eventObj(person, "sent a response"));
+                draftPromise = Promise.resolve(messages.update(thread));
+            });
+
             var statusbar = composeView.addStatusBar();
 
             // need to check status of person
