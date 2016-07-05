@@ -184,7 +184,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             messages.child(messageID).child('realtime').on('value', function (snapshot) {
                 var persontyping = snapshot.val();
                 if (persontyping && (persontyping !== person)) {
-                    statusbar.el.innerHTML = "<p>" + persontyping + " is typing...</p>";
+                    statusbar.el.innerHTML = '<p class="realtimetyping">' + persontyping + " is typing...</p>";
                 } else {
                     statusbar.el.innerHTML = "";
                 }
