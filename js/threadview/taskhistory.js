@@ -173,30 +173,9 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
             var statusbar = composeView.addStatusBar();
 
-            // need to check status of person
-            // messages.once('value', function(snap) {
-                // var people = Array.prototype.slice.call(thread[messageID].activity);
-                // var returnee = people.filter(function(personobj) {
-                //     return personobj.person === person;
-                // });
-                // if (returnee && returnee.length > 0) {
-                //     for (var i = 0; i < returnee.length; i++) {
-                //         // console.log('returnee i', returnee[i])
-                //         if (returnee[i].action === 'started draft') return;
-                //     };
-                // }
+ 
                 messages.child(messageID).child('activity').push(eventObj(person, "started draft"));
-                // draftPromise = messages.update(thread);
-            // });
 
-
-            // messages.child(messageID).child('activity').on('child_added', function(snapshot) {
-            //     // console.log('on snapshot of child_added in taskhistory', snapshot.val());
-            //     var task = snapshot.val();
-            //     var date = new Date(task.date);
-            //     console.log("task", task)
-            //         // createActivity(task.person, task.action, date);
-            // });
 
             messages.child(messageID).child('realtime').on('value', function(snapshot) {
                 var persontyping = snapshot.val();
@@ -226,7 +205,6 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 (keycode > 218 && keycode < 223); // [\]' (in order)
             if (valid && e.which !== 82 && e.which !== 84 && e.which !== 81 && e.which !== 87) {
                 try {
-                    // console.log('typing')
                     clearTimeout(typingTimer);
                     if (!thread[messageID].realtime) {
                         thread[messageID].realtime = person;
