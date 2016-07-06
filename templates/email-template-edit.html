@@ -1,0 +1,29 @@
+
+<div id="right-dashboard">
+	<div class="nav-header-bar"></div>
+	<div class="right-view">
+		<h2 class="section title">Email Templates</h2>
+		
+		<div class="col-md-9">
+
+			<p>Edit this template</p>
+
+			<form class="template-form">
+				<p>Subject:</p></br>
+				<input type="text">{{template.title}}</br>
+				<p>Body:</p></br>
+				<textarea rows=5>{{template.body}}</textarea></br>
+				<p>Shared With:</p></br>
+				<input type="text"></br>
+			</form>
+
+			<button ng-click="updateTemplate()">Update</button>
+
+			<button ng-click="discardTemplate()">Discard</button>
+		</div>
+	</div>
+</div>
+
+
+
+
