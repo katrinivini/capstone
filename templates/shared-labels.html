@@ -1,30 +1,45 @@
-<div>
-	<h1>YOU'RE IN SHARED LABELS</h1>
+<div id="right-dashboard">
+		<h2 class="section title">Shared Labels</h2>
 
-	<div class="right-view col-md-9">
-		<div class="right-view col-md-3">
-			<span class="glyphicon glyphicon-tags"></span>
-			<p>Shared Labels</p>
-			<button>Create</button>
-			<button>View All</button>
-		</div>
-		<div class="right-view col-md-3">
-			<span class="glyphicon glyphicon-address-book"></span>
-			<p>Shared Contact Groups</p>
-			<button>Create</button>
-			<button>View All</button>
-		</div>
-		<div class="right-view col-md-3">
-			<span class="glyphicon glyphicon-newspaper"></span>
-			<p>Email Templates</p>
-			<button>Create</button>
-			<button>View All</button>
-		</div>
-		<div class="right-view col-md-3">
-			<span class="glyphicon glyphicon-cogwheel"></span>
-			<p>Settings</p>
-			<button>Edit Settings</button>
-		</div>
-	</div>
+		<button class="btn btn-blue" ui-sref="sharedlabelscreate">Create New Shared Label</button>
 
+		<form>
+			<div class="form-group order-filter">
+		        <div class="search-bar inner-addon right-addon">
+					<i class="glyphicon glyphicon-search"></i>
+					<input type="text" class="form-control" placeholder="Filter labels by name" ng-model="searchLabels">
+				</div>      
+			</div>
+		</form>
+
+		<table class="table" id="label-table">
+			<thead>
+				<tr>
+					<th></th>
+					<th>Label Name</th>
+					<th>Shared With</th>
+					<th>Delete</th>
+					<!-- <th>Edit</th> -->
+					<th></th>
+				</tr>
+			</thead>
+
+			<tbody>
+				<tr ng-repeat="label in labels | filter: searchLabels">
+					<th></th>
+					<th>{{label.name}}</th>
+					<th>{{label.sharedWith}}</th>
+					<th>
+						<button class="btn btn-default btn-sm btn-delete" ng-click="removeLabel(label.id)" title="Delete label">
+			        		<i class="glyphicon glyphicon-remove"></i>
+			        	</button>
+					</th>						
+<!-- 					<th>
+						<button class="btn btn-default btn-sm" ng-click="updateLabel(label.id)" title="Edit label">
+			        	</button>
+					</th> -->
+					<th></th>			
+				</tr>
+			</tbody>
+		</table>
 </div>
