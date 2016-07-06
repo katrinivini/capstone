@@ -48,7 +48,7 @@ require('./left-navmenu/shared-labels.js');
 require('./threadview/assign/assign-button.js');
 require('./threadview/shared-labels-button.js');
 require('./threadview/taskhistory.js');
-require('./threadview/comment.js');
+// require('./threadview/comment.js');
 require('../angular/app.js');
 require('../angular/module.js');
 // require('../templates/index.html');
