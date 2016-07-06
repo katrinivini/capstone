@@ -1,5 +1,3 @@
-// var fs = require('fs');
-
 // Eventually need to refactor so that there's only one angular.module.
 var assignapp = angular.module('shazzam', ['firebase']);
 
@@ -32,29 +30,29 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
  //    }
 
     // Load InboxSDK.
-	InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
+    InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
-		// Get name of user who's viewing thread.
-		member = sdk.User.getAccountSwitcherContactList()[0].name;
+            // Get name of user who's viewing thread.
+            member = sdk.User.getAccountSwitcherContactList()[0].name;
 
-		// Register ThreadViewHandler to get threadID.
-		sdk.Conversations.registerThreadViewHandler(function(threadView) {
+            // Register ThreadViewHandler to get threadID.
+            sdk.Conversations.registerThreadViewHandler(function(threadView) {
 
-			threadID = threadView.getThreadID();
+                    threadID = threadView.getThreadID();
 
-			// Use threadID to call gapi in background script to get messageID.
-			// Because messageID can only come from gapi.
-			chrome.runtime.sendMessage({
-				type: 'read message',
-				threadId: threadID    // Watch out. Case-sensitive.
-	        }, function(hash) { 
-	        	// Hash function in background gets rid of characters Firebase doesn't like.
-	        	messageID = hash;
+                    // Use threadID to call gapi in background script to get messageID.
+                    // Because messageID can only come from gapi.
+                    chrome.runtime.sendMessage({
+                            type: 'read message',
+                            threadId: threadID // Watch out. Case-sensitive.
+                        }, function(hash) {
+                            // Hash function in background gets rid of characters Firebase doesn't like.
+                            messageID = hash;
 
-	        	// Get all messageIDs (messages get added to Firebase when they're read).
-				messages.once('value', function(snapshot) {
-					readMessages = snapshot.val();
-		        });
+				        	// Get all messageIDs (messages get added to Firebase when they're read).
+							messages.once('value', function(snapshot) {
+								readMessages = snapshot.val();
+					        });
 
 	        })    // closes sendMessage
 	    })    // closes registerThreadViewHandler
@@ -103,7 +101,6 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 		//make gapi call to add label
 		chrome.runtime.sendMessage({
 			type: 'add label', 
-
 			threadId: threadID, 
 			labelsToAdd: [labelID],
 			labelsToRemove: []
@@ -126,3 +123,4 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 
 	}
 });    // end of controller
+

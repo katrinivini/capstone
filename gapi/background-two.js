@@ -75,7 +75,7 @@ function handleAuthResult(authResult) {
  */
 function handleAuthClick(event) {
     console.log('event: ', event);
-    gapi.auth.authorize({ client_id: CLIENT_ID, scope: SCOPES, immediate: false },
+    gapi.auth.authorize({ client_id: CLIENT_ID, scope: SCOPES, immediate: true },
         handleAuthResult);
     return false;
 }
@@ -140,6 +140,10 @@ var getThread = function(userId, threadId, callback) {
     })
     // return req.execute(callback);
 }
+
+
+
+
 
 require('./taskhistory.js');
 require('./comment.js');
