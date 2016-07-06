@@ -6,33 +6,25 @@
 	margin-top: 65px;
 }
 
-/*#my-app {
-    position: absolute;
-    width: 100%;
-    left: 0px;
-    height: 100%;
-    background: #fff;	
-    z-index: 5;
-    background-color: #F3F3F4;
-}
-*/
-#my-app .nav-header{
+#main .nav-header{
     line-height: 40px;
     background-color: #5DA492;
     color: #fff;
     margin: 0;
     font-size: 30px;
     padding: 10px;
+    margin-right: -50px;
+    margin-left: -15px;
 }
 
-#my-app .nav-header-bar {
+/*#my-app .nav-header-bar {
 	height:60px;
 	background-color: #5DA492;
 	position: absolute;
 	top:0px;
 	width:100%;
 	left:0px;
-}
+}*/
 /*
 #my-app h1{
 	position: fixed;
@@ -44,25 +36,16 @@
 
 }*/
 
+.right-view {
+	background-color: white;
+}
+
 .inboxsdk__tooltip {
 	display: none;
 }
 
 .w-asV {
 	margin-bottom: 0px !important;
-}
-
-/*#my-app  #left-dashboard {
-	float:left;
-	height:100%;
-	width:20%;
-}*/
-
-
-#my-app #right-dashboard {
-	position: relative;
-	width:80%;
-	float:left;
 }
 
 #my-app #right-dashboard .right-view {

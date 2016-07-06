@@ -1,33 +1,32 @@
 <div id="right-dashboard">
 	<div class="nav-header-bar"></div>
 	<div class="right-view">
-
 		<h2>Welcome to your dashboard</h2>
 
 		<div class="right-view-item" id="labels-box">
-			<h2>
+			<h3>
 				<span class="glyphicon glyphicon-tags"></span>
 				<span>{{labels.length}}</span></br>
 				<span>Shared Labels</span>
-			</h2>
+			</h3>
 			<button class="btn btn-blue" ui-sref="sharedlabelscreate">Create</button>
 			<button class="btn btn-blank" ui-sref="sharedlabels">View All</button>
 		</div>
 		<div class="right-view-item" id="templates-box">
-			<h2>
+			<h3>
 				<span class="glyphicons glyphicons-newspaper"></span>
 				<span>{{templates.length}}</span><br>
 				<span>Email Templates</span>
-			</h2>
+			</h3>
 			<button class="btn btn-blue" ui-sref="emailtemplatescreate">Create</button>
 			<button class="btn btn-blank" ui-sref="emailtemplates">View All</button>
 		</div>
 		<div class="right-view-item" id="snoozed-box">
-			<h2>
+			<h3>
 				<span class="glyphicons glyphicons-clock"></span>
 				<span>{{snoozed.length}}</span>
 				<span>Snoozed Items</span>
-			</h2>
+			</h3>
 			<button class="btn btn-blank" ui-sref="snoozed">View All</button>
 		</div>
 	</div>
