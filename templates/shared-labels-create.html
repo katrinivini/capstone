@@ -1,0 +1,35 @@
+<div id="right-dashboard">
+	<div class="nav-header-bar"></div>
+	<div class="right-view">
+		<h2>Create Shared Labels</h2>
+		<div class="main-content">
+			<h3>Specify the name of the label you want to share</h3>
+		</div> 
+		<!-- option1 -->
+		<div class="input-group">
+			<input type="text" placeholder="Enter a label name" class="form-control" ng-model="label.label">
+		</div>
+		<!-- OR -->
+		<h3>OR</h3>
+
+		<!-- option2 -->
+		<div class="gmail-labels">
+			<form name="gmailLabels">
+				<select ng-model="gapi.labels">
+					<option ng-repeat="label in labels">
+						{{label.name}}
+					</option>
+				</select>
+			</form>
+		</div>
+
+		<h3>Share the labels among these users (type email to invite new users)</h3>
+		<div class="input-group">
+			<input type="text" placeholder="Enter emails separated by a comma" class="form-control" ng-model="label.members">
+		</div>
+
+		<!-- <button>Cancel</button> -->
+		<button ng-click="addLabel(label)">Save</button>
+
+	</div>
+</div>

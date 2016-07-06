@@ -24,6 +24,7 @@ var messages = firebase.database().ref('/messages');
 // messages.set({ isChanging: false, sender: "" });
 var members = firebase.database().ref('/members');
 var sharedLabels = firebase.database().ref('/sharedLabels');
+var templates = firebase.database().ref('/templates');
 // sharedLabels.on('child_added', function(data){
 //  data.ref('/members');
 // })
@@ -34,6 +35,7 @@ module.exports = {
     sharedLabels: sharedLabels,
     messages: messages,
     members: members,
+    templates: templates,
     Firebase: Firebase,
 }
 
@@ -49,6 +51,8 @@ require('./threadview/shared-labels-button.js');
 require('./threadview/taskhistory.js');
 require('./threadview/comment.js');
 require('../angular/app.js');
+require('../angular/module.js');
+// require('../templates/index.html');
 
 // require('../gapi/background.js');
 

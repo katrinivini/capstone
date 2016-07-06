@@ -1,38 +1,34 @@
-<div id="my-app">
+<div id="right-dashboard">
+	<div class="nav-header-bar"></div>
+	<div class="right-view">
 
-	<div id="left-dashboard">
-		<h1 class="nav-header">AppName</h1>
-		<ul class="nav nav-pills nav-stacked">
-		  <li>Your Name<br />Your Email</li>
-		  <li><a ui-sref="dashboard">Dashboard</a></li>
-		  <li><a ui-sref="sharedlabels">Shared Labels</a></li>
-		  <li><a ui-sref="emailtemplates">Email Templates</a></li>
-		  <li><a ui-sref="snoozed">Snoozed Items</a></li>
-		</ul>
-		
-	</div>
+		<h2>Welcome to your dashboard</h2>
 
-	<div id="right-dashboard">
-		<div class="nav-header-bar"></div>
-		<div class="right-view">
-			<div class="right-view-item col-md-4" id="labels-box">
+		<div class="right-view-item" id="labels-box">
+			<h2>
 				<span class="glyphicon glyphicon-tags"></span>
-				<p>Shared Labels</p>
-				<button>Create</button>
-				<button>View All</button>
-			</div>
-			<div class="right-view-item col-md-4" id="templates-box">
-				<span class="glyphicon glyphicon-newspaper"></span>
-				<p>Email Templates</p>
-				<button>Create</button>
-				<button>View All</button>
-			</div>
-			<div class="right-view-item col-md-4" id="snoozed-box">
-				<span class="glyphicon glyphicon-cogwheel"></span>
-				<p>Snoozed Items</p>
-				<button>View All</button>
-			</div>
+				<span>{{labels.length}}</span></br>
+				<span>Shared Labels</span>
+			</h2>
+			<button class="btn btn-blue" ui-sref="sharedlabelscreate">Create</button>
+			<button class="btn btn-blank" ui-sref="sharedlabels">View All</button>
+		</div>
+		<div class="right-view-item" id="templates-box">
+			<h2>
+				<span class="glyphicons glyphicons-newspaper"></span>
+				<span>{{templates.length}}</span><br>
+				<span>Email Templates</span>
+			</h2>
+			<button class="btn btn-blue" ui-sref="emailtemplatescreate">Create</button>
+			<button class="btn btn-blank" ui-sref="emailtemplates">View All</button>
+		</div>
+		<div class="right-view-item" id="snoozed-box">
+			<h2>
+				<span class="glyphicons glyphicons-clock"></span>
+				<span>{{snoozed.length}}</span>
+				<span>Snoozed Items</span>
+			</h2>
+			<button class="btn btn-blank" ui-sref="snoozed">View All</button>
 		</div>
 	</div>
-
 </div>

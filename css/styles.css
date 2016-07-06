@@ -1,13 +1,21 @@
-#my-app {
+#main {
+	background-color: #F1F1F1;
+}
+
+.right-view {
+	margin-top: 65px;
+}
+
+/*#my-app {
     position: absolute;
     width: 100%;
     left: 0px;
     height: 100%;
     background: #fff;	
     z-index: 5;
-    background-color: #F3F3F4
+    background-color: #F3F3F4;
 }
-
+*/
 #my-app .nav-header{
     line-height: 40px;
     background-color: #5DA492;
@@ -44,11 +52,11 @@
 	margin-bottom: 0px !important;
 }
 
-#my-app  #left-dashboard {
+/*#my-app  #left-dashboard {
 	float:left;
 	height:100%;
 	width:20%;
-}
+}*/
 
 
 #my-app #right-dashboard {
@@ -58,12 +66,17 @@
 }
 
 #my-app #right-dashboard .right-view {
-	margin-top: 60px;
-	padding-top: 30px
+	margin-top: 80px;
+	padding-top: 30px;
+	background-color: #FFFFFF;
+    height: 100%;
+    margin-right: 20px;
+    border-radius: 5px;
+    margin-left: 20px;
 }
 
 .right-view-item {
-	background-color: #fff;
+	background-color: #FFFFFF;
     border-radius: 5px;
     width: calc(28.33% - 20px);
     float: left;
@@ -71,19 +84,56 @@
     margin-right: 5%;
 }
 
-.left-dashboard ul.nav {
+#left-dashboard ul.nav {
 	padding: 0;
 	margin:0;
+	/*list-style-type: none;*/
+}
+
+#left-dashboard ul.nav li {
+	padding: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	margin-left: 20px;
 	list-style-type: none;
 }
-
-.left-dashboard ul.nav li {
-	padding: 5px;
-
+/*
+#left-dashboard ul.nav a:hover {
+}*/
+#left-dashboard ul.nav li:hover {
+	background-color: #FAFAFA;
+	color: #5DA492;
 }
 
+.btn {
+	border-radius: 5px;
+}
 
+.btn-blue {
+	background: #1c84c6;
+	color: #fff;
+	width: 46%;
+	text-shadow: none;
+	box-shadow: none;
+}
 
+.btn-blue:hover {
+	opacity: 0.9;
+	border-color: #2385C6;
+}
+
+.btn-blank {
+	background: none;
+	color: #8d8d8d;
+	width: 46%;
+	border: 1px solid #ededed;
+	text-shadow: none;
+	box-shadow: none;
+}
+
+.btn-blank:hover {
+	border-color: #F3F3F4;
+}
 /*#appname {
 	background-color: yellow;	
 }

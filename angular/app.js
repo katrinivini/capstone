@@ -1,16 +1,4 @@
-var $ = require('jquery');
-var Firebase = require('firebase');
-
-
-var app = angular.module('thing', ['firebase', 'ui.router']);
-
-app.controller('DashboardCtrl', function($scope) {
-	$scope.kathy = "kathy yay";
-	console.log("hello from inside app.js DashboardCtrl");
-});
-
-
-
+// var fs = require('fs');
 
 // Eventually need to refactor so that there's only one angular.module.
 var assignapp = angular.module('shazzam', ['firebase']);
@@ -31,7 +19,7 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 		return {
 			person: p,
             action: a,
-            date: Firebase.database.ServerValue.TIMESTAMP
+            // date: Firebase.database.ServerValue.TIMESTAMP
         }
     }
 
@@ -97,98 +85,99 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 
 
 
-// use to fetch html templates???? 
-// // var el = document.createElement("div");
-// fetch(chrome.extension.getURL('/templates/dashboard-home.html'))
-// .then(function(response){
-// 	return response.text();
-// })
-// .then(function(html){
-// 	insert = html; 
-// 	// el.innerHTML = html;
-// })
+// app.controller('LabelsCtrl', function($scope, $firebaseArray, $state) {
+// 	console.log('in the labels controller now', $state.current);
 
-app.config(function($urlRouterProvider, $locationProvider, $stateProvider){
-// 	// This turns off hashbang urls (/#about) and changes it to something normal (/about)
-	// $locationProvider.html5Mode(true);
-// 	// If we go to a URL that ui-router doesn't have registered, go to the "/" url.
-	// $urlRouterProvider.otherwise('/userpanel');
-	$urlRouterProvider.when('/userpanel', '/dashboard');
+// 	$scope.labels = [];
 
-	$stateProvider.state('userpanel', {
-		url: '/userpanel', 
-		controller: 'UserPanelCtrl'
-	})
-
-	$stateProvider.state('dashboard', {
-		url: '/dashboard',
-		controller: 'DashboardCtrl'
-	})
-
-	$stateProvider.state('sharedlabels', {
-		url: '/shared-labels',
-		controller: 'LabelsCtrl'
-	})
-
-	$stateProvider.state('sharedlabels.create', {
-		url: '/create',
-		controller: 'LabelsCtrl'
-	})
-
-	$stateProvider.state('emailtemplates', {
-		url: '/email-templates',
-		controller: 'TemplatesCtrl'
-	})
-
-	$stateProvider.state('emailtemplates.create', {
-		url: '/create',
-		controller: 'TemplatesCtrl'
-	})
-	$stateProvider.state('emailtemplates.edit', {
-		url: '/edit',
-		controller: 'TemplatesCtrl'
-	})
-
-	$stateProvider.state('snoozed', {
-		url: '/snoozed',
-		controller: 'SnoozeCtrl'
-	})
-
-})
-
-app.controller('UserPanelCtrl', function($scope, $firebaseArray, $state) {
-	
-});
-
-app.controller('DashboardCtrl', function($scope, $firebaseArray, $state) {
-	
-});
-
-app.controller('LabelsCtrl', function($scope, $firebaseArray, $state) {
-	
-});
-
-app.controller('TemplatesCtrl', function($scope, $firebaseArray, $state) {
-	console.log('in the templates controller now', $state.current);
-	$scope.templates = [];
-
-	var ref = firebase.database().ref('/templates'); 
-	var arr = $firebaseArray(ref);
-	arr.$loaded().then(function(data) {
-		angular.forEach(arr, function(item) {
-			// console.log('what is this item', item)
-			$scope.templates.push({id: item.$id, body: item.body, title: item.title, sharedWith: item.members});
-		})
-		console.log("$scope.templates: ", $scope.templates);
-	});
-
-	$scope.saveTemplate = function(){
-		
-	}
+// 	var ref = firebase.database().ref('/sharedLabels'); 
+// 	var arr = $firebaseArray(ref);
+// 	arr.$loaded().then(function(data) {
+// 		angular.forEach(arr, function(item) {
+// 			console.log('what is this item', item)
+// 			$scope.labels.push({id: item.$id, name: item.label, sharedWith: item.members});
+// 		})
+// 		console.log("$scope.labels: ", $scope.labels);
+// 	});
 
 
+// 	$scope.addLabel = function(){
+// 		arr.$add({})
+// 		.then(function(ref) {
+// 		  var id = ref.key();
+// 		  console.log("added record with id " + id);
+// 		  list.$indexFor(id); // returns location in the array
+// 		});
+// 	}
+
+// 	$scope.updateLabel = function(id){
+// 		arr.$add({})
+// 		.then(function(ref) {
+// 			var id = ref.key();
+// 			console.log("added record with id " + id);
+// 			arr.$indexFor(id); // returns location in the array
+// 		});
+// 	}
+
+// 	$scope.removeLabel = function(id){
+// 		// find the item first in the firebase array
+// 		var item = "CHANGE THIS PLEASE";
+// 		arr.$remove(item)
+// 		.then(function(ref) {
+// 			console.log('successfully deleted');
+// 			ref.key() === item.$id; // true
+// 		});
+// 	}
+// });
+
+// app.controller('TemplatesCtrl', function($scope, $firebaseArray, $state) {
+// 	console.log('in the templates controller now', $state.current);
+// 	$scope.templates = [];
+
+// 	var ref = firebase.database().ref('/templates'); 
+
+// 	var arr = $firebaseArray(ref);
 
 
+// 	arr.$loaded().then(function(data) {
+// 		angular.forEach(arr, function(item) {
+// 			console.log('what is this item', item)
+// 			$scope.templates.push({id: item.$id, body: item.body, title: item.title, sharedWith: item.members});
+// 		})
+// 		console.log("$scope.templates: ", $scope.templates);
+// 	});
 
+// 	$scope.addTemplate = function(newtemplate){
+// 		arr.$add({ body: newtemplate.body, title: newtemplate.title , sharedWith: ["somebody@gmail.com", "nobody@yahoo.com"] })
+// 		.then(function(ref) {
+// 		  var id = ref.key();
+// 		  console.log("added record with id " + id);
+// 		  list.$indexFor(id); // returns location in the array
+// 		});
+// 	}
 
-});
+// 	$scope.updateTemplate = function(id){
+// 		arr.$add({ body: body, title: title, sharedWith: members })
+// 		.then(function(ref) {
+// 			var id = ref.key();
+// 			console.log("added record with id " + id);
+// 			arr.$indexFor(id); // returns location in the array
+// 		});
+// 	}
+
+// 	$scope.removeTemplate = function(id){
+// 		// find the item first in the firebase array
+// 		var item = "CHANGE THIS PLEASE";
+// 		arr.$remove(item)
+// 		.then(function(ref) {
+// 			console.log('successfully deleted');
+// 			ref.key() === item.$id; // true
+// 		});
+// 	}
+
+// 	$scope.discardTemplate = function(){
+// 		// only redirect? and dump the information? 
+// 		console.log('discard this template');
+// 	}
+
+// });
