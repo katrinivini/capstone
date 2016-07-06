@@ -1,5 +1,5 @@
 // var fs = require('fs');
-
+// var addToTaskHistory = require('./taskhistory.js');
 // Eventually need to refactor so that there's only one angular.module.
 var assignapp = angular.module('shazzam', ['firebase']);
 
@@ -10,8 +10,10 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 	var messageID;
 	var threadID;
 	var readMessages;
-	var messages = firebase.database().ref('/messages');
-	var members = firebase.database().ref('/members');
+	// var messages = firebase.database().ref('/messages');
+	var messages = require('../js/myapp.js').messages;
+	// var members = firebase.database().ref('/members');
+	var members = require('../js/myapp.js').members;
 
 
 	// This came from taskhistory.js.
@@ -19,7 +21,7 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 		return {
 			person: p,
             action: a,
-            // date: Firebase.database.ServerValue.TIMESTAMP
+            date: firebase.database.ServerValue.TIMESTAMP
         }
     }
 
