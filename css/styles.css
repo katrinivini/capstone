@@ -102,6 +102,13 @@ html, body {
 
 .right-view-item.col-md-4.dashboard-box h1 {
     display:inline-block;
+    padding-right: 5px;
+    line-height: 0;
+}
+
+.right-view-item.col-md-4.dashboard-box h1 .glyphicon-tags {
+    display:inline-block;
+    padding-right: 8px;
 }
 
 .right-view-item.col-md-4.dashboard-box div {
