@@ -6,7 +6,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     var boo = true;
     sdk.Toolbars.addToolbarButtonForApp({
         title: 'Dashboard',
-        iconUrl: 'http://www.lifein19x19.com/forum/images/smilies/icon_batman.gif',
+        iconUrl: chrome.extension.getURL('/templates/elephant-toolbar.png'),
         iconClass: 'dashboard-button',
         onClick: function(event) {
             $(dashboard).toggle();
@@ -25,7 +25,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         el.style.height = "100%";
         $(el).hide();
         document.body.appendChild(el);
-        return el; 
+        return el;
     }
     
     var dashboard = initDashboard();
