@@ -30,7 +30,12 @@ body.appendChild(DIV);
 // Developer Console, https://console.developers.google.com
 var CLIENT_ID = require('../manifest.json').oauth2.client_id
 
-var SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
+var SCOPES = [
+    'https://www.googleapis.com/auth/gmail.readonly', 
+    'https://www.googleapis.com/auth/gmail.modify', 
+    'https://www.googleapis.com/auth/gmail.labels', 
+    'https://mail.google.com'
+];
 
 /**
  * Check if current user has authorized this application.
@@ -139,3 +144,4 @@ var getThread = function(userId, threadId, callback) {
 require('./taskhistory.js');
 require('./comment.js');
 require('./dashboard.js');
+require('./assign.js');
