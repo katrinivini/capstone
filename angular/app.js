@@ -16,7 +16,7 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
     var messages = require('../js/myapp.js').messages;
     // var members = firebase.database().ref('/members');
     var members = require('../js/myapp.js').members;
-
+    // var assignments = require('../js/myapp.js').assignments;
 
     // This came from taskhistory.js.
     function eventObj(p, a) {
@@ -33,9 +33,9 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
     var threadID;
     var readMessages;
     var assignedThreads;
-    var assignments = firebase.database().ref('/assignments');
-    var messages = firebase.database().ref('/messages');
-    var members = firebase.database().ref('/members');
+    // var assignments = firebase.database().ref('/assignments');
+    // var messages = firebase.database().ref('/messages');
+    // var members = firebase.database().ref('/members');
 
 
     // This came from taskhistory.js.
@@ -113,9 +113,12 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
         }
 
         // Adds assignment to Firebase.
-        messages.child(messageID).child('activity').push(assignment(member, assignee));
-        messages.child(messageID).child('people').push({ person: member, status: "assigned" });
-
+        readMessages[messageID]['activity'].push(assignment(member, assignee))
+         messages.child(messageID).child('activity').set(readMessages[messageID]['activity']);
+        // messages.child(messageID).child('activity').push(assignment(member, assignee));
+        // messages.child(messageID).child('people').push({ person: member, status: "assigned" });
+        readMessages[messageID]['people'].push({ person: member, status: "assigned" });
+        messages.child(messageID).child('people').set(readMessages[messageID]['people']);
 
         // Make gapi call to add label.
         chrome.runtime.sendMessage({
