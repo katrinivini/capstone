@@ -9,8 +9,8 @@ html, body {
 #main {
 	min-height: 100%;
     /*background-color: #F3F3F4;*/
-    padding-left: 0px;
-    padding-right: 0px;
+    padding-left: 0;
+    padding-right: 0;
 }
 
 .right-view {
@@ -37,7 +37,7 @@ html, body {
     font-size: 30px;
     padding: 10px;
     margin-right: -50px;
-    margin-left: -15px;
+    /*margin-left: -15px;*/
     border-bottom: 10px solid #F3F3F4;
 }
 
@@ -99,22 +99,22 @@ html, body {
     /*margin-right: 5%;*/
 }
 
-#left-dashboard ul.nav {
-    padding: 0;
-    margin: 0;
+ul.nav {
+    /*padding: 0;*/
+    /*margin: 0;*/
     /*list-style-type: none;*/
 }
 
-#left-dashboard ul.nav li {
+ul.nav li {
     padding: 0px;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    /*margin-top: 10px;*/
+    /*margin-bottom: 10px;*/
     /*margin-left: 20px;*/
     list-style-type: none;
 }
 
-#left-dashboard ul.nav .user-info {
-    padding: 0px;
+ul.nav .user-info {
+    padding-left: 15px;
     margin-top: 10px;
     margin-bottom: 10px;
     /*margin-left: 20px;*/
@@ -122,25 +122,40 @@ html, body {
     color: black;
 }
 
-#left-dashboard ul.nav li:hover {
+ul.nav li a:hover {
     cursor: pointer;
     /*background-color: #C2C2C2;*/
     color: #5DA492;
 }
 
-#left-dashboard ul.nav a:hover {
+ul.nav a {
     /*background-color: #C2C2C2;*/
     color: #404040;
 }
 
-#left-dashboard ul.nav a:hover {
+ul.nav a:hover {
     /*background-color: #C2C2C2;*/
     color: #5DA492;
 }
 
-#left-dashboard .nav_active {
+.nav_active {
     border-left: 4px solid #5DA492;
     background-color: #FAFAFA;
+}
+
+#username {
+	font-weight: bold;	
+}
+
+#useremail {
+	color: #A0A0A2;
+	border-bottom: 1px solid #e5e5e5;
+	padding-bottom: 20px;
+	margin-bottom: -2px;
+}
+
+#logo {
+	height:45px;
 }
 
 .btn {
