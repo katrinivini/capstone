@@ -44,7 +44,7 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
             person: assigner,
             action: "assigned to " + assignee,
             assignee: assignee,
-            date: Firebase.database.ServerValue.TIMESTAMP
+            date: firebase.database.ServerValue.TIMESTAMP
         }
     }
 
