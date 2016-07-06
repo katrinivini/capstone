@@ -145,4 +145,4 @@ var getThread = function(userId, threadId, callback) {
 }
 
 require('./taskhistory.js');
-require('./comment.js');
+// require('./comment.js');
