@@ -1,44 +1,29 @@
-<div id="my-app">
 
-	<div id="left-dashboard">
-		<h1 class="nav-header">AppName</h1>
-		<ul class="nav nav-pills nav-stacked">
-		  <li>Your Name</li>
-		  <li>Your Email</li>
-		  <li><a ui-sref="dashboard">Dashboard</a></li>
-		  <li><a ui-sref="sharedlabels">Shared Labels</a></li>
-		  <li><a ui-sref="emailtemplates">Email Templates</a></li>
-		  <li><a ui-sref="snoozed">Snoozed Items</a></li>
-		</ul>
+<div id="right-dashboard">
+	<div class="nav-header-bar"></div>
+	<div class="right-view">
+		<h2 class="section title">Email Templates</h2>
 		
-	</div>
+		<div class="col-md-9">
 
-	<div id="right-dashboard">
-		<div class="nav-header-bar"></div>
-		<div class="right-view">
-			<h2>EMAIL TEMPLATES</h2>
-			
-			<div class="col-md-9">
+			<p>Edit this template</p>
 
-				<p>Edit this template</p>
+			<form class="template-form">
+				<p>Subject:</p></br>
+				<input type="text">{{template.title}}</br>
+				<p>Body:</p></br>
+				<textarea rows=5>{{template.body}}</textarea></br>
+				<p>Shared With:</p></br>
+				<input type="text"></br>
+			</form>
 
-				<form class="template-form">
-					<p>Subject:</p></br>
-					<input type="text">{{template.title}}</br>
-					<p>Body:</p></br>
-					<textarea rows=5>{{template.body}}</textarea></br>
-					<p>Shared With:</p></br>
-					<input type="text"></br>
-				</form>
+			<button ng-click="updateTemplate()">Update</button>
 
-				<button ng-click="updateTemplate()">Update</button>
-
-				<button ng-click="discardTemplate()">Discard</button>
-			</div>
+			<button ng-click="discardTemplate()">Discard</button>
 		</div>
 	</div>
-
 </div>
+
 
 
 

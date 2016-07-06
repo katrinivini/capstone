@@ -1,7 +1,5 @@
 <div id="right-dashboard">
-	<div class="nav-header-bar"></div>
-	<div class="right-view">
-		<h2>Shared Labels</h2>
+		<h2 class="section title">Shared Labels</h2>
 
 		<button class="btn btn-blue" ui-sref="sharedlabelscreate">Create New Shared Label</button>
 
@@ -9,7 +7,7 @@
 			<div class="form-group order-filter">
 		        <div class="search-bar inner-addon right-addon">
 					<i class="glyphicon glyphicon-search"></i>
-					<input type="text" class="form-control" placeholder="Filter labels" ng-model="searchLabels">
+					<input type="text" class="form-control" placeholder="Filter labels by name" ng-model="searchLabels">
 				</div>      
 			</div>
 		</form>
@@ -27,12 +25,12 @@
 			</thead>
 
 			<tbody>
-				<tr ng-repeat="label in labels">
+				<tr ng-repeat="label in labels | filter: searchLabels">
 					<th></th>
 					<th>{{label.name}}</th>
 					<th>{{label.sharedWith}}</th>
 					<th>
-						<button class="btn btn-default btn-sm" ng-click="removeLabel(label.id)" title="Delete label">
+						<button class="btn btn-default btn-sm btn-delete" ng-click="removeLabel(label.id)" title="Delete label">
 			        		<i class="glyphicon glyphicon-remove"></i>
 			        	</button>
 					</th>						
@@ -44,5 +42,4 @@
 				</tr>
 			</tbody>
 		</table>
-	</div>
 </div>
