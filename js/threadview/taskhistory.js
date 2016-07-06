@@ -36,7 +36,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
         chrome.runtime.sendMessage({
             type: 'read message',
-            threadId: threadView.getThreadID()
+            threadId: threadId
         }, function(hash) {
             messageID = hash;
             person = sdk.User.getAccountSwitcherContactList()[0].name;
@@ -52,12 +52,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                         return personobj.person === person;
                     });
                     if (returnee && returnee.length > 0 && returnee[0].status === 'read') {
-                        messages.child(messageID).child('activity').on('child_added', function(snapshot) {
-                            console.log('on snapshot of child_added in taskhistory', snapshot.val());
-                            var task = snapshot.val();
-                            var date = new Date(task.date);
-                            createActivity(task.person, task.action, date);
-                        })
+                        addToTaskHistory();
                         return;
                     }
 
