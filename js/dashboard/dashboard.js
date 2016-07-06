@@ -3,14 +3,12 @@ var $ = require('jquery');
 // var fb = require('../myapp.js');
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
-    var boo = true;
     sdk.Toolbars.addToolbarButtonForApp({
         title: 'Dashboard',
         iconUrl: chrome.extension.getURL('/templates/elephant-toolbar.png'),
         iconClass: 'dashboard-button',
         onClick: function(event) {
             $(dashboard).toggle();
-
         }
     });
 

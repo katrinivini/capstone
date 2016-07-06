@@ -1,35 +1,41 @@
 <div id="right-dashboard">
-
-		<h2 class="section title">Welcome to your dashboard</h2>
-
-		<div class="right-view-item col-md-4" id="dashboard-box">
-			<h3>
-				<span class="glyphicon glyphicon-tags"></span>
+    <h2 class="section title">Welcome to your dashboard</h2>
+    <div class="right-view-item col-md-4 dashboard-box">
+        <h1><span class=""></span></h1>
+        <div>
+            <h3>
+				<!-- <span class="glyphicon glyphicon-tags"></span> -->
 				<span>{{labels.length}}</span></br>
-				<span>Shared Labels</span>
 			</h3>
-			<button class="btn btn-blue dashboard-btn" ui-sref="sharedlabelscreate">Create</button>
-			<button class="btn btn-blank dashboard-btn" ui-sref="sharedlabels">View All</button> 
-		</div>
-
-		<div class="right-view-item col-md-4" id="dashboard-box">
-			<h3>
-				<span class="glyphicons glyphicons-newspaper"></span>
+            <p>Shared Labels</p>
+        </div>
+        <br />
+        <button class="btn btn-blue dashboard-btn" ui-sref="sharedlabelscreate">Create</button>
+        <button class="btn btn-blank dashboard-btn" ui-sref="sharedlabels">View All</button>
+    </div>
+    <div class="right-view-item col-md-4 dashboard-box">
+        <h1> <span class="glyphicon glyphicon-pencil"></span></h1>
+        <div>
+            <h3>
 				<span>{{templates.length}}</span><br>
-				<span>Email Templates</span>
 			</h3>
-			<button class="btn btn-blue dashboard-btn" ui-sref="emailtemplatescreate">Create</button>
-			<button class="btn btn-blank dashboard-btn" ui-sref="emailtemplates">View All</button>
-		</div>
-
-		<div class="right-view-item col-md-4" id="dashboard-box">
-			<h3>
-				<span class="glyphicons glyphicons-clock"></span>
+            <p>Email Templates</p>
+        </div>
+        <br />
+        <button class="btn btn-blue dashboard-btn" ui-sref="emailtemplatescreate">Create</button>
+        <button class="btn btn-blank dashboard-btn" ui-sref="emailtemplates">View All</button>
+    </div>
+    <div class="right-view-item col-md-4 dashboard-box">
+        <h1><span class="glyphicons glyphicons-clock"></span></h1>
+        <div>
+            <h3>
+				
 				<span>4</span><br>
 				<!-- <span>{{snoozed.length}}</span> -->
-				<span>Snoozed Items</span>
 			</h3>
-			<button class="btn btn-blank dashboard-btn" ui-sref="snoozed">View All</button>
-		</div>
-
+            <p>Snoozed Items</p>
+        </div>
+        <br />
+        <button class="btn btn-blank dashboard-btn" ui-sref="snoozed">View All</button>
+    </div>
 </div>
