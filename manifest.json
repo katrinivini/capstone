@@ -21,7 +21,13 @@
     "oauth2": {
         "client_id": "124834244949-slnho6bo9fbta9f4gmc5cqiorpkahjm6.apps.googleusercontent.com",
         "scopes": [
-          "email", "openid", "profile", "https://www.googleapis.com/auth/gmail.readonly"
+          "email",
+          "openid",
+          "profile", 
+          "https://mail.google.com/",
+          "https://www.googleapis.com/auth/gmail.readonly",
+          "https://www.googleapis.com/auth/gmail.modify",
+          "https://www.googleapis.com/auth/gmail.labels"
         ]
     },
     "content_security_policy": "script-src 'self' 'unsafe-eval' https://*.google.com https://capstone1604gha.firebaseio.com; object-src 'self' https://*.google.com https://capstone1604gha.firebaseio.com",
