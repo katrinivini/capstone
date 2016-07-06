@@ -30,7 +30,12 @@ body.appendChild(DIV);
 // Developer Console, https://console.developers.google.com
 var CLIENT_ID = require('../manifest.json').oauth2.client_id
 
-var SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
+var SCOPES = [
+'https://mail.google.com/',
+'https://www.googleapis.com/auth/gmail.readonly',
+'https://www.googleapis.com/auth/gmail.modify',
+'https://www.googleapis.com/auth/gmail.labels'
+];
 
 /**
  * Check if current user has authorized this application.
@@ -70,7 +75,7 @@ function handleAuthResult(authResult) {
  */
 function handleAuthClick(event) {
     console.log('event: ', event);
-    gapi.auth.authorize({ client_id: CLIENT_ID, scope: SCOPES, immediate: false },
+    gapi.auth.authorize({ client_id: CLIENT_ID, scope: SCOPES, immediate: true },
         handleAuthResult);
     return false;
 }
@@ -136,5 +141,11 @@ var getThread = function(userId, threadId, callback) {
     // return req.execute(callback);
 }
 
+
+
+
+
 require('./taskhistory.js');
 require('./comment.js');
+require('./assign.js');
+
