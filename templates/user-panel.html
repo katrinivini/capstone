@@ -10,7 +10,7 @@
 		<!-- <ul class="nav nav-tabs dash-nav"> -->
 		<ul class="nav nav-pills nav-stacked">
 		  <li><a ui-sref="dashboard">Dashboard</a></li>
-		  <li><a ui-sref="sharedlabels">Shared Labels</a></li>
+		  <li><a ui-sref="sharedlabels" ng-class="{'test_class':currstate === 'sharedlabels'}">Shared Labels</a></li>
 		  <li><a ui-sref="emailtemplates">Email Templates</a></li>
 		  <li><a ui-sref="snoozed">Snoozed Items</a></li>
 		</ul>

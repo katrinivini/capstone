@@ -1,7 +1,7 @@
 'use strict';
 // var app = require('../module.js').app;
 
-app.controller('DashboardCtrl', function($scope, $firebase, $firebaseArray) {
+app.controller('DashboardCtrl', function($scope, $firebase, $firebaseArray, $state) {
 
 	$scope.labels = [];
 
