@@ -8,7 +8,7 @@ app.controller('LabelsCtrl', function($scope, $firebase, $firebaseArray) {
 	var arr = $firebaseArray(ref);
 	arr.$loaded().then(function(data) {
 		angular.forEach(arr, function(item) {
-			var members = item.members.join();
+			var members = item.members.join(', ');
 			$scope.labels.push({id: item.$id, name: item.label, sharedWith: members});
 		})
 	});
