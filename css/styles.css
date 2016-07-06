@@ -407,6 +407,67 @@ ul.nav a:hover {
 }
 
 .realtimetyping {
-    font-size: small;
-    margin-left: 5px;
+	font-size: small;
+	margin-left: 5px;
+}
+
+#assignForm {
+	padding-bottom: 20px;
+}
+
+.assign-members{
+	padding-bottom: 10px;
+	margin-left: auto;
+	margin-right: auto;
+	font-style: Helvetica;
+	font-weight: 20px;
+	text-align: justify;
+}
+
+.click-assigned {
+	padding-right: 5px;
+}
+
+#assign-submit {
+	position: absolute;
+	width: 50%;
+	left: 25%;
+	padding: 5px;
+	background-color: #6ED8B8;
+	border-radius: 2px;
+	font-color: white;
+	font-style: Helvetica;
+	font-size: 14px;
+}
+.shared-labels:hover {
+	cursor: pointer;
+	/*background-color: #C2C2C2;*/
+	color: #5DA492;
+}
+
+.template-popup {
+	width: 250px;
+}
+
+.template-popup-title {
+	background-color: #5DA492; 
+	color: #FFFFFF;
+	height: 30px;
+	text-align: center; 
+	font-size: 1.2vw;
+}
+
+.template-title {
+	font-weight: bold; 
+}
+.template-body {
+	font-style: italic; 
+}
+
+.template-popup-item {
+	padding-left: 8px;
+	border-bottom: 1px solid #C2C2C2; 
+}
+.template-popup-item:hover {
+	background-color: #C2C2C2;
 }

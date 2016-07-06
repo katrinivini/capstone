@@ -51,4 +51,22 @@ app.controller('LabelsCtrl', function($scope, $firebase, $firebaseArray) {
 		});
 	}
 	
+	getLabels();
+	$scope.gapiLabels = [];
+
+    // Make gapi call to get list of user's labels.
+    function getLabels(){
+	    chrome.runtime.sendMessage({
+	        type: 'list labels'
+	    }, function(gapiResponse) {
+	        for(var key in gapiResponse) {
+	            // if (gapiResponse[key].indexOf("Label_") === 0) {
+	            if (/Label\_/.test(gapiResponse[key])) {
+	            	$scope.gapiLabels.push(key);
+	            };
+	        }
+	    });
+    	
+    }
+
 });
