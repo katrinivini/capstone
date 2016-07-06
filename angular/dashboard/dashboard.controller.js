@@ -1,9 +1,11 @@
 'use strict';
 // var app = require('../module.js').app;
 
-app.controller('DashboardCtrl', function($scope, $firebase, $firebaseArray) {
+app.controller('DashboardCtrl', function($scope, $firebase, $firebaseArray, $state) {
 
 	$scope.labels = [];
+	// $scope.currstate = $state.current;
+	// console.log("the current state is", $state.current)
 
 	var ref = firebase.database().ref('/sharedLabels'); 
 	var arr = $firebaseArray(ref);
