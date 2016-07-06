@@ -349,3 +349,29 @@
 	color: #5DA492;
 }
 
+.template-popup {
+	width: 250px;
+}
+
+.template-popup-title {
+	background-color: #5DA492; 
+	color: #FFFFFF;
+	height: 30px;
+	text-align: center; 
+	font-size: 1.2vw;
+}
+
+.template-title {
+	font-weight: bold; 
+}
+.template-body {
+	font-style: italic; 
+}
+
+.template-popup-item {
+	padding-left: 8px;
+	border-bottom: 1px solid #C2C2C2; 
+}
+.template-popup-item:hover {
+	background-color: #C2C2C2;
+}

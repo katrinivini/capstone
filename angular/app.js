@@ -67,7 +67,6 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
                         }, function(hash) {
                             // Hash function in background gets rid of characters Firebase doesn't like.
                             messageID = hash;
-
                             // Get all messageIDs (messages get added to Firebase when they're read).
                             messages.once('value', function(snapshot) {
                                 readMessages = snapshot.val();
@@ -78,11 +77,6 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
                         }) // closes sendMessage
                 }) // closes registerThreadViewHandler
         }) // closes InboxSDK then
-
-
-
-
-
     // Add members from Firebase to Angular scope.
     // $loaded is a Firebase thing.
     $scope.members = [];
@@ -119,8 +113,8 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
         }
 
         // Adds assignment to Firebase.
-        readMessages[messageID].activity.push(assignment(member, assignee));
-        readMessages[messageID].people.push({ person: member, status: "assigned" });
+        messages.child(messageID).child('activity').push(assignment(member, assignee));
+        messages.child(messageID).child('people').push({ person: member, status: "assigned" });
 
 
         // Make gapi call to add label.
@@ -140,22 +134,16 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
         chrome.runtime.sendMessage({
             type: 'list labels'
         }, function(gapiResponse) {
-            console.log("background response to list labels (labelDictionary): ", gapiResponse);
+            console.log("background response: ", gapiResponse);
         });
 
+        if (!readMessages[messageID].gmailThreadIDs) readMessages[messageID].gmailThreadIDs = {}; 
+        readMessages[messageID]["gmailThreadIDs"][member] = threadID; 
 
-        if (!readMessages[messageID].gmailThreadIDs) readMessages[messageID].gmailThreadIDs = {};
-        readMessages[messageID]["gmailThreadIDs"][member] = threadID;
+		// Saves updates.
+		messages.update(readMessages);
 
-
-
-        // Saves updates.
-        messages.update(readMessages);
-
-
+	}
+});    // end of controller
 
 
-
-
-    }
-}); // end of controller

@@ -40,7 +40,6 @@ module.exports = {
 }
 
 /* -------- JS FILES ----------- */
-require('../gapi/taskhistory.js');
 require('./compose/realtime-updates.js');
 require('./dashboard/dashboard.js');
 require('./left-navmenu/myconversations.js');

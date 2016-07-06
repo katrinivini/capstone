@@ -1,0 +1,6 @@
+- FIX DUPLICATES -- DONE
+- how to get started draft appear more than once in activity history --DONE
+-figure out what it means to send this typing thing
+	-use on disconnect
+- extract the comment form template
+-more sensible comment event listening

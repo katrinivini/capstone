@@ -169,4 +169,3 @@ function hashCode(s) {
     //     messageID = jsonresp.payload.headers[16].value;
     //     messageHash = hashCode(messageID);
     // });
-
