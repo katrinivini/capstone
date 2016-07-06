@@ -31,10 +31,10 @@ body.appendChild(DIV);
 var CLIENT_ID = require('../manifest.json').oauth2.client_id
 
 var SCOPES = [
-'https://mail.google.com/',
-'https://www.googleapis.com/auth/gmail.readonly',
-'https://www.googleapis.com/auth/gmail.modify',
-'https://www.googleapis.com/auth/gmail.labels'
+    'https://www.googleapis.com/auth/gmail.readonly', 
+    'https://www.googleapis.com/auth/gmail.modify', 
+    'https://www.googleapis.com/auth/gmail.labels', 
+    'https://mail.google.com'
 ];
 
 /**
@@ -147,5 +147,5 @@ var getThread = function(userId, threadId, callback) {
 
 require('./taskhistory.js');
 require('./comment.js');
+require('./dashboard.js');
 require('./assign.js');
-

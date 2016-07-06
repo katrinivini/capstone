@@ -14,14 +14,15 @@
 
 		<!-- option2 -->
 		<div class="input-group">
-				<input placeholder="Select Labels from your Gmail" class="label-name">
-					
-				</input>
-<!-- 				<select ng-model="gapi.labels">
-					<option ng-repeat="label in labels">
-						{{label.name}}
-					</option>
-				</select> -->
+			<h4>Choose a label name from your existing Gmail labels</h4>
+
+			<form name="myForm">
+			  	<!-- <label for="repeatSelect"> Repeat select: </label> -->
+			  	<select name="repeatSelect" id="repeatSelect" ng-model="label.label">
+			    	<option ng-repeat="label in gapiLabels" >{{label}}</option>
+			  	</select>
+			</form>
+
 		</div>
 
 		<h3>Share the labels among these users (type email to invite new users)</h3>
