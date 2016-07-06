@@ -1,11 +1,9 @@
 <div class='assign' ng-controller='AssignCtrl'>
 
-<h1>Assign Task To:</h1>
+<h1>Assign Task To</h1>
 
 <form id='assignForm' ng-submit="submitAssignment()">
-  <div ng-repeat="member in members"><label><input type="radio" name="radioMember" ng-value="member"> {{member}}</label></div>
-  <input type="submit" id="submit" value="ASSIGN IT BABY!" />
+  <div ng-repeat="member in members" class="assign-members"><label><input type="radio" name="radioMember" class="click-assigned" ng-value="member"> {{member}}</label></div>
+  <input type="submit" id="assign-submit" value="Assign" />
 </form>
-
-
 </div>

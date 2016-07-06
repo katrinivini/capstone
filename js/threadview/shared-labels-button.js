@@ -1,35 +1,61 @@
+var addToTaskHistory = require('./taskhistory.js');
+var Firebase = require('firebase');
 var sharedLabels = require('../myapp.js').sharedLabels;
-var $ = require('jquery');
-
+var messages = require('../myapp.js').messages;
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
+    // var $ = require('jquery');
+    var messageID;
+    var threadId;
+    var taskHistory;
+    var person = sdk.User.getAccountSwitcherContactList()[0].name;
+    sdk.Conversations.registerThreadViewHandler(function(threadView) {
+        threadId = threadView.getThreadID();
+    })
 
+    sdk.Toolbars.registerToolbarButtonForThreadView({
+        title: 'Shared Labels',
+        iconUrl: 'https://qph.ec.quoracdn.net/main-qimg-a2ed001082fee51d1af874d5319ab5c1?convert_to_webp=true',
+        section: 'METADATA_STATE',
+        hasDropdown: true,
+        onClick: function(event) {
+            var labels;
+            Promise.resolve(chrome.runtime.sendMessage({
+                    type: 'read message',
+                    threadId: threadId
+                }, function(hash) {
+                    messageID = hash;
 
-	sdk.Toolbars.registerToolbarButtonForThreadView({
-		title: 'Shared Labels',
-		iconUrl: 'http://i.stack.imgur.com/6Yn8V.png',
-		section: 'METADATA_STATE',
-		hasDropdown: true,
-		onClick: function(event){
-			var labels;
-			Promise.resolve(sharedLabels.once('value', function(snapshot){
-				var data = snapshot.val();
-				var properties = Object.getOwnPropertyNames(data);
-				labels = properties.map(function(prop){
-					return data[prop].label;
-				});
-			}))
-			.then(function(){
-				var list = document.createElement('div');
-				labels.forEach(function(label){
-					var p  = document.createElement('div');
-					p.classList.add(label);
-					p.innerHTML = label;
-					p.addEventListener('click', function(event){
-					})
-					list.appendChild(p);
-				})
-				event.dropdown.el.appendChild(list);
-			});
-		}
-	})
+                    messages.child(messageID).child('activity').once('value', function(snapshot) {
+                        taskHistory = snapshot.val();
+                    })
+                }))
+                .then(function() {
+                    Promise.resolve(sharedLabels.once('value', function(snapshot) {
+                        var data = snapshot.val();
+                        var properties = Object.getOwnPropertyNames(data);
+                        labels = properties.map(function(prop) {
+                            return data[prop].label;
+                        });
+                        var list = document.createElement('div');
+                        labels.forEach(function(label) {
+                            var p = document.createElement('div');
+                            // p.classList.add(label);
+                            p.innerHTML = label;
+                            p.classList.add('shared-labels')
+                            p.addEventListener('click', function(event) {
+                                taskHistory.push({
+                                    person: person,
+                                    action: 'assigned the shared label ' + p.innerHTML,
+                                    date: Firebase.database.ServerValue.TIMESTAMP
+                                })
+                                messages.child(messageID).child('activity').set(taskHistory);
+                            })
+                            list.appendChild(p);
+                        })
+                        event.dropdown.el.appendChild(list);
+                    }))
+                })
+
+        }
+    })
 });

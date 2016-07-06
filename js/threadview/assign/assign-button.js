@@ -31,7 +31,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         hasDropdown: false,
         onClick: function(event) {
             sdk.Widgets.showModalView({
-                title: 'Well hello there beautiful',
+                title: '',
                 el: el
             })
         }
