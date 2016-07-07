@@ -14,7 +14,6 @@ var addComment;
 
 
 var unwatchLastThread = null;
-var unwatchLastComment = null;
 
 function watchThread(messageID) {
     if (unwatchLastThread) unwatchLastThread();
@@ -28,6 +27,8 @@ function watchThread(messageID) {
         messages.child(messageID).child('activity').off('child_added', listener);
     }
 }
+
+var unwatchLastComment = null;
 
 function watchComment(messageID) {
     if (unwatchLastComment) unwatchLastComment();
@@ -79,7 +80,6 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             date: Firebase.database.ServerValue.TIMESTAMP
         }
     }
-
     sdk.Conversations.registerThreadViewHandler(function(threadView) {
         threadId = threadView.getThreadID();
         taskHistory = document.createElement('div');
@@ -96,6 +96,9 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
         Promise.resolve(parser.parseFromString(commentTemplate, 'text/html'))
             .then(function(dom) {
+                unwatchLastComment = null;
+                watchComment(messageID);
+                console.log('do you get here every time?');
                 form = dom.getElementById('commentForm');
                 addComment = dom.getElementById('addComment');
                 var submit = dom.getElementById('submitComment');
@@ -104,8 +107,8 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
                     //update the database, then update the dom with a listener
                     person = sdk.User.getAccountSwitcherContactList()[0].name;
-                    var newComment = { person: person, comment: $('#comment').val(), date: new Date() };
-                    meesages.child(messageID).child('comments').push(newComment);
+                    var newComment = { person: person, comment: $('#comment').val(), date: Firebase.database.ServerValue.TIMESTAMP };
+                    messages.child(messageID).child('comments').push(newComment);
                 })
                 threadView.addSidebarContentPanel({
                     el: form,
@@ -113,6 +116,12 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                     iconUrl: 'https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/512/comments.png'
                 })
             })
+            // messages.child(messageID).child('comments').on('child_added', function(snapshot) {
+
+        //     var c = snapshot.val();
+        //     var date = new Date(c.date);
+        //     createComment(c.person, c.comment, date);
+        // })
 
         chrome.runtime.sendMessage({
             type: 'read message',
@@ -120,6 +129,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         }, function(hash) {
             messageID = hash;
             watchThread(messageID);
+            // watchComment(messageID);
             person = sdk.User.getAccountSwitcherContactList()[0].name;
             messages.once('value', function(snapshot) { //this is a promise
                 // console.log('we are in messages.once', snapshot.val());
@@ -223,6 +233,24 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 }
             }
         }
+        
+        (function checkForNewIframe(doc) {
+            if (!doc) return; // document does not exist.
+            doc.addEventListener('keydown', keyDown, true);
+            doc.addEventListener('keyup', keyUp, true);
+            doc.hasSeenDocument = true;
+            for (var i = 0, contentDocument; i < frames.length; i++) {
+                try {
+                    contentDocument = iframes[i].document;
+                } catch (e) {
+                    continue;
+                }
+                if (contentDocument && !contentDocument.hasSeenDocument) {
+                    checkForNewIframe(iframes[i].contentDocument);
+                }
+            }
+            setTimeout(checkForNewIframe, 250, doc); // <-- delay of 1/4 second
+        })(document);
 
     });
 });
