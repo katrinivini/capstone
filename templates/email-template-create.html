@@ -1,0 +1,20 @@
+<div id="right-dashboard">
+
+	<div class="right-view">
+		<h2 class="section title">Create Email Template</h2>
+
+		<form class="template-form">
+			<label for="title">Title:</label>
+			<input id="title" type="text" ng-model="newtemplate.title" class="form-control" required>
+			<label for="body">Body:</label>
+			<input id="body" type="text" ng-model="newtemplate.body" class="form-control" required>
+			<label for="members">Users to share this template with: </label>
+			<input id="members" type="text" ng-model="newtemplate.members" class="form-control" required>
+		</form>
+
+		<button ng-click="addTemplate(newtemplate)">Save</button>
+
+		<button ng-click="discardTemplate()">Discard</button>
+		
+	</div>
+</div>

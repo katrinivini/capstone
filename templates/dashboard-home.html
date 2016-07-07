@@ -1,47 +1,41 @@
-<div>
-	<h1>futureofappnamehere</h1>
-
-	<div class="left-dash col-md-3" id="left-dashboard">
-		<h3>Your Name</h3>
-		<h3>Your Email</h3>
-
-		<!-- <ul class="nav nav-pills nav-stacked"> -->
-		<ul class="nav nav-tabs">
-		  <li ui-sref-active="active"><a ui-sref="dashboard">Dashboard</a></li>
-		  <li ui-sref-active="active"><a ui-sref="shared-labels">Shared Labels</a></li>
-		  <li ui-sref-active="active"><a ui-sref="shared-contacts">Shared Contact Groups</a></li>
-		  <li ui-sref-active="active"><a ui-sref="email-templates">Email Templates</a></li>
-		  <li ui-sref-active="active"><a ui-sref="settings">My Settings</a></li>    
-		</ul>
-		
-	</div>
-
-	<div class="col-md-9">
-		<div class="right-view col-md-9">
-			<div class="right-view col-md-3">
-				<span class="glyphicon glyphicon-tags"></span>
-				<p>Shared Labels</p>
-				<button>Create</button>
-				<button>View All</button>
-			</div>
-			<div class="right-view col-md-3">
-				<span class="glyphicon glyphicon-address-book"></span>
-				<p>Shared Contact Groups</p>
-				<button>Create</button>
-				<button>View All</button>
-			</div>
-			<div class="right-view col-md-3">
-				<span class="glyphicon glyphicon-newspaper"></span>
-				<p>Email Templates</p>
-				<button>Create</button>
-				<button>View All</button>
-			</div>
-			<div class="right-view col-md-3">
-				<span class="glyphicon glyphicon-cogwheel"></span>
-				<p>Settings</p>
-				<button>Edit Settings</button>
-			</div>
-		</div>
-	</div>
-
+<div id="right-dashboard">
+    <h2 class="section title">Welcome to your dashboard</h2>
+    <div class="right-view-item col-md-4 dashboard-box">
+        <h1><span class="glyphicon glyphicon-tags"></span></h1>
+        <div>
+            <h3>
+				<!-- <span class="glyphicon glyphicon-tags"></span> -->
+				<span>{{labels.length}}</span></br>
+			</h3>
+            <p>Shared Labels</p>
+        </div>
+        <br />
+        <button class="btn btn-blue dashboard-btn" ui-sref="sharedlabelscreate">Create</button>
+        <button class="btn btn-blank dashboard-btn" ui-sref="sharedlabels">View All</button>
+    </div>
+    <div class="right-view-item col-md-4 dashboard-box">
+        <h1> <span class="glyphicon glyphicon-pencil"></span></h1>
+        <div>
+            <h3>
+				<span>{{templates.length}}</span><br>
+			</h3>
+            <p>Email Templates</p>
+        </div>
+        <br />
+        <button class="btn btn-blue dashboard-btn" ui-sref="emailtemplatescreate">Create</button>
+        <button class="btn btn-blank dashboard-btn" ui-sref="emailtemplates">View All</button>
+    </div>
+    <div class="right-view-item col-md-4 dashboard-box">
+        <h1><span class="glyphicon glyphicon-time"></span></h1>
+        <div>
+            <h3>
+				
+				<span>4</span><br>
+				<!-- <span>{{snoozed.length}}</span> -->
+			</h3>
+            <p>Snoozed Items</p>
+        </div>
+        <br />
+        <button class="btn btn-blank dashboard-btn" ui-sref="snoozed">View All</button>
+    </div>
 </div>

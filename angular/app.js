@@ -27,14 +27,11 @@ function eventObj(p, a) {
         date: firebase.database.ServerValue.TIMESTAMP
     }
 }
+
 assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
     console.log("inside assignapp.js AssignCtrl");
 
     var assignedThreads;
-    // var assignments = firebase.database().ref('/assignments');
-    // var messages = firebase.database().ref('/messages');
-    // var members = firebase.database().ref('/members');
-
 
     // This came from taskhistory.js.
     function assignment(assigner, assignee) {
@@ -54,6 +51,7 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 
             // Register ThreadViewHandler to get threadID.
             sdk.Conversations.registerThreadViewHandler(function(threadView) {
+
                     threadID = threadView.getThreadID();
 
                     // Use threadID to call gapi in background script to get messageID.
@@ -65,14 +63,13 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
                             // Hash function in background gets rid of characters Firebase doesn't like.
                             messageID = hash;
                             // Get all messageIDs (messages get added to Firebase when they're read).
-
-
-
+                            messages.once('value', function(snapshot) {
+                                readMessages = snapshot.val();
+                            });
                         }) // closes sendMessage
                 }) // closes registerThreadViewHandler
         }) // closes InboxSDK then
-        // Add members from Firebase to Angular scope.
-        // $loaded is a Firebase thing.
+
     $scope.members = [];
     var membersArray = $firebaseArray(members);
     membersArray.$loaded().then(function(data) {
@@ -129,6 +126,7 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
         }, function(gapiResponse) {
             console.log("background response: ", gapiResponse);
         });
+
         messages.child(messageID).child('gmailThreadIDs').push({ member: member, threadId: threadID });
     }
 }); // end of controller

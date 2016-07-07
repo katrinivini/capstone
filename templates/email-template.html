@@ -1,0 +1,38 @@
+<div id="right-dashboard">
+
+	<h2 class="section title">Email Templates</h2>
+	<p>You can use these email templates while composing/replying to an email in Gmail</p>
+	<!-- <button class="btn btn-blue" ui-sref="emailtemplatescreate">Create a new template</button> -->
+	<a class="btn btn-orange" ui-sref="emailtemplatescreate">
+		<i class="fa fa-plus">
+			Create New Template
+		</i>
+	</a>
+
+	<div class="template-preview" class="col-md-6">
+		<div class="template-list" ng-repeat="template in templates">
+			<p>Subject: </p>
+			<p class="template-title">{{template.title}}</p>
+			<p>Body: </p>
+			<p class="template-body">{{template.body.slice(0, 40)}}...</p>
+		</div>
+	</div>		
+
+<!-- 	<div class="template-details" class="col-md-6">
+		{{template.title}}</p></br>
+		{{template.body}}</p></br>
+		{{template.sharedWith}}</p></br>
+	</div> -->
+
+	<button class="btn btn-blue" ui-sref="emailtemplatesedit">Edit</button>
+
+	<button class="btn btn-blue">Delete</button>
+
+
+
+
+</div>
+
+
+
+

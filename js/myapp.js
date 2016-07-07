@@ -21,6 +21,7 @@ var rootRef = firebase.database().ref();
 var messages = firebase.database().ref('/messages');
 var members = firebase.database().ref('/members');
 var sharedLabels = firebase.database().ref('/sharedLabels');
+
 var assignedHistory = firebase.database().ref('/assigned');
 
 var templates = firebase.database().ref('/templates');
@@ -41,8 +42,9 @@ module.exports = {
 }
 
 /* -------- JS FILES ----------- */
+
 require('../gapi/taskhistory.js');
-// require('./compose/realtime-updates.js');
+require('./compose/realtime-updates.js');
 require('./dashboard/dashboard.js');
 require('./left-navmenu/myconversations.js');
 require('./left-navmenu/shared-labels.js');
@@ -52,3 +54,11 @@ require('./threadview/assign/assign-button.js');
 require('./threadview/typing-status.js');
 require('./threadview/shared-labels-button.js');
 require('../angular/app.js');
+require('../angular/module.js');
+// require('../templates/index.html');
+
+// require('../gapi/background.js');
+
+/* -------- CSS FILES ----------- */
+// require('../css/styles.css');
+// require('./myapp.css');

@@ -12,7 +12,6 @@ var thread;
 var form;
 var addComment;
 
-
 var unwatchLastThread = null;
 
 function watchThread(messageID) {
@@ -26,6 +25,17 @@ function watchThread(messageID) {
     unwatchLastThread = function() {
         messages.child(messageID).child('activity').off('child_added', listener);
     }
+}
+
+function createActivity(person, action, date) {
+    //TODO: should return the created element to be appended later
+    var act = document.createElement('div');
+    act.className = 'activity';
+    if (action === 'read') act.classList.add('read_activity');
+    if (action === 'started draft') act.classList.add('draft_activity');
+    if (action === 'sent a response') act.classList.add('sent_activity');
+    act.innerHTML = person + " " + action + " on " + date;
+    $('.taskHistory').prepend(act);
 }
 
 var unwatchLastComment = null;
@@ -59,17 +69,6 @@ function createComment(person, comment, date) {
     $('#comment').val('');
 }
 
-function createActivity(person, action, date) {
-    //TODO: should return the created element to be appended later
-    var act = document.createElement('div');
-    act.className = 'activity';
-    if (action === 'read') act.classList.add('read_activity');
-    if (action === 'started draft') act.classList.add('draft_activity');
-    if (action === 'sent a response') act.classList.add('sent_activity');
-    act.innerHTML = person + " " + action + " on " + date;
-    $('.taskHistory').prepend(act);
-}
-
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     var parser = new DOMParser();
 
@@ -93,10 +92,8 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             iconUrl: 'https://cdn3.iconfinder.com/data/icons/website-panel-icons/128/test1-13-512.png'
         })
 
-
         Promise.resolve(parser.parseFromString(commentTemplate, 'text/html'))
             .then(function(dom) {
-                unwatchLastComment = null;
                 watchComment(messageID);
                 console.log('do you get here every time?');
                 form = dom.getElementById('commentForm');
@@ -116,24 +113,16 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                     iconUrl: 'https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/512/comments.png'
                 })
             })
-            // messages.child(messageID).child('comments').on('child_added', function(snapshot) {
-
-        //     var c = snapshot.val();
-        //     var date = new Date(c.date);
-        //     createComment(c.person, c.comment, date);
-        // })
-
         chrome.runtime.sendMessage({
             type: 'read message',
             threadId: threadId
         }, function(hash) {
             messageID = hash;
             watchThread(messageID);
-            // watchComment(messageID);
             person = sdk.User.getAccountSwitcherContactList()[0].name;
             messages.once('value', function(snapshot) { //this is a promise
-                // console.log('we are in messages.once', snapshot.val());
-                thread = snapshot.val();
+                thread = snapshot.val()
+                    // console.log('we are in messages.once', snapshot.val());
                 if (thread && thread[hash]) { //we have thread and the thread
 
                     var people = Array.prototype.slice.call(thread[hash].people)
@@ -146,6 +135,11 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                         person: person,
                         status: 'read'
                     });
+                    thread[hash].activity.push(eventObj(person, "read"));
+                    thread[hash].people.push({
+                        person: person,
+                        status: 'read'
+                    })
                 } else { //we either don't have the thread or dont have the thread
                     if (!thread) thread = {};
                     thread[hash] = {
@@ -157,7 +151,6 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                     };
                     messages.update(thread);
                 }
-
             })
         })
     });
@@ -173,13 +166,12 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             // fires after 'sent' button is pressed
             composeView.on('presending', function() {
                 messages.child(messageID).child('activity').push(eventObj(person, "sent a response"));
+
             });
 
             var statusbar = composeView.addStatusBar();
 
-
             messages.child(messageID).child('activity').push(eventObj(person, "started draft"));
-
 
             messages.child(messageID).child('realtime').on('value', function(snapshot) {
                 var persontyping = snapshot.val();
@@ -233,7 +225,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 }
             }
         }
-        
+
         (function checkForNewIframe(doc) {
             if (!doc) return; // document does not exist.
             doc.addEventListener('keydown', keyDown, true);
@@ -252,5 +244,6 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             setTimeout(checkForNewIframe, 250, doc); // <-- delay of 1/4 second
         })(document);
 
-    });
+    }); // end composeview
+
 });
