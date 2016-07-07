@@ -26,19 +26,7 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
             date: firebase.database.ServerValue.TIMESTAMP
         }
     }
-    console.log("inside assignapp.js AssignCtrl");
 
-    var member;
-    var messageID;
-    var threadID;
-    var readMessages;
-    var assignedThreads;
-    var assignments = firebase.database().ref('/assignments');
-    var messages = firebase.database().ref('/messages');
-    var members = firebase.database().ref('/members');
-
-
-    // This came from taskhistory.js.
     function assignment(assigner, assignee) {
         return {
             person: assigner,
@@ -47,6 +35,29 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
             date: firebase.database.ServerValue.TIMESTAMP
         }
     }
+
+
+
+
+    console.log("before runtime sendMessage");
+    // Call gapi in background script to sync common messageIDs with their respective Gmail threadIDs, which are different for each user.
+    // Receives [{messageID: threadID}, ...].
+            
+    chrome.runtime.sendMessage({
+        type: 'sync'
+    },
+        function(gapiResponse) {
+
+        // Get all messageIDs (messages get added to Firebase when they're read).
+        messages.once('value', function(snapshot) {
+            readMessages = snapshot.val();
+        });
+
+    }) // closes sendMessage
+
+
+
+
 
     // Load InboxSDK.
     InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
@@ -72,18 +83,24 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
                                 readMessages = snapshot.val();
                             });
 
+                            members.once('value', function(snapshot) {
+                                console.log("members snapshot: ", snapshot);
+                            });
+
 
 
                         }) // closes sendMessage
                 }) // closes registerThreadViewHandler
         }) // closes InboxSDK then
-    // Add members from Firebase to Angular scope.
-    // $loaded is a Firebase thing.
+        // Add members from Firebase to Angular scope.
+        // $loaded is a Firebase thing.
     $scope.members = [];
     var membersArray = $firebaseArray(members);
     membersArray.$loaded().then(function(data) {
+        console.log("membersArray: ", membersArray);
         angular.forEach(membersArray, function(item) {
-            $scope.members.push(item.$value);
+            console.log("item: ");
+            $scope.members.push(item.name);
         })
     });
 
@@ -137,13 +154,11 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
             console.log("background response: ", gapiResponse);
         });
 
-        if (!readMessages[messageID].gmailThreadIDs) readMessages[messageID].gmailThreadIDs = {}; 
-        readMessages[messageID]["gmailThreadIDs"][member] = threadID; 
+        if (!readMessages[messageID].gmailThreadIDs) readMessages[messageID].gmailThreadIDs = {};
+        readMessages[messageID]["gmailThreadIDs"][member] = threadID;
 
-		// Saves updates.
-		messages.update(readMessages);
+        // Saves updates.
+        messages.update(readMessages);
 
-	}
-});    // end of controller
-
-
+    }
+}); // end of controller

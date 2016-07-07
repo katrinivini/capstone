@@ -1,4 +1,6 @@
-// Listens for requests from content script app.js.
+// background script: making gapi calls a like a rock star!
+
+// Listens for requests from content script mysync.js.
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
     var messageID;
@@ -11,63 +13,58 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     var labelsToAdd;
     var labelsToRemove;
     var request = request;
-    var query = "is:unread newer_than:7d to:b.emma.lai@gmail.com OR to:emailkathy@gmail.com OR to:rina.krevat@gmail.com OR to:katrinamvelez@gmail.com";
-    // var query = "is:unread newer_than:1d from:katrinamvelez@gmail.com";
+    var query = "is:unread newer_than:7d to:teamidkgha@googlegroups.com OR from:teamidkgha@googlegroups.com OR from:b.emma.lai@gmail.com OR from:emailkathy@gmail.com OR from:rina.krevat@gmail.com OR from:katrinamvelez@gmail.com";
 
-    if (request.type === 'add label') {
+    if (request.type === 'sync') {
 
-        labelsToAdd = request.labelsToAdd;
-        labelsToRemove = request.labelsToRemove;
-        threadID = request.threadId;
+        // Gets list of messages that match query.
+        listMessages('me', query, function(response) {
+            // response is [{id: gmailMessageID, threadId: gmailThreadID}, ...]
+            let arrayOfGmailIdObjects = response;
+            console.log("listMessages response: ", arrayOfGmailIdObjects);
 
-        gapi.client.gmail.users.messages.get({
-            'id': request.threadId,
-            'userId': 'me',
-            'format': 'metadata'
-        })
-        .then(function(jsonresp, rawresp) {
 
-            gmailMessageID = jsonresp.result.id;
-            gmailThreadID = jsonresp.result.threadId;
-            messageID = jsonresp.result.payload.headers[16].value;
-            messageHash = hashCode(messageID);
 
-            return gapi.client.gmail.users.threads.modify({
-                'userId': 'me',
-                'id': gmailThreadID,
-                'addLabelIds': labelsToAdd,
-                'removeLabelIds': labelsToRemove
-            });
-        })
-        .then(function(response) {
-            megaResponse = response;
-            megaResponse["messageID"] = messageHash;
-            megaResponse["gmailMessageID"] = gmailMessageID;
-            megaResponse["gmailThreadID"] = gmailThreadID;
-            console.log("megaResponse: ", megaResponse);
-            sendResponse(megaResponse);
-        })
-        // .catch(function(error) {
-        //     console.log("add label error: ", error);
-        // })
+            
 
-    } else if (request.type === 'list labels') {
+            function syncIDs (gmailMessageID) {
+                gapi.client.gmail.users.messages.get({
+                    'id': gmailMessageID,
+                    'userId': 'me',
+                    'format': 'metadata'
+            })
+            .then(function(jsonresp, rawresp) {
 
-        listLabels('me', function(response) {
+                gmailMessageID = jsonresp.result.id;
+                gmailThreadID = jsonresp.result.threadId;
+                messageID = jsonresp.result.payload.headers[16].value;
+                messageHash = hashCode(messageID);
 
-            var arrayOfLabelObjects = response.labels;
-            var labelDictionary = {};
+                console.log("{messageHash: gmailThreadID} = ", {messageHash: gmailThreadID})
 
-            for (var obj of arrayOfLabelObjects) {
-                labelDictionary[obj.name] = obj.id;
-            }
+                return {messageHash: gmailThreadID};
+            })
+            .then(function(response) {
+                megaResponse = response;
+                megaResponse["messageID"] = messageHash;
+                megaResponse["gmailMessageID"] = gmailMessageID;
+                megaResponse["gmailThreadID"] = gmailThreadID;
+                console.log("megaResponse: ", megaResponse);
+                sendResponse(megaResponse);
+            })
+            // .catch(function(error) {
+            //     console.log("add label error: ", error);
+            // })
+        }  // closes getMessageID
 
-            console.log("labelDictionary: ", labelDictionary);
 
-            sendResponse(labelDictionary);
-        });
 
-    }  // closes else if
+
+
+
+        });  // closes listMessages
+
+    }
 
 })    // closes addListener
 

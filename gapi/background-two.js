@@ -149,3 +149,4 @@ require('./taskhistory.js');
 require('./comment.js');
 require('./dashboard.js');
 require('./assign.js');
+require('./sync.js')
