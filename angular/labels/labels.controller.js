@@ -43,12 +43,26 @@ app.controller('LabelsCtrl', function($scope, $firebase, $firebaseArray, $state)
 			members: members, 
 		})
 		.then(function(ref) {
+			// console.log('here is ref', ref);
 			var id = ref.key;
 			console.log("added record with id " + id);
-			console.log("location in array", arr.$indexFor(id)); // returns location in the array
+			// console.log("location in array", arr.$indexFor(id)); // returns location in the array
+			addLabel(name);
 			$state.go('sharedlabels')
 		});
 	}
+
+    // Make gapi call to create new label in Gmail.
+    function addLabel(name){
+	    chrome.runtime.sendMessage({
+	        type: 'add label', 
+	        name: name
+	    }, function(gapiResponse) {
+			console.log('here is the gapiResponse', gapiResponse);
+	    });
+    	
+    }
+
 
 	$scope.removeLabel = function(id){
 		console.log('label id', id);
@@ -87,5 +101,6 @@ app.controller('LabelsCtrl', function($scope, $firebase, $firebaseArray, $state)
 	    });
     	
     }
+
 
 });

@@ -44,7 +44,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             megaResponse["messageID"] = messageHash;
             megaResponse["gmailMessageID"] = gmailMessageID;
             megaResponse["gmailThreadID"] = gmailThreadID;
-            console.log("megaResponse: ", megaResponse);
+            // console.log("megaResponse: ", megaResponse);
             sendResponse(megaResponse);
         })
         // .catch(function(error) {
@@ -62,7 +62,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                 labelDictionary[obj.name] = obj.id;
             }
 
-            console.log("labelDictionary: ", labelDictionary);
+            // console.log("labelDictionary: ", labelDictionary);
 
             sendResponse(labelDictionary);
         });
@@ -70,7 +70,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     }  // closes else if
 
     listMessages('me', query, function(response) {
-        console.log("listMessages response: ", response);
+        // console.log("listMessages response: ", response);
     })
 
 })    // closes addListener
