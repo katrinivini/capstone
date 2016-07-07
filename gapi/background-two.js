@@ -147,7 +147,10 @@ var getThread = function(userId, threadId, callback) {
         // return req.execute(callback);
 }
 
-require('./taskhistory.js');
-require('./dashboard.js');
 require('./assign.js');
+require('./dashboard.js');
+require('./fetch-email.js');
 require('./get-profile.js');
+require('./sync.js');
+require('./taskhistory.js');
+

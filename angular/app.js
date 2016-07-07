@@ -20,6 +20,7 @@ var members = require('../js/myapp.js').members;
 var assignments = require('../js/myapp.js').assignments;
 // var Firebase = require('../js/myapp.js').Firebase;
 
+
 assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
     console.log("inside assignapp.js AssignCtrl");
 
@@ -34,6 +35,31 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
             date: firebase.database.ServerValue.TIMESTAMP
         }
     }
+
+
+
+
+    console.log("before runtime sendMessage");
+    // Call gapi in background script to sync common messageIDs with their respective Gmail threadIDs, which are different for each user.
+    // Receives [{messageID: threadID}, ...].
+            
+    chrome.runtime.sendMessage({
+        type: 'sync'
+    },
+        function(gapiResponse) {
+
+            console.log("app.js sync gapiResponse: ", gapiResponse);
+
+        // Get all messageIDs (messages get added to Firebase when they're read).
+        messages.once('value', function(snapshot) {
+            readMessages = snapshot.val();
+        });
+
+    }) // closes sendMessage
+
+
+
+
 
     // Load InboxSDK.
     InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
@@ -58,14 +84,18 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
                             messages.once('value', function(snapshot) {
                                 readMessages = snapshot.val();
                             });
+
                         }) // closes sendMessage
                 }) // closes registerThreadViewHandler
         }) // closes InboxSDK then
+        // Add members from Firebase to Angular scope.
+        // $loaded is a Firebase thing.
 
     $scope.members = [];
     var membersArray = $firebaseArray(members);
     membersArray.$loaded().then(function(data) {
         angular.forEach(membersArray, function(item) {
+
             $scope.members.push(item.name);
         })
     });
@@ -119,6 +149,17 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
             console.log("background response: ", gapiResponse);
         });
 
+        // if (!readMessages[messageID].gmailThreadIDs) readMessages[messageID].gmailThreadIDs = {};
+        // readMessages[messageID]["gmailThreadIDs"][member] = threadID;
+
+        // // Saves updates.
+        // messages.update(readMessages);
+
+        // replaces above
+
         messages.child(messageID).child('gmailThreadIDs').push({ member: member, threadId: threadID });
+
+
+
     }
 }); // end of controller
