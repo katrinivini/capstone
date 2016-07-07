@@ -99,16 +99,16 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 
         switch (assignee) {
             case "b.emma.lai@gmail.com":
-                labelID = "Label_16";
+                labelID = "Label_19";
                 break;
             case "emailkathy@gmail.com":
-                labelID = "Label_17";
+                labelID = "Label_20";
                 break;
             case "rina.krevat@gmail.com":
-                labelID = "Label_18";
+                labelID = "Label_22";
                 break;
             case "katrinamvelez@gmail.com":
-                labelID = "Label_19";
+                labelID = "Label_21";
                 break;
         }
 
