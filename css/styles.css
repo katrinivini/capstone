@@ -471,3 +471,15 @@ ul.nav a:hover {
 .template-popup-item:hover {
 	background-color: #C2C2C2;
 }
+
+
+.template-preview {
+    margin-top: 20px;
+    width: 48%;
+}
+.template-list {
+    border-bottom: 1px solid #C2C2C2;
+}
+.template-details {
+    width: 48%;
+}

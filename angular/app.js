@@ -1,32 +1,32 @@
-// var fs = require('fs');
-// var addToTaskHistory = require('./taskhistory.js');
+// var $ = require('jquery');
+// var Firebase = require('firebase');
 
+// var assignedHistory = require('../js/myapp.js').assignedHistory;
+// var members = require('../js/myapp.js').members;
+// var messages = require('../js/myapp.js').messages;
+var app = angular.module('thing', ['firebase', 'ui.router']);
 // Eventually need to refactor so that there's only one angular.module.
 var assignapp = angular.module('shazzam', ['firebase']);
 
-assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 
+var member;
+var messageID;
+var threadID;
+var readMessages;
+// var messages = firebase.database().ref('/messages');
+var messages = require('../js/myapp.js').messages;
+// var members = firebase.database().ref('/members');
+var members = require('../js/myapp.js').members;
+var assignments = require('../js/myapp.js').assignments;
+// var Firebase = require('../js/myapp.js').Firebase;
+
+
+assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
     console.log("inside assignapp.js AssignCtrl");
 
-    var member;
-    var messageID;
-    var threadID;
-    var readMessages;
-    // var messages = firebase.database().ref('/messages');
-    var messages = require('../js/myapp.js').messages;
-    // var members = firebase.database().ref('/members');
-    var members = require('../js/myapp.js').members;
-
+    var assignedThreads;
 
     // This came from taskhistory.js.
-    function eventObj(p, a) {
-        return {
-            person: p,
-            action: a,
-            date: firebase.database.ServerValue.TIMESTAMP
-        }
-    }
-
     function assignment(assigner, assignee) {
         return {
             person: assigner,
@@ -83,23 +83,17 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
                                 readMessages = snapshot.val();
                             });
 
-                            members.once('value', function(snapshot) {
-                                console.log("members snapshot: ", snapshot);
-                            });
-
-
-
                         }) // closes sendMessage
                 }) // closes registerThreadViewHandler
         }) // closes InboxSDK then
         // Add members from Firebase to Angular scope.
         // $loaded is a Firebase thing.
+
     $scope.members = [];
     var membersArray = $firebaseArray(members);
     membersArray.$loaded().then(function(data) {
-        console.log("membersArray: ", membersArray);
         angular.forEach(membersArray, function(item) {
-            console.log("item: ");
+
             $scope.members.push(item.name);
         })
     });
@@ -131,8 +125,7 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 
         // Adds assignment to Firebase.
         messages.child(messageID).child('activity').push(assignment(member, assignee));
-        messages.child(messageID).child('people').push({ person: member, status: "assigned" });
-
+        messages.child(messageID).child('people').push({ person: member, status: "assigned", date: firebase.database.ServerValue.TIMESTAMP });
 
         // Make gapi call to add label.
         chrome.runtime.sendMessage({
@@ -154,11 +147,15 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
             console.log("background response: ", gapiResponse);
         });
 
-        if (!readMessages[messageID].gmailThreadIDs) readMessages[messageID].gmailThreadIDs = {};
-        readMessages[messageID]["gmailThreadIDs"][member] = threadID;
+        // if (!readMessages[messageID].gmailThreadIDs) readMessages[messageID].gmailThreadIDs = {};
+        // readMessages[messageID]["gmailThreadIDs"][member] = threadID;
 
-        // Saves updates.
-        messages.update(readMessages);
+        // // Saves updates.
+        // messages.update(readMessages);
+
+        // replaces above
+
+        messages.child(messageID).child('gmailThreadIDs').push({ member: member, threadId: threadID });
 
     }
 }); // end of controller
