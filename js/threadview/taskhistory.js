@@ -22,8 +22,8 @@ function watchThread(messageID) {
         var date = new Date(task.date);
         createActivity(task.person, task.action, date);
     })
-    unwatchLastThread = function(){
-       messages.child(messageID).child('activity').off('child_added', listener);
+    unwatchLastThread = function() {
+        messages.child(messageID).child('activity').off('child_added', listener);
     }
 }
 
@@ -38,6 +38,37 @@ function createActivity(person, action, date) {
     $('.taskHistory').prepend(act);
 }
 
+var unwatchLastComment = null;
+
+function watchComment(messageID) {
+    if (unwatchLastComment) unwatchLastComment();
+    var listener = messages.child(messageID).child('comments').on('child_added', function(snapshot) {
+
+        var c = snapshot.val();
+        var date = new Date(c.date);
+        createComment(c.person, c.comment, date);
+    })
+
+    unwatchLastComment = function() {
+        messages.child(messageID).child('comment').off('child_added', listener);
+    }
+}
+
+function createComment(person, comment, date) {
+    var comm = document.createElement('div');
+    comm.className = 'comment';
+    var d = date;
+    var time = document.createElement('p');
+    time.className = 'date';
+    time.innerHTML = d;
+    comm.appendChild(time);
+    var person_comment = document.createElement('p');
+    person_comment.innerHTML = '<b>' + person + '</b>' + ": " + comment;
+    comm.appendChild(person_comment);
+    addComment.appendChild(comm);
+    $('#comment').val('');
+}
+
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     var parser = new DOMParser();
 
@@ -48,9 +79,9 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             date: Firebase.database.ServerValue.TIMESTAMP
         }
     }
-
     sdk.Conversations.registerThreadViewHandler(function(threadView) {
-        var taskHistory = document.createElement('div');
+        threadId = threadView.getThreadID();
+        taskHistory = document.createElement('div');
         taskHistory.classList.add('taskHistory');
         // thread > activity and comments
         // activity > [{person: person, action: action, date: date}]
@@ -61,26 +92,20 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             iconUrl: 'https://cdn3.iconfinder.com/data/icons/website-panel-icons/128/test1-13-512.png'
         })
 
-
-
         Promise.resolve(parser.parseFromString(commentTemplate, 'text/html'))
             .then(function(dom) {
+                watchComment(messageID);
+                console.log('do you get here every time?');
                 form = dom.getElementById('commentForm');
                 addComment = dom.getElementById('addComment');
                 var submit = dom.getElementById('submitComment');
                 submit.addEventListener('click', function(event) {
                     event.preventDefault();
+
                     //update the database, then update the dom with a listener
                     person = sdk.User.getAccountSwitcherContactList()[0].name;
-                    var newComment = { person: person, comment: $('#comment').val(), date: new Date() };
-                    if (!thread[messageID].comments) {
-                        thread[messageID].comments = [newComment];
-                        messages.child(messageID).update(thread[messageID]);
-                    } else {
-                        thread[messageID].comments.push(newComment);
-                        messages.child(messageID).child('comments').update(thread[messageID].comments);
-                    }
-
+                    var newComment = { person: person, comment: $('#comment').val(), date: Firebase.database.ServerValue.TIMESTAMP };
+                    messages.child(messageID).child('comments').push(newComment);
                 })
                 threadView.addSidebarContentPanel({
                     el: form,
@@ -88,10 +113,9 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                     iconUrl: 'https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/512/comments.png'
                 })
             })
-
         chrome.runtime.sendMessage({
             type: 'read message',
-            threadId: threadView.getThreadID()
+            threadId: threadId
         }, function(hash) {
             messageID = hash;
             watchThread(messageID);
@@ -99,7 +123,6 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             messages.once('value', function(snapshot) { //this is a promise
                 thread = snapshot.val()
                     // console.log('we are in messages.once', snapshot.val());
-                thread = snapshot.val();
                 if (thread && thread[hash]) { //we have thread and the thread
 
                     var people = Array.prototype.slice.call(thread[hash].people)
@@ -107,13 +130,11 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                         return personobj.person === person;
                     });
                     if (returnee && returnee.length > 0 && returnee[0].status === 'read') return;
-
-                    thread[hash].activity.push(eventObj(person, "read"));
-                    thread[hash].people.push({
+                    messages.child(hash).child('activity').push(eventObj(person, 'read'));
+                    messages.child(hash).child('people').push({
                         person: person,
                         status: 'read'
-                    })
-
+                    });
                 } else { //we either don't have the thread or dont have the thread
                     if (!thread) thread = {};
                     thread[hash] = {
@@ -123,38 +144,10 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                             status: 'read'
                         }]
                     };
+                    messages.update(thread);
                 }
-                readPromise = messages.update(thread);
             })
-
-            messages.child(messageID).child('comments').on('value', function(snapshot) {
-                $('#addComment').children().remove();
-                // console.log('console logging on, child_added, comments', snapshot.val());
-                var comments = snapshot.val();
-                comments.forEach(function(c) {
-                    createComment(c.person, c.comment, c.date);
-                })
-
-            })
-
         })
-
-        function createComment(person, comment, date) {
-            // console.log("create the comment");
-            var comm = document.createElement('div');
-            comm.className = 'comment';
-            var d = new Date(date);
-            var time = document.createElement('p');
-            time.className = 'date';
-            time.innerHTML = d;
-            comm.appendChild(time);
-            var person_comment = document.createElement('p');
-            person_comment.innerHTML = '<b>' + person + '</b>' + ": " + comment;
-            comm.appendChild(person_comment);
-            // comm.innerHTML = person + " " + comment + " " + time;
-            addComment.appendChild(comm);
-            $('#comment').val('');
-        }
     });
 
     sdk.Compose.registerComposeViewHandler(function(composeView) {
@@ -167,15 +160,13 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
             // fires after 'sent' button is pressed
             composeView.on('presending', function() {
-                thread[messageID].activity.push(eventObj(person, "sent a response"));
-                draftPromise = messages.update(thread);
+                messages.child(messageID).child('activity').push(eventObj(person, "sent a response"));
+
             });
 
             var statusbar = composeView.addStatusBar();
 
- 
-                messages.child(messageID).child('activity').push(eventObj(person, "started draft"));
-
+            messages.child(messageID).child('activity').push(eventObj(person, "started draft"));
 
             messages.child(messageID).child('realtime').on('value', function(snapshot) {
                 var persontyping = snapshot.val();
@@ -224,7 +215,8 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             if (messageID && person && thread) {
                 if (thread[messageID].realtime) {
                     thread[messageID].realtime = null;
-                    messages.update(thread);
+                    // messages.update(thread);
+                    messages.child(messageID).child('reatime').update(thread[messageID].realtime);
                 }
             }
         }
