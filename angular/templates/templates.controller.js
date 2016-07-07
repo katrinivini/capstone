@@ -1,7 +1,7 @@
 'use strict';
 // var app = require('../module.js').app;
 
-app.controller('TemplatesCtrl', function($scope, $firebaseArray) {
+app.controller('TemplatesCtrl', function($scope, $firebaseArray, $state) {
 
 	$scope.templates = [];
 
@@ -20,12 +20,13 @@ app.controller('TemplatesCtrl', function($scope, $firebaseArray) {
 		var body = template.body;
 		var temp = template.members.split(", ");
 		var members = []; 
+
 		temp.forEach(function(item){
 			members.push(item.trim());
 		})
 		arr.$add({
 			title: title,
-			body: body, 
+			body: body,
 			members: members, 
 		})
 		.then(function(ref) {
@@ -53,6 +54,10 @@ app.controller('TemplatesCtrl', function($scope, $firebaseArray) {
 			console.log("added record with id " + id);
 			arr.$indexFor(id); // returns location in the array
 		});
+	}
+
+	$scope.showTemplate = function(template){
+		$scope.template = template;
 	}
 	
 });

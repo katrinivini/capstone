@@ -505,5 +505,6 @@ div.template-list:hover {
 
 .template-details {
     margin-top: 20px;
+    padding: 5px;
     /*width: 48%;*/
 }

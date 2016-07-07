@@ -92,7 +92,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk){
 						event.dropdown.el.appendChild(list);
 
 						list.addEventListener('click', function(event){
-							buttonEvent.composeView.insertTextIntoBodyAtCursor(template.body);
+							buttonEvent.composeView.insertTextIntoBodyAtCursor(template.body)
 						})
 					})
 				});
