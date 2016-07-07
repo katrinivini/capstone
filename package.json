@@ -8,7 +8,7 @@
   },
   "browserify": {
     "transform": [
-      "browserify-css", 
+      "browserify-css",
       "brfs"
     ]
   },
@@ -17,6 +17,7 @@
   "dependencies": {
     "angular": "^1.5.7",
     "angular-ui-router": "^0.3.1",
+    "angular-ui-select": "^0.12.100",
     "angularfire": "^2.0.1",
     "bootstrap": "^3.3.6",
     "brfs": "^1.4.3",

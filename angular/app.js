@@ -6,28 +6,6 @@ var assignapp = angular.module('shazzam', ['firebase']);
 
 assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 
-    console.log("inside assignapp.js AssignCtrl");
-
-    var member;
-    var messageID;
-    var threadID;
-    var readMessages;
-    // var messages = firebase.database().ref('/messages');
-    var messages = require('../js/myapp.js').messages;
-    // var members = firebase.database().ref('/members');
-    var members = require('../js/myapp.js').members;
-
-
-    // This came from taskhistory.js.
-    function eventObj(p, a) {
-        return {
-            person: p,
-            action: a,
-            date: firebase.database.ServerValue.TIMESTAMP
-        }
-    }
-    console.log("inside assignapp.js AssignCtrl");
-
     var member;
     var messageID;
     var threadID;

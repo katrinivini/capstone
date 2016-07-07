@@ -4,12 +4,25 @@ app.controller('LabelsCtrl', function($scope, $firebase, $firebaseArray) {
 
 	$scope.labels = [];
 
+	//fetch shared labels from firebase
 	var ref = firebase.database().ref('/sharedLabels'); 
 	var arr = $firebaseArray(ref);
 	arr.$loaded().then(function(data) {
 		angular.forEach(arr, function(item) {
 			var members = item.members.join(', ');
 			$scope.labels.push({id: item.$id, name: item.label, sharedWith: members});
+		})
+	});
+
+	$scope.users = [];
+
+	//fetch members from firebase
+	var foo = firebase.database().ref('/members'); 
+	var mem = $firebaseArray(foo);
+	mem.$loaded().then(function(data) {
+		angular.forEach(mem, function(thing) {
+			console.log('here is the thing', thing)
+			$scope.users.push({id: thing.$id, name: thing.name, email: thing.email});
 		})
 	});
 

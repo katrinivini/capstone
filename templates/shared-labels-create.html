@@ -27,7 +27,12 @@
 
 		<h3>Share the labels among these users (type email to invite new users)</h3>
 		<div class="input-group">
-			<input type="text" placeholder="Enter emails separated by a comma" class="form-control label-name" ng-model="label.members">
+			<!-- <input type="text" placeholder="Enter emails separated by a comma" class="form-control label-name" ng-model="label.members"> -->			
+			<ui-select ng-model="label.members">
+				<ui-select-choices ng-repeat="m in users | filter: $select.search">
+					{{m.email}}
+				</ui-select-choices>
+			</ui-select>
 		</div>
 
 		<!-- <button>Cancel</button> -->
