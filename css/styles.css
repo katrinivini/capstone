@@ -498,6 +498,10 @@ div.template-list:hover {
     background-color: #F3F3F4;
 }
 
+.template-list-active {
+    background-color: #F3F3F4;
+}
+
 .template-list p {
     margin: 0;
     font-size: smaller;

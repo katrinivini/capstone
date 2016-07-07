@@ -11,20 +11,12 @@
     </div>
     <div class="row templates">
         <div class="template-preview col-sm-4">
-            <div class="template-list" ng-repeat="template in templates" ng-click="showTemplate(template)">
-                <p>Subject: <span class="template-title">{{template.title}}</span></p>
-                <p>Body: <span class="template-body">{{template.body.slice(0, 40)}}...</span></p>
+            <div class="template-list" ng-repeat="template in templates" ng-class="{'template-list-active': thetemplate == template}" ng-click="showTemplate(template)">
+                <p><span class="template-title">Subject:</span> {{template.title}}</p>
+                <p><span class="template-title">Body:</span> <span class="template-body">{{template.body.slice(0, 40)}}...</span></p>
             </div>
         </div>
         <div class="template-details col-sm-8">
-            <p>{{template.title}}</p>
-            <!-- </br> -->
-            <p>{{template.body}}</p>
-            <!-- </br> -->
-            <p>{{template.sharedWith}}</p>
-            <!-- </br> -->
-            <button ng-show="template" class="btn btn-orange" ui-sref="emailtemplates.edit">Edit</button>
-            <button ng-show="template" class="btn btn-orange">Delete</button>
             <ui-view></ui-view>
         </div>
     </div>

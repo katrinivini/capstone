@@ -33,10 +33,12 @@ app.controller('TemplatesCtrl', function($scope, $firebaseArray, $state) {
 			var id = ref.key;
 			console.log("added record with id " + id);
 			console.log("location in array", arr.$indexFor(id)); // returns location in the array
+			$state.go('emailtemplates.preview')
 		});
 	}
 
-	$scope.removeTemplate = function(id){
+	$scope.removeTemplate = function(){
+		var id = $scope.template.id;
 		console.log('label id', id);
 		var item = arr.$indexFor(id)
 		arr.$remove(item)
@@ -44,6 +46,7 @@ app.controller('TemplatesCtrl', function($scope, $firebaseArray, $state) {
 			console.log('successfully deleted', ref);
 			ref.key === item.$id; // true
 			$scope.templates.splice(item, 1);
+			$state.go($state.current, {}, {reload: true});
 		});
 	}
 
@@ -57,7 +60,9 @@ app.controller('TemplatesCtrl', function($scope, $firebaseArray, $state) {
 	}
 
 	$scope.showTemplate = function(template){
+		$scope.thetemplate = template;
 		$scope.template = template;
+		$state.go('emailtemplates.preview')
 	}
 	
 });
