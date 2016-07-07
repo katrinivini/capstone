@@ -29,7 +29,7 @@
           "https://www.googleapis.com/auth/gmail.labels"
         ]
     },
-    "content_security_policy": "script-src 'self' 'unsafe-eval' https://*.google.com https://capstone1604gha.firebaseio.com; object-src 'self' https://*.google.com https://capstone1604gha.firebaseio.com",
+    "content_security_policy": "script-src 'self' 'unsafe-eval' https://*.google.com https://*.firebaseio.com; object-src 'self' https://*.google.com https://*.firebaseio.com",
 
     "content_scripts": [{
         "matches": ["https://mail.google.com/*", "https://inbox.google.com/*"],

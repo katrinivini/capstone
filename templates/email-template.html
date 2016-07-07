@@ -1,38 +1,31 @@
 <div id="right-dashboard">
-
-	<h2 class="section title">Email Templates</h2>
-	<p>You can use these email templates while composing/replying to an email in Gmail</p>
-	<!-- <button class="btn btn-blue" ui-sref="emailtemplatescreate">Create a new template</button> -->
-	<a class="btn btn-orange" ui-sref="emailtemplatescreate">
-		<i class="fa fa-plus">
-			Create New Template
-		</i>
-	</a>
-
-	<div class="template-preview" class="col-md-6">
-		<div class="template-list" ng-repeat="template in templates">
-			<p>Subject: </p>
-			<p class="template-title">{{template.title}}</p>
-			<p>Body: </p>
-			<p class="template-body">{{template.body.slice(0, 40)}}...</p>
-		</div>
-	</div>		
-
-<!-- 	<div class="template-details" class="col-md-6">
-		{{template.title}}</p></br>
-		{{template.body}}</p></br>
-		{{template.sharedWith}}</p></br>
-	</div> -->
-
-	<button class="btn btn-blue" ui-sref="emailtemplatesedit">Edit</button>
-
-	<button class="btn btn-blue">Delete</button>
-
-
-
-
+    <div class="row">
+        <h2 class="section title">Email Templates</h2>
+        <p>You can use these email templates while composing/replying to an email in Gmail</p>
+        <!-- <button class="btn btn-blue" ui-sref="emailtemplatescreate">Create a new template</button> -->
+        <button class="btn btn-blue" ui-sref="emailtemplatescreate">
+            <!-- <i class="fa fa-plus"> -->
+            <span class="glyphicon glyphicon-plus"></span> Create New Template
+            <!-- </i> -->
+        </button>
+    </div>
+    <div class="row templates">
+        <div class="template-preview col-sm-4">
+            <div class="template-list" ng-repeat="template in templates">
+                <p>Subject: <span class="template-title">{{template.title}}</span></p>
+                
+                <p>Body: <span class="template-body">{{template.body.slice(0, 40)}}...</span></p>
+            </div>
+        </div>
+        <div class="template-details col-sm-8">
+            <p>Placeholder Title {{template.title}}</p>
+            <!-- </br> -->
+            <p>Placeholder Body {{template.body}}</p>
+            <!-- </br> -->
+            <p>Placeholder Shared With{{template.sharedWith}}</p>
+            <!-- </br> -->
+        </div>
+        <!--  <button class="btn btn-orange" ui-sref="emailtemplatesedit">Edit</button>
+        <button class="btn btn-orange">Delete</button> -->
+    </div>
 </div>
-
-
-
-
