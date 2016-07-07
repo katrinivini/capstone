@@ -1,20 +1,17 @@
+var messages = require('../myapp.js').messages;
+var fs = require('fs');
+var path = require('path')
+
+var commentTemplate = fs.readFileSync(path.resolve(__dirname + '/../../templates/comment.html'), 'utf8');
+
 var person;
 var messageID;
 var Firebase = require('firebase');
 $ = require('jquery');
 var thread;
-var threadId;
-var messages = require('../myapp.js').messages;
-var taskHistory;
+var form;
+var addComment;
 
-
-function eventObj(p, a) {
-    return {
-        person: p,
-        action: a,
-        date: Firebase.database.ServerValue.TIMESTAMP
-    }
-}
 
 var unwatchLastThread = null;
 var unwatchLastComment = null;
@@ -73,6 +70,16 @@ function createActivity(person, action, date) {
 }
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
+    var parser = new DOMParser();
+
+    function eventObj(p, a) {
+        return {
+            person: p,
+            action: a,
+            date: Firebase.database.ServerValue.TIMESTAMP
+        }
+    }
+
     sdk.Conversations.registerThreadViewHandler(function(threadView) {
         threadId = threadView.getThreadID();
         taskHistory = document.createElement('div');
@@ -112,11 +119,10 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             threadId: threadId
         }, function(hash) {
             messageID = hash;
+            watchThread(messageID);
             person = sdk.User.getAccountSwitcherContactList()[0].name;
             messages.once('value', function(snapshot) { //this is a promise
-                console.log('hello messages once');
-                thread = snapshot.val()
-                    // console.log('we are in messages.once', snapshot.val());
+                // console.log('we are in messages.once', snapshot.val());
                 thread = snapshot.val();
                 if (thread && thread[hash]) { //we have thread and the thread
 
@@ -125,11 +131,11 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                         return personobj.person === person;
                     });
                     if (returnee && returnee.length > 0 && returnee[0].status === 'read') return;
-                messages.child(hash).child('activity').push(eventObj(person, 'read'));
-                messages.child(hash).child('people').push({
-                    person: person,
-                    status: 'read'
-                });
+                    messages.child(hash).child('activity').push(eventObj(person, 'read'));
+                    messages.child(hash).child('people').push({
+                        person: person,
+                        status: 'read'
+                    });
                 } else { //we either don't have the thread or dont have the thread
                     if (!thread) thread = {};
                     thread[hash] = {
@@ -141,7 +147,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                     };
                     messages.update(thread);
                 }
-                
+
             })
         })
     });
@@ -218,5 +224,5 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             }
         }
 
+    });
 });
-
