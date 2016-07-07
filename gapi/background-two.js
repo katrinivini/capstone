@@ -32,6 +32,9 @@ var CLIENT_ID = require('../manifest.json').oauth2.client_id
 
 var SCOPES = [
     'https://mail.google.com/',
+    'profile',
+    'openid',
+    'https://www.googleapis.com/auth/plus.me',
     'https://www.googleapis.com/auth/gmail.readonly',
     'https://www.googleapis.com/auth/gmail.modify',
     'https://www.googleapis.com/auth/gmail.labels'
@@ -147,3 +150,4 @@ var getThread = function(userId, threadId, callback) {
 require('./taskhistory.js');
 require('./dashboard.js');
 require('./assign.js');
+require('./get-profile.js');

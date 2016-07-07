@@ -21,7 +21,6 @@ var rootRef = firebase.database().ref();
 var messages = firebase.database().ref('/messages');
 var members = firebase.database().ref('/members');
 var sharedLabels = firebase.database().ref('/sharedLabels');
-
 var assignedHistory = firebase.database().ref('/assigned');
 
 var templates = firebase.database().ref('/templates');
