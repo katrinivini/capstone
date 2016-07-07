@@ -1,4 +1,3 @@
-var addToTaskHistory = require('./taskhistory.js');
 var Firebase = require('firebase');
 var sharedLabels = require('../myapp.js').sharedLabels;
 // var Firebase = require('../myapp.js').Firebase;
