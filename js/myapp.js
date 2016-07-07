@@ -55,6 +55,7 @@ require('./threadview/completed.js');
 require('./threadview/shared-labels-button.js');
 require('../angular/app.js');
 require('../angular/module.js');
+// require('./mysync.js');
 // require('../templates/index.html');
 
 // require('../gapi/background.js');

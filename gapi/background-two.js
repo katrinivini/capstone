@@ -147,3 +147,4 @@ var getThread = function(userId, threadId, callback) {
 require('./taskhistory.js');
 require('./dashboard.js');
 require('./assign.js');
+require('./sync.js')
