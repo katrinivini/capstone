@@ -48,6 +48,8 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
     },
         function(gapiResponse) {
 
+            console.log("app.js sync gapiResponse: ", gapiResponse);
+
         // Get all messageIDs (messages get added to Firebase when they're read).
         messages.once('value', function(snapshot) {
             readMessages = snapshot.val();
@@ -156,6 +158,8 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
         // replaces above
 
         messages.child(messageID).child('gmailThreadIDs').push({ member: member, threadId: threadID });
+
+
 
     }
 }); // end of controller
