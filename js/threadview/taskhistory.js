@@ -135,11 +135,6 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                         person: person,
                         status: 'read'
                     });
-                    thread[hash].activity.push(eventObj(person, "read"));
-                    thread[hash].people.push({
-                        person: person,
-                        status: 'read'
-                    })
                 } else { //we either don't have the thread or dont have the thread
                     if (!thread) thread = {};
                     thread[hash] = {
