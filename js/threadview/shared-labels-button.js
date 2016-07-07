@@ -1,7 +1,7 @@
 var addToTaskHistory = require('./taskhistory.js');
 var Firebase = require('firebase');
 var sharedLabels = require('../myapp.js').sharedLabels;
-var Firebase = require('../myapp.js').Firebase;
+// var Firebase = require('../myapp.js').Firebase;
 var messages = require('../myapp.js').messages;
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     var messageID;

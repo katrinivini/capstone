@@ -19,14 +19,6 @@ var messages = require('../js/myapp.js').messages;
 var members = require('../js/myapp.js').members;
 var assignments = require('../js/myapp.js').assignments;
 // var Firebase = require('../js/myapp.js').Firebase;
-// This came from taskhistory.js.
-function eventObj(p, a) {
-    return {
-        person: p,
-        action: a,
-        date: firebase.database.ServerValue.TIMESTAMP
-    }
-}
 
 assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
     console.log("inside assignapp.js AssignCtrl");
@@ -74,7 +66,7 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
     var membersArray = $firebaseArray(members);
     membersArray.$loaded().then(function(data) {
         angular.forEach(membersArray, function(item) {
-            $scope.members.push(item.$value);
+            $scope.members.push(item.name);
         })
     });
 
