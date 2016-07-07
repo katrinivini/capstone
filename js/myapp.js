@@ -23,12 +23,19 @@ var members = firebase.database().ref('/members');
 var sharedLabels = firebase.database().ref('/sharedLabels');
 var assignedHistory = firebase.database().ref('/assigned');
 
+var templates = firebase.database().ref('/templates');
+// sharedLabels.on('child_added', function(data){
+//  data.ref('/members');
+// })
+var assignments = firebase.database().ref('/assignments');
 /*also require all the files here. browserify will compile them and put them into the bundle file*/
 module.exports = {
     $: $,
     sharedLabels: sharedLabels,
     messages: messages,
     members: members,
+    assignments: assignments,
+    templates: templates,
     Firebase: Firebase,
     assignedHistory: assignedHistory
 }
