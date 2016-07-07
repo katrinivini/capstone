@@ -7,7 +7,7 @@
 		</div> 
 		<!-- option1 -->
 		<div class="input-group">
-			<input type="text" placeholder="Enter a label name" class="form-control label-name" ng-model="label.label">
+			<input type="text" placeholder="Enter a label name" class="form-control label-input" ng-model="newLabel.label">
 		</div>
 		<!-- OR -->
 		<h3>OR</h3>
@@ -17,25 +17,26 @@
 			<h4>Choose a label name from your existing Gmail labels</h4>
 
 			<form name="myForm">
-			  	<!-- <label for="repeatSelect"> Repeat select: </label> -->
-			  	<select name="repeatSelect" id="repeatSelect" ng-model="label.label">
+			  	<select name="repeatSelect" id="repeatSelect" ng-model="newLabel.label">
 			    	<option ng-repeat="label in gapiLabels" >{{label}}</option>
 			  	</select>
 			</form>
 
 		</div>
 
-		<h3>Share the labels among these users (type email to invite new users)</h3>
+		<h4>Share the labels among these users</h4>
 		<div class="input-group">
-			<!-- <input type="text" placeholder="Enter emails separated by a comma" class="form-control label-name" ng-model="label.members"> -->			
-			<ui-select ng-model="label.members">
-				<ui-select-choices ng-repeat="m in users | filter: $select.search">
-					{{m.email}}
-				</ui-select-choices>
+			<ui-select multiple ng-model="newLabel.members" theme="bootstrap" sortable="true" close-on-select="false" class="label-input">
+			  <ui-select-match placeholder="Select or search a person in the list...">
+			  	{{$item.name}} &lt;{{$item.email}}&gt;
+			  </ui-select-match>
+			  <ui-select-choices repeat="item in users | filter: {name: $select.search, email: $select.search}">
+			      {{item.name}}: {{item.email}}
+			  </ui-select-choices>
 			</ui-select>
+
 		</div>
 
-		<!-- <button>Cancel</button> -->
-		<button class="btn btn-orange" ng-click="addLabel(label)">Save</button>
+		<button class="btn btn-orange" ng-click="addLabel(newLabel)">Save</button>
 
 </div>

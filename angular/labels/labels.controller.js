@@ -1,6 +1,6 @@
 'use strict';
 
-app.controller('LabelsCtrl', function($scope, $firebase, $firebaseArray) {
+app.controller('LabelsCtrl', function($scope, $firebase, $firebaseArray, $state) {
 
 	$scope.labels = [];
 
@@ -9,7 +9,12 @@ app.controller('LabelsCtrl', function($scope, $firebase, $firebaseArray) {
 	var arr = $firebaseArray(ref);
 	arr.$loaded().then(function(data) {
 		angular.forEach(arr, function(item) {
-			var members = item.members.join(', ');
+			var temp = []; 
+				// console.log(item.members)
+				for (var i = 0; i < item.members.length; i++) {
+					temp.push(item.members[i].email);
+				}
+				var members = temp.join(', ')
 			$scope.labels.push({id: item.$id, name: item.label, sharedWith: members});
 		})
 	});
@@ -21,18 +26,18 @@ app.controller('LabelsCtrl', function($scope, $firebase, $firebaseArray) {
 	var mem = $firebaseArray(foo);
 	mem.$loaded().then(function(data) {
 		angular.forEach(mem, function(thing) {
-			console.log('here is the thing', thing)
 			$scope.users.push({id: thing.$id, name: thing.name, email: thing.email});
+			// console.log('here are the users', $scope.users);
 		})
 	});
 
+	//set up the newLabel object because for some reason if you don't provide an empty array for members, it will break 
+	$scope.newLabel = {label: "", members: []};
+
 	$scope.addLabel = function(label){
+		console.log('label here', label.members)
 		var name = label.label;
-		var temp = label.members.split(", ");
-		var members = []; 
-		temp.forEach(function(item){
-			members.push(item.trim());
-		})
+		var members = label.members;
 		arr.$add({
 			label: name,
 			members: members, 
@@ -41,6 +46,7 @@ app.controller('LabelsCtrl', function($scope, $firebase, $firebaseArray) {
 			var id = ref.key;
 			console.log("added record with id " + id);
 			console.log("location in array", arr.$indexFor(id)); // returns location in the array
+			$state.go('sharedlabels')
 		});
 	}
 
@@ -54,7 +60,7 @@ app.controller('LabelsCtrl', function($scope, $firebase, $firebaseArray) {
 			$scope.labels.splice(item, 1);
 		});
 	}
-
+	//updateLabel func is not hooked up to anything
 	$scope.updateLabel = function(id){
 		arr.$add({})
 		.then(function(ref) {
