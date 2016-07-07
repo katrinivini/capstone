@@ -43,15 +43,15 @@ module.exports = {
 
 /* -------- JS FILES ----------- */
 
-require('../gapi/taskhistory.js');
+// require('../gapi/taskhistory.js');
 require('./compose/realtime-updates.js');
 require('./dashboard/dashboard.js');
-require('./left-navmenu/myconversations.js');
-require('./left-navmenu/shared-labels.js');
+// require('./left-navmenu/myconversations.js');
+// require('./left-navmenu/shared-labels.js');
 require('./threadview/taskhistory.js');
-require('./threadview/comment.js');
+// require('./threadview/comment.js');
 require('./threadview/assign/assign-button.js');
-require('./threadview/typing-status.js');
+// require('./threadview/typing-status.js');
 require('./threadview/shared-labels-button.js');
 require('../angular/app.js');
 require('../angular/module.js');
