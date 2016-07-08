@@ -156,7 +156,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                             status: 'read'
                         }]
                     };
-                    messages.update(thread);
+                    messages.child(messageID).update(thread[hash]);
                 }
             })
         })
@@ -228,8 +228,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             if (messageID && person && thread) {
                 if (thread[messageID].realtime) {
                     thread[messageID].realtime = null;
-                    // messages.update(thread);
-                    messages.child(messageID).child('reatime').update(thread[messageID].realtime);
+                    messages.child(messageID).child('realtime').update(thread[messageID].realtime);
                 }
             }
         }
