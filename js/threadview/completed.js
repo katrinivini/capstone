@@ -1,11 +1,20 @@
 var messages = require('../myapp.js').messages;
+var members = require('../myapp.js').members;
 var Firebase = require('firebase');
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     var threadId;
     sdk.Conversations.registerThreadViewHandler(function(threadView) {
         threadId = threadView.getThreadID();
     })
-    var person = sdk.User.getAccountSwitcherContactList()[0].name;
+    var name = sdk.User.getAccountSwitcherContactList()[0].name;
+    members.once('value', function(snapshot) {
+        var people = Array.prototype.slice.call(snapshot.val());
+        people.forEach(function(p, i) {
+            if (name === p.name) {
+                index = i;
+            }
+        })
+    })
     sdk.Toolbars.registerToolbarButtonForThreadView({
         title: 'Complete',
         iconUrl: 'https://cdn2.iconfinder.com/data/icons/web/512/Check_Sign-512.png',
@@ -15,7 +24,8 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 type: 'read message',
                 threadId: threadId
             }, function(messageID) {
-                messages.child(messageID).child('activity').push(eventObj(person, 'completed this email'))
+                messages.child(messageID).child('activity').push(eventObj(name, 'completed this email'))
+                members.child(index).child('activity').push({ action: 'completed', threadId: threadId, date: Firebase.database.ServerValue.TIMESTAMP })
             })
         }
     })

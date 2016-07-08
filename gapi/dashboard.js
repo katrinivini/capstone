@@ -9,7 +9,7 @@ function listLabels(userId, callback) {
 
 // Listens for requests from content script app.js.
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    console.log('in the listener function in dashboard.js', request, sender)
+    // console.log('in the listener function in dashboard.js', request, sender)
     if (request.type === 'list labels') {
         listLabels('me', function(response) {
             var arrayOfLabelObjects = response.labels;
