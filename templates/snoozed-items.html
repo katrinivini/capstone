@@ -1,45 +1,46 @@
-<div id="right-dashboard">
-		<h2 class="section title">Snoozed Items</h2>
-
-		<!-- <button class="btn btn-blue" ui-sref="sharedlabelscreate">Create New Shared Label</button> -->
-
-		<form>
-			<div class="form-group order-filter">
-		        <div class="search-bar inner-addon right-addon">
-					<i class="glyphicon glyphicon-search"></i>
-					<input type="text" class="form-control" placeholder="Filter snoozed items by name" ng-model="searchLabels">
-				</div>      
-			</div>
-		</form>
-
-		<table class="table" id="label-table">
-			<thead>
-				<tr>
-					<th></th>
-					<th>Email ID</th>
-					<th>Date Snoozed</th>
-					<th>Unsnooze</th>
-					<!-- <th>Edit</th> -->
-					<th></th>
-				</tr>
-			</thead>
-
-			<tbody>
-				<tr ng-repeat="label in labels | filter: searchLabels">
-					<th></th>
-					<!-- <th>{{label.name}}</th> -->
-					<!-- <th>{{label.sharedWith}}</th> -->
-					<th>
-						<button class="btn btn-default btn-sm btn-delete" ng-click="removeLabel(label.id)" title="Delete label">
+<div id="right-dashboard" ng-controller="SnoozeCtrl">
+    <h2 class="section title">Snoozed Items</h2>
+    <!-- <button class="btn btn-blue" ui-sref="sharedlabelscreate">Create New Shared Label</button> -->
+    <form>
+        <div class="form-group order-filter">
+            <div class="search-bar inner-addon right-addon">
+                <i class="glyphicon glyphicon-search"></i>
+                <input type="text" class="form-control" placeholder="Filter snoozed items by name" ng-model="searchLabels">
+            </div>
+        </div>
+    </form>
+    <table class="table" id="label-table">
+        <thead>
+            <tr>
+                <!-- <th></th> -->
+                <th>Email</th>
+                <th>Date Snoozed</th>
+                <th>Unsnooze</th>
+                <!-- <th>Edit</th> -->
+                <!-- <th>{{hello}}</th> -->
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="snoozedemail in snoozedemails">
+                <td>{{snoozedemail.body}}</td>
+                <!-- <th>{{label.name}}</th> -->
+                <!-- <th>{{label.sharedWith}}</th> -->
+                <td>
+                    <!-- <button class="btn btn-default btn-sm btn-delete" ng-click="removeLabel(label.id)" title="Delete label">
 			        		<i class="glyphicon glyphicon-remove"></i>
-			        	</button>
-					</th>						
-<!-- 					<th>
+			        	</button> -->
+                    {{snoozedemail.date}}
+                </td>
+                <!-- 					<th>
 						<button class="btn btn-default btn-sm" ng-click="updateLabel(label.id)" title="Edit label">
 			        	</button>
 					</th> -->
-					<th></th>			
-				</tr>
-			</tbody>
-		</table>
+                <td>
+                    <button class="btn btn-default btn-sm btn-delete" ng-click="removeSnooze(snoozedemail.threadId)" title="Delete label">
+                        <i class="glyphicon glyphicon-remove"></i>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </div>
