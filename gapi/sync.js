@@ -8,13 +8,12 @@ var config = {
     storageBucket: "https://capstone1604gha.firebaseio.com",
 };
 
+// Sets up Firebase and gets messages branch of database.
 firebase.initializeApp(config);
-
 var messages = firebase.database().ref('/messages');
-
-
-
 messages.once('value', function(snapshot) {messagesDatabase = snapshot.val();})
+
+
 // Listens for requests from content script mysync.js.
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
@@ -31,7 +30,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         var labelsToRemove;
         var request = request;
         var arrayOfSyncedIDs;
-        var query = "newer_than:1d to:teamidkgha@googlegroups.com OR from:teamidkgha@googlegroups.com OR from:b.emma.lai@gmail.com OR from:rina.krevat@gmail.com OR from:katrinamvelez@gmail.com";
+        var query = "newer_than:1d";
+        // var query = "newer_than:1d from:emailkathy@gmail.com OR to:teamidkgha@googlegroups.com OR from:teamidkgha@googlegroups.com to:teamidkgha@gmail.com OR from:teamidkgha@gmail.com OR from:b.emma.lai@gmail.com OR from:rina.krevat@gmail.com OR to:katrinavelez@gmail.com OR from:katrinamvelez@gmail.com";
         // var query = "is:unread newer_than:7d to:teamidkgha@googlegroups.com OR from:teamidkgha@googlegroups.com OR from:b.emma.lai@gmail.com OR from:emailkathy@gmail.com OR from:rina.krevat@gmail.com OR from:katrinamvelez@gmail.com";
 
         if (request.type === 'sync') {
@@ -40,19 +40,17 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             listMessages('me', query, function(response) {
                 // response is [{id: gmailMessageID, threadId: gmailThreadID}, ...]
                 let arrayOfGmailIdObjects = response;
-                console.log("sync.js listMessages response: ", arrayOfGmailIdObjects);
                 let arrayOfGmailMessageIDs = arrayOfGmailIdObjects.map(function(obj)
                 {
                     return obj.id;
                 });
-                console.log("arrayOfGmailMessageIDs: ", arrayOfGmailMessageIDs);
+                
                 arrayOfSyncedIDs = arrayOfGmailMessageIDs.map(syncID);
+                console.log("arrayOfSyncedIDs: ", arrayOfSyncedIDs);
 
             }); // closes listMessages
 
         } // closes if block
-        console.log("arrayOfSyncedIDs: ", arrayOfSyncedIDs);
-        // sendResponse("heyo from sync.js");
 
     }) // closes addListener
 
@@ -199,23 +197,23 @@ function syncID(gmailMessageID) {
             // Saves updates.
             messages.update(messagesDatabase);
 
-            return {
-                memberEmailAddress: "abc123@yahoo.com",
-                messageHash: response.messageHash,
-                gmailThreadID: "testgmailthread12345"
-            };
+            // return {
+            //     memberEmailAddress: "abc123@yahoo.com",
+            //     messageHash: response.messageHash,
+            //     gmailThreadID: "testgmailthread12345"
+            // };
 
         })
-        .then(function(response) {
+        // .then(function(response) {
 
-            if (!messagesDatabase[response.messageHash].gmailThreadIDs) messagesDatabase[response.messageHash].gmailThreadIDs = {};
+        //     if (!messagesDatabase[response.messageHash].gmailThreadIDs) messagesDatabase[response.messageHash].gmailThreadIDs = {};
 
-            messagesDatabase[response.messageHash]["gmailThreadIDs"][response.gmailThreadID] = response.memberEmailAddress;
+        //     messagesDatabase[response.messageHash]["gmailThreadIDs"][response.gmailThreadID] = response.memberEmailAddress;
 
-            // Saves updates.
-            messages.update(messagesDatabase);
+        //     // Saves updates.
+        //     messages.update(messagesDatabase);
 
-        })
+        // })
         // .catch(function(error) {
         //     console.log("add label error: ", error);
         // })
