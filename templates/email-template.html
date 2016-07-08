@@ -12,8 +12,8 @@
     <div class="row templates">
         <div class="template-preview col-sm-4">
             <div class="template-list" ng-repeat="template in templates" ng-class="{'template-list-active': thetemplate == template}" ng-click="showTemplate(template)">
-                <p><span class="template-title">Subject:</span> {{template.title}}</p>
-                <p><span class="template-title">Body:</span> <span class="template-body">{{template.body.slice(0, 40)}}...</span></p>
+                <p><span class="template-title">{{template.title}}</span></p>
+                <p><span class="template-title">Body:</span> <span class="template-body">{{template.body.slice(0, 75)}}...</span></p>
             </div>
         </div>
         <div class="template-details col-sm-8">

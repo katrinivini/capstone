@@ -213,7 +213,7 @@ ul.nav a:hover {
 }
 
 .btn-orange {
-    margin-top: 20px;
+    margin-top: 10px;
     background: #F8AC59;
     color: #fff;
     text-shadow: none;
@@ -492,6 +492,8 @@ ul.nav a:hover {
     border: 1px solid #eee;
     padding: 5px;
     margin: 5px 0;
+    margin-left: -15px;
+    height: 62px;
 }
 
 div.template-list:hover {
@@ -511,4 +513,14 @@ div.template-list:hover {
     margin-top: 20px;
     padding: 5px;
     /*width: 48%;*/
+}
+
+.template-form input {
+    width: 75%;
+    margin-top: -7px;
+}
+
+.template-form textarea {
+    width: 75%;
+    margin-top: -7px;
 }

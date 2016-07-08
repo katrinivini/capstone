@@ -1,15 +1,11 @@
-<p>Edit this template</p>
 <form class="template-form">
-    <p>Subject:</p>
-    <br>
-    <input type="text" ng-model="template.title"></input><br>
-    <p>Body:</p>
-    <br>
-    <textarea rows=5>{{template.body}}</textarea>
-    <br>
+    <p>Template Title:</p>
+    <input type="text" ng-model="copyTemplate.title"></input>
+    <br><br>
+    <p>Message Body:</p>
+    <textarea rows=5 ng-model="copyTemplate.body">{{copyTemplate.body}}</textarea>
     <!-- <p>Shared With:</p> -->
     <!-- <input type="text" ng-model="template.members"></input> -->
-    <br>
 </form>
 <button class="btn btn-orange" ng-click="updateTemplate()">Update</button>
-<button class="btn btn-orange" ng-click="removeTemplate()">Discard</button>
+<button class="btn btn-orange" ng-click="discardTemplate()">Discard</button>
