@@ -31,22 +31,27 @@ body.appendChild(DIV);
 var CLIENT_ID = require('../manifest.json').oauth2.client_id
 
 var SCOPES = [
-    'https://www.googleapis.com/auth/gmail.readonly', 
-    'https://www.googleapis.com/auth/gmail.modify', 
-    'https://www.googleapis.com/auth/gmail.labels', 
-    'https://mail.google.com'
+    'https://mail.google.com/',
+    'profile',
+    'openid',
+    'https://www.googleapis.com/auth/plus.me',
+    'https://www.googleapis.com/auth/gmail.readonly',
+    'https://www.googleapis.com/auth/gmail.modify',
+    'https://www.googleapis.com/auth/gmail.labels'
 ];
 
 /**
  * Check if current user has authorized this application.
  */
+var config = {
+    'client_id': CLIENT_ID,
+    'scope': SCOPES,
+    'immediate': true
+}
 window.checkAuth = function checkAuth() {
     console.log('did you get in here?');
-    gapi.auth.authorize({
-        'client_id': CLIENT_ID,
-        'scope': SCOPES,
-        'immediate': true
-    }, handleAuthResult);
+    gapi.auth.authorize(config, handleAuthResult);
+    // config['immediate'] = true;
 }
 
 /**
@@ -55,6 +60,7 @@ window.checkAuth = function checkAuth() {
  * @param {Object} authResult Authorization result.
  */
 function handleAuthResult(authResult) {
+    // config['immediate'] = true;
     console.log('authResult: ', authResult);
     var authorizeDiv = document.getElementById('authorize-div');
     if (authResult && !authResult.error) {
@@ -131,21 +137,20 @@ function appendPre(message) {
 
 var getThread = function(userId, threadId, callback) {
     return gapi.client.gmail.users.messages.get({
-        'id': threadId,
-        'userId': userId,
-        'format': 'metadata'
-    })
-    .then(function(resp){
-        return resp;
-    })
-    // return req.execute(callback);
+            'id': threadId,
+            'userId': userId,
+            'format': 'metadata'
+        })
+        .then(function(resp) {
+            return resp;
+        })
+        // return req.execute(callback);
 }
 
-
-
-
-
-require('./taskhistory.js');
-require('./comment.js');
-require('./dashboard.js');
 require('./assign.js');
+require('./dashboard.js');
+require('./fetch-email.js');
+require('./get-profile.js');
+require('./sync.js');
+require('./taskhistory.js');
+

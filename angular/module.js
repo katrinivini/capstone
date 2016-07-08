@@ -9,7 +9,7 @@ var config = {
 
 var Firebase = firebase.initializeApp(config);
 
-var app = angular.module('app', ['firebase', 'ui.router']);
+var app = angular.module('app', ['firebase', 'ui.router', 'ui.select']);
 
 app.config(function($stateProvider) {
     // // 	// This turns off hashbang urls (/#about) and changes it to something normal (/about)

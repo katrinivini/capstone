@@ -1,9 +1,8 @@
-var addToTaskHistory = require('./taskhistory.js');
 var Firebase = require('firebase');
 var sharedLabels = require('../myapp.js').sharedLabels;
+// var Firebase = require('../myapp.js').Firebase;
 var messages = require('../myapp.js').messages;
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
-    // var $ = require('jquery');
     var messageID;
     var threadId;
     var taskHistory;
@@ -24,10 +23,6 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                     threadId: threadId
                 }, function(hash) {
                     messageID = hash;
-
-                    messages.child(messageID).child('activity').once('value', function(snapshot) {
-                        taskHistory = snapshot.val();
-                    })
                 }))
                 .then(function() {
                     Promise.resolve(sharedLabels.once('value', function(snapshot) {
@@ -39,23 +34,20 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                         var list = document.createElement('div');
                         labels.forEach(function(label) {
                             var p = document.createElement('div');
-                            // p.classList.add(label);
                             p.innerHTML = label;
                             p.classList.add('shared-labels')
                             p.addEventListener('click', function(event) {
-                                taskHistory.push({
+                                messages.child(messageID).child('activity').push({
                                     person: person,
                                     action: 'assigned the shared label ' + p.innerHTML,
                                     date: Firebase.database.ServerValue.TIMESTAMP
-                                })
-                                messages.child(messageID).child('activity').set(taskHistory);
+                                });
                             })
                             list.appendChild(p);
                         })
                         event.dropdown.el.appendChild(list);
                     }))
                 })
-
         }
-    })
+    });
 });

@@ -23,17 +23,19 @@ angular.element(document).ready(function() {
 
 // Makes Assign button that shows modal on click.
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
-
     sdk.Toolbars.registerToolbarButtonForThreadView({
         title: 'Assign',
         iconUrl: 'https://cdn3.iconfinder.com/data/icons/box-and-shipping-supplies-icons/447/Clipboard_With_Pencil-512.png',
         section: 'METADATA_STATE',
         hasDropdown: false,
         onClick: function(event) {
-            sdk.Widgets.showModalView({
+            var view = sdk.Widgets.showModalView({
                 title: '',
                 el: el
             })
+            $('#assign-submit').on('click', function(event){
+                view.close();
+            });
         }
     });
 

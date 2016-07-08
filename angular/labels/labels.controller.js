@@ -1,35 +1,67 @@
 'use strict';
 
-app.controller('LabelsCtrl', function($scope, $firebase, $firebaseArray) {
+app.controller('LabelsCtrl', function($scope, $firebase, $firebaseArray, $state) {
 
 	$scope.labels = [];
 
+	//fetch shared labels from firebase
 	var ref = firebase.database().ref('/sharedLabels'); 
 	var arr = $firebaseArray(ref);
 	arr.$loaded().then(function(data) {
 		angular.forEach(arr, function(item) {
-			var members = item.members.join(', ');
+			var temp = []; 
+				// console.log(item.members)
+				for (var i = 0; i < item.members.length; i++) {
+					temp.push(item.members[i].email);
+				}
+				var members = temp.join(', ')
 			$scope.labels.push({id: item.$id, name: item.label, sharedWith: members});
 		})
 	});
 
-	$scope.addLabel = function(label){
-		var name = label.label;
-		var temp = label.members.split(", ");
-		var members = []; 
-		temp.forEach(function(item){
-			members.push(item.trim());
+	$scope.users = [];
+
+	//fetch members from firebase
+	var foo = firebase.database().ref('/members'); 
+	var mem = $firebaseArray(foo);
+	mem.$loaded().then(function(data) {
+		angular.forEach(mem, function(thing) {
+			$scope.users.push({id: thing.$id, name: thing.name, email: thing.email});
+			// console.log('here are the users', $scope.users);
 		})
+	});
+
+	//set up the newLabel object because for some reason if you don't provide an empty array for members, it will break 
+	$scope.newLabel = {label: "", members: []};
+
+	$scope.addLabel = function(label){
+		console.log('label here', label.members)
+		var name = label.label;
+		var members = label.members;
 		arr.$add({
 			label: name,
 			members: members, 
 		})
 		.then(function(ref) {
+			// console.log('here is ref', ref);
 			var id = ref.key;
 			console.log("added record with id " + id);
-			console.log("location in array", arr.$indexFor(id)); // returns location in the array
+			// console.log("location in array", arr.$indexFor(id)); // returns location in the array
+			addLabel(name);
+			$state.go('sharedlabels')
 		});
 	}
+
+    // Make gapi call to create new label in Gmail.
+    function addLabel(name){
+	    chrome.runtime.sendMessage({
+	        type: 'create sharedLabel', 
+	        name: name
+	    }, function(gapiResponse) {
+			console.log('here is the gapiResponse', gapiResponse);
+			//STORE THE GMAIL PROVIDED LABEL ID SOMEWHERE GLOBALLY
+	    });
+    }
 
 	$scope.removeLabel = function(id){
 		console.log('label id', id);
@@ -41,7 +73,7 @@ app.controller('LabelsCtrl', function($scope, $firebase, $firebaseArray) {
 			$scope.labels.splice(item, 1);
 		});
 	}
-
+	//updateLabel func is not hooked up to anything
 	$scope.updateLabel = function(id){
 		arr.$add({})
 		.then(function(ref) {
@@ -65,8 +97,7 @@ app.controller('LabelsCtrl', function($scope, $firebase, $firebaseArray) {
 	            	$scope.gapiLabels.push(key);
 	            };
 	        }
-	    });
-    	
+	    });	
     }
 
 });

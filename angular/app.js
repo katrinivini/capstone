@@ -1,42 +1,28 @@
-// var fs = require('fs');
-// var addToTaskHistory = require('./taskhistory.js');
+// var $ = require('jquery');
+// var Firebase = require('firebase');
 
+// var assignedHistory = require('../js/myapp.js').assignedHistory;
+// var members = require('../js/myapp.js').members;
+// var messages = require('../js/myapp.js').messages;
+var app = angular.module('thing', ['firebase', 'ui.router']);
 // Eventually need to refactor so that there's only one angular.module.
 var assignapp = angular.module('shazzam', ['firebase']);
 
+var member;
+var messageID;
+var threadID;
+var readMessages;
+// var messages = firebase.database().ref('/messages');
+var messages = require('../js/myapp.js').messages;
+// var members = firebase.database().ref('/members');
+var members = require('../js/myapp.js').members;
+var assignments = require('../js/myapp.js').assignments;
+// var Firebase = require('../js/myapp.js').Firebase;
+
+
 assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 
-    console.log("inside assignapp.js AssignCtrl");
-
-    var member;
-    var messageID;
-    var threadID;
-    var readMessages;
-    // var messages = firebase.database().ref('/messages');
-    var messages = require('../js/myapp.js').messages;
-    // var members = firebase.database().ref('/members');
-    var members = require('../js/myapp.js').members;
-
-
-    // This came from taskhistory.js.
-    function eventObj(p, a) {
-        return {
-            person: p,
-            action: a,
-            date: firebase.database.ServerValue.TIMESTAMP
-        }
-    }
-    console.log("inside assignapp.js AssignCtrl");
-
-    var member;
-    var messageID;
-    var threadID;
-    var readMessages;
     var assignedThreads;
-    var assignments = firebase.database().ref('/assignments');
-    var messages = firebase.database().ref('/messages');
-    var members = firebase.database().ref('/members');
-
 
     // This came from taskhistory.js.
     function assignment(assigner, assignee) {
@@ -47,6 +33,31 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
             date: firebase.database.ServerValue.TIMESTAMP
         }
     }
+
+
+
+
+    console.log("before runtime sendMessage");
+    // Call gapi in background script to sync common messageIDs with their respective Gmail threadIDs, which are different for each user.
+    // Receives [{messageID: threadID}, ...].
+            
+    chrome.runtime.sendMessage({
+        type: 'sync'
+    },
+        function(gapiResponse) {
+
+            console.log("app.js sync gapiResponse: ", gapiResponse);
+
+        // Get all messageIDs (messages get added to Firebase when they're read).
+        messages.once('value', function(snapshot) {
+            readMessages = snapshot.val();
+        });
+
+    }) // closes sendMessage
+
+
+
+
 
     // Load InboxSDK.
     InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
@@ -72,18 +83,18 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
                                 readMessages = snapshot.val();
                             });
 
-
-
                         }) // closes sendMessage
                 }) // closes registerThreadViewHandler
         }) // closes InboxSDK then
-    // Add members from Firebase to Angular scope.
-    // $loaded is a Firebase thing.
+        // Add members from Firebase to Angular scope.
+        // $loaded is a Firebase thing.
+
     $scope.members = [];
     var membersArray = $firebaseArray(members);
     membersArray.$loaded().then(function(data) {
         angular.forEach(membersArray, function(item) {
-            $scope.members.push(item.$value);
+
+            $scope.members.push(item.name);
         })
     });
 
@@ -99,23 +110,22 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 
         switch (assignee) {
             case "b.emma.lai@gmail.com":
-                labelID = "Label_19";
+                labelID = "Label_16";
                 break;
             case "emailkathy@gmail.com":
-                labelID = "Label_20";
+                labelID = "Label_17";
                 break;
             case "rina.krevat@gmail.com":
-                labelID = "Label_22";
+                labelID = "Label_18";
                 break;
             case "katrinamvelez@gmail.com":
-                labelID = "Label_21";
+                labelID = "Label_19";
                 break;
         }
 
         // Adds assignment to Firebase.
         messages.child(messageID).child('activity').push(assignment(member, assignee));
-        messages.child(messageID).child('people').push({ person: member, status: "assigned" });
-
+        // members.child(assignee).push({ action: 'was assigned by' + member, threadId: threadID, date: firebase.database.ServerValue.TIMESTAMP });
 
         // Make gapi call to add label.
         chrome.runtime.sendMessage({
@@ -137,13 +147,17 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
             console.log("background response: ", gapiResponse);
         });
 
-        if (!readMessages[messageID].gmailThreadIDs) readMessages[messageID].gmailThreadIDs = {}; 
-        readMessages[messageID]["gmailThreadIDs"][member] = threadID; 
+        // if (!readMessages[messageID].gmailThreadIDs) readMessages[messageID].gmailThreadIDs = {};
+        // readMessages[messageID]["gmailThreadIDs"][member] = threadID;
 
-		// Saves updates.
-		messages.update(readMessages);
+        // // Saves updates.
+        // messages.update(readMessages);
 
-	}
-});    // end of controller
+        // replaces above
+
+        messages.child(messageID).child('gmailThreadIDs').push({ member: member, threadId: threadID });
 
 
+
+    }
+}); // end of controller

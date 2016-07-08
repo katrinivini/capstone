@@ -524,3 +524,9 @@ div.template-list:hover {
     width: 75%;
     margin-top: -7px;
 }
+
+/*this doesn't work... not sure why*/
+.label-input {
+    width: 80%;
+    border-radius: 5px;
+}
