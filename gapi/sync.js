@@ -31,7 +31,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         var labelsToRemove;
         var request = request;
         var arrayOfSyncedIDs;
-        var query = "is:unread newer_than:7d to:teamidkgha@googlegroups.com OR from:teamidkgha@googlegroups.com OR from:b.emma.lai@gmail.com OR from:emailkathy@gmail.com OR from:rina.krevat@gmail.com OR from:katrinamvelez@gmail.com";
+        var query = "newer_than:1d to:teamidkgha@googlegroups.com OR from:teamidkgha@googlegroups.com OR from:b.emma.lai@gmail.com OR from:rina.krevat@gmail.com OR from:katrinamvelez@gmail.com";
+        // var query = "is:unread newer_than:7d to:teamidkgha@googlegroups.com OR from:teamidkgha@googlegroups.com OR from:b.emma.lai@gmail.com OR from:emailkathy@gmail.com OR from:rina.krevat@gmail.com OR from:katrinamvelez@gmail.com";
 
         if (request.type === 'sync') {
 
@@ -133,6 +134,7 @@ function syncID(gmailMessageID) {
             'format': 'metadata'
         })
         .then(function(jsonresp, rawresp) {
+            console.log("jsonresp: ", jsonresp.result.payload.headers);
 
             
 
@@ -144,6 +146,22 @@ function syncID(gmailMessageID) {
 
                 if (jsonresp.result.payload.headers[i].name.toUpperCase() === "MESSAGE-ID") {
                     messageID = jsonresp.result.payload.headers[i].value;
+                }
+
+                if (jsonresp.result.payload.headers[i].name.toUpperCase() === "DATE") {
+                    var date = jsonresp.result.payload.headers[i].value;
+                }
+
+                if (jsonresp.result.payload.headers[i].name.toUpperCase() === "TO") {
+                    var emailTo = jsonresp.result.payload.headers[i].value;
+                }
+
+                if (jsonresp.result.payload.headers[i].name.toUpperCase() === "FROM") {
+                    var emailFrom = jsonresp.result.payload.headers[i].value;
+                }
+
+                if (jsonresp.result.payload.headers[i].name.toUpperCase() === "SUBJECT") {
+                    var subject = jsonresp.result.payload.headers[i].value;
                 }
             }
 
@@ -161,12 +179,34 @@ function syncID(gmailMessageID) {
             return {
                 memberEmailAddress: memberEmailAddress,
                 messageHash: messageHash,
-                gmailThreadID: gmailThreadID
+                gmailThreadID: gmailThreadID,
+                date: date,
+                to: emailTo,
+                from: emailFrom,
+                subject: subject
             };
         })
         .then(function(response) {
 
+            console.log("response: ", response);
+
             // messages.child(messageHash).child("gmailThreadIDs")[response.gmailThreadID] = response.memberEmailAddress;
+
+            if (!messagesDatabase[response.messageHash].gmailThreadIDs) messagesDatabase[response.messageHash].gmailThreadIDs = {};
+
+            messagesDatabase[response.messageHash]["gmailThreadIDs"][response.gmailThreadID] = response.memberEmailAddress;
+
+            // Saves updates.
+            messages.update(messagesDatabase);
+
+            return {
+                memberEmailAddress: "abc123@yahoo.com",
+                messageHash: response.messageHash,
+                gmailThreadID: "testgmailthread12345"
+            };
+
+        })
+        .then(function(response) {
 
             if (!messagesDatabase[response.messageHash].gmailThreadIDs) messagesDatabase[response.messageHash].gmailThreadIDs = {};
 
