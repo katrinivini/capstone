@@ -5,6 +5,40 @@ var messages = require('../myapp.js').messages;
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     
+    //ON INBOXSDK LOAD - ALWAYS LISTEN FOR THE FACT THAT A SHARED LABEL WITH YOUR NAME WAS ADDED
+
+    var myOwnEmail; 
+
+    sharedLabels.on('child_added', function(snapshot) { 
+        var newLabelAdded = snapshot.val(); 
+        var newLabelName = newLabelAdded.label; 
+        console.log('something was added to shared labels', snapshot.val())
+        // if your email is included in the 'members' array of the new label aka if someone included you on a new shared label, then you want to go and create that new label in gmail
+        var newLabelPeople = [];
+        newLabelAdded.members.forEach(function(member){
+            newLabelPeople.push(member.email)
+        })
+        console.log('here is an array of ppl', newLabelPeople)
+
+        //fetch your own email address
+        chrome.runtime.sendMessage({
+            type: 'get profile'
+        }, function(gapiResponse) {
+            console.log('here is my personal email', gapiResponse)
+            myOwnEmail = gapiResponse;
+        });
+
+        if (newLabelPeople.indexOf(myOwnEmail) >= 0) {
+            console.log('YES MY EMAIL IS IN HERE')
+            chrome.runtime.sendMessage({
+                type: 'create sharedLabel', 
+                name: newLabelName
+            }, function(gapiResponse) {
+                console.log('here is the response after i created that shared label for you', gapiResponse);
+            });
+        }
+    })
+
     var messageID;
     var threadId;
     var taskHistory;
