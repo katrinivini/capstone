@@ -60,14 +60,14 @@ app.config(function($stateProvider) {
         templateUrl: chrome.extension.getURL('/templates/email-template-create.html'),
         controller: 'TemplatesCtrl'
     })
+    $stateProvider.state('emailtemplates.edit', {
+        // url: '/edit',
+        templateUrl: chrome.extension.getURL('/templates/email-template-edit.html'),
+        controller: 'TemplatesCtrl'
+    })
      $stateProvider.state('emailtemplates.preview', {
         // url: '/edit',
         templateUrl: chrome.extension.getURL('/templates/email-template-preview.html'),
-        controller: 'TemplatesCtrl'
-    })
-    $stateProvider.state('emailtemplates.preview.edit', {
-        // url: '/edit',
-        templateUrl: chrome.extension.getURL('/templates/email-template-edit.html'),
         controller: 'TemplatesCtrl'
     })
 

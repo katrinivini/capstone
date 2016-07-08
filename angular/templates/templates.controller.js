@@ -16,7 +16,7 @@ app.controller('TemplatesCtrl', function($scope, $firebaseArray, $state) {
 	});
 
 	$scope.addTemplate = function(template){
-		console.log('what is this template', template)
+		// console.log('what is this template', template)
 		var title = template.title;
 		var body = template.body;
 		var temp = template.members.split(", ");
@@ -52,29 +52,14 @@ app.controller('TemplatesCtrl', function($scope, $firebaseArray, $state) {
 	}
 
 	$scope.updateTemplate = function(){
-		// arr.$add({})
-		// .then(function(ref) {
-		// 	var id = ref.key();
-		// 	console.log("added record with id " + id);
-		// 	arr.$indexFor(id); // returns location in the array
-		// });
 		var id = $scope.template.id;
 		var itemindex = arr.$indexFor(id);
-		var item = $scope.templates[itemindex];
-		item.title = template.title;
-		item.body = updatedtemplate.body;
-		console.log('before', $scope.templates)
-		$scope.templates[itemindex] = item;
-		// update database here
-		console.log('after', $scope.templates)
-	}
-
-	$scope.goToEditState = function(){
-		$scope.copyTemplate = {};
-		$scope.copyTemplate["body"] = $scope.thetemplate.body;
-		$scope.copyTemplate["title"] = $scope.thetemplate.title;
-		$state.go('emailtemplates.edit');
-		console.log("shalom", $scope.copyTemplate)
+		arr[itemindex].body = $scope.template.body;
+		arr[itemindex].title = $scope.template.body;
+		arr.$save(itemindex)
+		.then(function(){
+			$state.go('emailtemplates.preview')
+		})
 	}
 
 	$scope.showTemplate = function(template){
@@ -84,10 +69,10 @@ app.controller('TemplatesCtrl', function($scope, $firebaseArray, $state) {
 	}
 
 	$scope.discardTemplate = function(){
-		console.log("bonjour", $scope.copyTemplate)
-		console.log("au revoir", $scope.template)
-		$scope.template.body = $scope.copyTemplate.body;
-		$scope.template.title = $scope.copyTemplate.title;
+		var id = $scope.template.id;
+		var itemindex = arr.$indexFor(id);
+		$scope.template.body = arr[itemindex].body;
+		$scope.template.title = arr[itemindex].title;
 		$state.go('emailtemplates.preview');
 	}
 	
