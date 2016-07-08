@@ -74,7 +74,7 @@ app.controller('TemplatesCtrl', function($scope, $firebaseArray, $state) {
 		$scope.copyTemplate["body"] = $scope.thetemplate.body;
 		$scope.copyTemplate["title"] = $scope.thetemplate.title;
 		$state.go('emailtemplates.edit');
-		console.log("$scope.copyTemplate", $scope.copyTemplate)
+		console.log("shalom", $scope.copyTemplate)
 	}
 
 	$scope.showTemplate = function(template){
@@ -84,10 +84,11 @@ app.controller('TemplatesCtrl', function($scope, $firebaseArray, $state) {
 	}
 
 	$scope.discardTemplate = function(){
+		console.log("bonjour", $scope.copyTemplate)
+		console.log("au revoir", $scope.template)
 		$scope.template.body = $scope.copyTemplate.body;
 		$scope.template.title = $scope.copyTemplate.title;
 		$state.go('emailtemplates.preview');
-
 	}
 	
 });
