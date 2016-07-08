@@ -483,3 +483,9 @@ ul.nav a:hover {
 .template-details {
     width: 48%;
 }
+
+/*this doesn't work... not sure why*/
+.label-input {
+    width: 80%;
+    border-radius: 5px;
+}
