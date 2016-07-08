@@ -69,6 +69,16 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
     }  // closes else if
 
+    if (request.type === 'apply sharedLabel') {
+        console.log('in the listener apply sharedLabel', request)
+        request.applyTo.forEach(function(person){
+            console.log(person.email);
+            console.log(person.name); 
+        })
+
+
+    }
+
 })    // closes addListener
 
 

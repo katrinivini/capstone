@@ -32,7 +32,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 properties.map(function(prop){
                     // console.log('firebase id of label', prop)
                     var obj = {labelName: data[prop].label, sharedWith: data[prop].members };
-                    console.log('what is obj', obj)
+                    console.log('label is shared with these ppl', obj.sharedWith)
                     labels.push(obj);
                     return labels; 
                 });
@@ -60,55 +60,14 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
                     //attach a click event on each of these shared labels
                     item.addEventListener('click', function(event){
-                        
+                        chrome.runtime.sendMessage({
+                            type: 'apply sharedLabel', 
+                            labelName: label.labelName,
+                            applyTo: label.sharedWith
+                        })
                     })
                 })
             });
-
-
-
-            //when you click on it - chrome.runtime.sendMessage
-            //type: apply sharedLabel
-            //send the gmail labelId of the label that you want to apply to other people's inboxes
-            //create listener in assign.js
-            //this listener is going to go 
         }
     });
 });
-
-/*
-
-var labels;
-
-Promise.resolve(chrome.runtime.sendMessage({
-        type: 'read message',
-        threadId: threadId
-    }, function(hash) {
-        messageID = hash;
-    }))
-    .then(function() {
-        Promise.resolve(sharedLabels.once('value', function(snapshot) {
-            var data = snapshot.val();
-            var properties = Object.getOwnPropertyNames(data);
-            labels = properties.map(function(prop) {
-                return data[prop].label;
-            });
-            var list = document.createElement('div');
-            labels.forEach(function(label) {
-                var p = document.createElement('div');
-                p.innerHTML = label;
-                p.classList.add('shared-labels')
-                p.addEventListener('click', function(event) {
-                    messages.child(messageID).child('activity').push({
-                        person: person,
-                        action: 'assigned the shared label ' + p.innerHTML,
-                        date: Firebase.database.ServerValue.TIMESTAMP
-                    });
-                })
-                list.appendChild(p);
-            })
-            event.dropdown.el.appendChild(list);
-        }))
-    })
-
-*/
