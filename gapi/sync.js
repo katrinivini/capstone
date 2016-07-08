@@ -46,7 +46,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                 });
                 
                 arrayOfSyncedIDs = arrayOfGmailMessageIDs.map(syncID);
-                console.log("arrayOfSyncedIDs: ", arrayOfSyncedIDs);
 
             }); // closes listMessages
 
@@ -132,9 +131,6 @@ function syncID(gmailMessageID) {
             'format': 'metadata'
         })
         .then(function(jsonresp, rawresp) {
-            console.log("jsonresp: ", jsonresp.result.payload.headers);
-
-            
 
             for (var i = 0; i < jsonresp.result.payload.headers.length; i++) {
 
@@ -186,7 +182,7 @@ function syncID(gmailMessageID) {
         })
         .then(function(response) {
 
-            console.log("response: ", response);
+            console.log("email to sync: ", response);
 
             // messages.child(messageHash).child("gmailThreadIDs")[response.gmailThreadID] = response.memberEmailAddress;
 
