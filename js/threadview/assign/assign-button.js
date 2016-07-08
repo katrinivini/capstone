@@ -30,15 +30,12 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         section: 'METADATA_STATE',
         hasDropdown: false,
         onClick: function(event) {
-            var e = event;
-            console.log('e: ', e);
-            sdk.Widgets.showModalView({
+            var view = sdk.Widgets.showModalView({
                 title: '',
                 el: el
             })
             $('#assign-submit').on('click', function(event){
-                console.log('close assign modal view');
-                e.threadView.close();
+                view.close();
             });
         }
     });
