@@ -21,7 +21,6 @@ var rootRef = firebase.database().ref();
 var messages = firebase.database().ref('/messages');
 var members = firebase.database().ref('/members');
 var sharedLabels = firebase.database().ref('/sharedLabels');
-
 var assignedHistory = firebase.database().ref('/assigned');
 
 var templates = firebase.database().ref('/templates');
@@ -55,6 +54,7 @@ require('./threadview/completed.js');
 require('./threadview/shared-labels-button.js');
 require('../angular/app.js');
 require('../angular/module.js');
+// require('./mysync.js');
 // require('../templates/index.html');
 
 // require('../gapi/background.js');

@@ -69,10 +69,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
     }  // closes else if
 
-    listMessages('me', query, function(response) {
-        // console.log("listMessages response: ", response);
-    })
-
 })    // closes addListener
 
 
