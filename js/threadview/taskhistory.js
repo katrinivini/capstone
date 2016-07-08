@@ -10,7 +10,6 @@ var Firebase = require('firebase');
 $ = require('jquery');
 var thread;
 var form;
-var addComment;
 
 var unwatchLastThread = null;
 
@@ -19,45 +18,46 @@ function watchThread(messageID) {
     var listener = messages.child(messageID).child('activity').on('child_added', function(snapshot) {
         // console.log('on snapshot of child_added in taskhistory', snapshot.val());
         var task = snapshot.val();
-        var date = new Date(task.date);
-        createActivity(task.person, task.action, date);
+        // var date = new Date(task.date);
+        createActivity(task);
     })
     unwatchLastThread = function() {
         messages.child(messageID).child('activity').off('child_added', listener);
     }
 }
 
-function createActivity(person, action, date) {
+function createActivity(task) {
     //TODO: should return the created element to be appended later
+    if (task.comment) { createComment(task.person, task.comment, task.date); return;}
     var act = document.createElement('div');
     act.className = 'activity';
-    if (action === 'read') act.classList.add('read_activity');
-    if (action === 'started draft') act.classList.add('draft_activity');
-    if (action === 'sent a response') act.classList.add('sent_activity');
-    act.innerHTML = person + " " + action + " on " + date;
+    if (task.action === 'read') act.classList.add('read_activity');
+    if (task.action === 'started draft') act.classList.add('draft_activity');
+    if (task.action === 'sent a response') act.classList.add('sent_activity');
+    var date = new Date(task.date);
+    act.innerHTML = task.person + " " + task.action + " on " + date;
     $('.taskHistory').prepend(act);
 }
 
-var unwatchLastComment = null;
+// var unwatchLastComment = null;
 
-function watchComment(messageID) {
-    if (unwatchLastComment) unwatchLastComment();
-    var listener = messages.child(messageID).child('comments').on('child_added', function(snapshot) {
+// function watchComment(messageID) {
+//     // if (unwatchLastComment) unwatchLastComment();
+//     messages.child(messageID).child('comments').on('child_added', function(snapshot) {
 
-        var c = snapshot.val();
-        var date = new Date(c.date);
-        createComment(c.person, c.comment, date);
-    })
-
-    unwatchLastComment = function() {
-        messages.child(messageID).child('comment').off('child_added', listener);
-    }
-}
+//         var c = snapshot.val();
+//         var date = new Date(c.date);
+//         createComment(c.person, c.comment, date);
+//     })
+//     // unwatchLastComment = function() {
+//     //     messages.child(messageID).child('comment').off('child_added', listener);
+//     // }
+// }
 
 function createComment(person, comment, date) {
     var comm = document.createElement('div');
     comm.className = 'comment';
-    var d = date;
+    var d = new Date(date);
     var time = document.createElement('p');
     time.className = 'date';
     time.innerHTML = d;
@@ -65,12 +65,12 @@ function createComment(person, comment, date) {
     var person_comment = document.createElement('p');
     person_comment.innerHTML = '<b>' + person + '</b>' + ": " + comment;
     comm.appendChild(person_comment);
-    addComment.appendChild(comm);
+    $('.taskHistory').prepend(comm);
     $('#comment').val('');
 }
 
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
-    var parser = new DOMParser();
+    // var parser = new DOMParser();
 
     function eventObj(p, a) {
         return {
@@ -79,10 +79,29 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             date: Firebase.database.ServerValue.TIMESTAMP
         }
     }
+
     sdk.Conversations.registerThreadViewHandler(function(threadView) {
         threadId = threadView.getThreadID();
         taskHistory = document.createElement('div');
         taskHistory.classList.add('taskHistory');
+        var addComment;
+        var textarea = document.createElement('textarea');
+        textarea.id = 'comment';
+        taskHistory.appendChild(textarea);
+        var submit = document.createElement('input');
+        submit.type = 'submit';
+        submit.id = 'submitComment';
+        submit.addEventListener('click', function(event) {
+            event.preventDefault();
+            //update the database, then update the dom with a listener
+            person = sdk.User.getAccountSwitcherContactList()[0].name;
+            var newComment = { person: person, comment: $('#comment').val(), date: Firebase.database.ServerValue.TIMESTAMP };
+            messages.child(messageID).child('activity').push(newComment);
+            messages.child(messageID).child('comments').push(newComment);
+            // watchComment(messageID);
+        })
+
+        taskHistory.appendChild(submit);
         // thread > activity and comments
         // activity > [{person: person, action: action, date: date}]
         // comment > [{person:person , comment:comment , date:date}]
@@ -92,27 +111,20 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             iconUrl: 'https://cdn3.iconfinder.com/data/icons/website-panel-icons/128/test1-13-512.png'
         })
 
-        Promise.resolve(parser.parseFromString(commentTemplate, 'text/html'))
-            .then(function(dom) {
-                watchComment(messageID);
-                console.log('do you get here every time?');
-                form = dom.getElementById('commentForm');
-                addComment = dom.getElementById('addComment');
-                var submit = dom.getElementById('submitComment');
-                submit.addEventListener('click', function(event) {
-                    event.preventDefault();
+        // Promise.resolve(parser.parseFromString(commentTemplate, 'text/html'))
+        // .then(function(dom) {
+        // watchComment(messageID);
+        // console.log('do you get here every time?');
+        // form = dom.getElementById('commentForm');
+        // addComment = dom.getElementById('addComment');
+        // var submit = dom.getElementById('submitComment');
 
-                    //update the database, then update the dom with a listener
-                    person = sdk.User.getAccountSwitcherContactList()[0].name;
-                    var newComment = { person: person, comment: $('#comment').val(), date: Firebase.database.ServerValue.TIMESTAMP };
-                    messages.child(messageID).child('comments').push(newComment);
-                })
-                threadView.addSidebarContentPanel({
-                    el: form,
-                    title: 'Comments',
-                    iconUrl: 'https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/512/comments.png'
-                })
-            })
+        // threadView.addSidebarContentPanel({
+        //     el: form,
+        //     title: 'Comments',
+        //     iconUrl: 'https://cdn2.iconfinder.com/data/icons/windows-8-metro-style/512/comments.png'
+        // })
+        // })
         chrome.runtime.sendMessage({
             type: 'read message',
             threadId: threadId
@@ -124,7 +136,6 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 thread = snapshot.val()
                     // console.log('we are in messages.once', snapshot.val());
                 if (thread && thread[hash]) { //we have thread and the thread
-
                     var people = Array.prototype.slice.call(thread[hash].people)
                     var returnee = people.filter(function(personobj) {
                         return personobj.person === person;
@@ -135,6 +146,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                         person: person,
                         status: 'read'
                     });
+
                 } else { //we either don't have the thread or dont have the thread
                     if (!thread) thread = {};
                     thread[hash] = {
@@ -148,6 +160,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 }
             })
         })
+
     });
 
     sdk.Compose.registerComposeViewHandler(function(composeView) {

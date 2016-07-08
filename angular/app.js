@@ -8,7 +8,6 @@ var app = angular.module('thing', ['firebase', 'ui.router']);
 // Eventually need to refactor so that there's only one angular.module.
 var assignapp = angular.module('shazzam', ['firebase']);
 
-
 var member;
 var messageID;
 var threadID;
@@ -22,7 +21,6 @@ var assignments = require('../js/myapp.js').assignments;
 
 
 assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
-    console.log("inside assignapp.js AssignCtrl");
 
     var assignedThreads;
 
@@ -127,7 +125,7 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 
         // Adds assignment to Firebase.
         messages.child(messageID).child('activity').push(assignment(member, assignee));
-        messages.child(messageID).child('people').push({ person: member, status: "assigned", date: firebase.database.ServerValue.TIMESTAMP });
+        // members.child(assignee).push({ action: 'was assigned by' + member, threadId: threadID, date: firebase.database.ServerValue.TIMESTAMP });
 
         // Make gapi call to add label.
         chrome.runtime.sendMessage({

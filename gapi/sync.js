@@ -52,7 +52,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
         } // closes if block
         console.log("arrayOfSyncedIDs: ", arrayOfSyncedIDs);
-        sendResponse("heyo from sync.js");
+        // sendResponse("heyo from sync.js");
 
     }) // closes addListener
 
@@ -227,22 +227,3 @@ function hashCode(s) {
     //     return a & a }, 0);
     return s.replace(/[^\w\s]/gi, '');
 }
-
-
-
-
-
-
-// Version with loop instead of directly fetching with index.
-getMessage('me', request.threadId, function(jsonresp, rawresp) {
-
-    for (var i = 0; i < jsonresp.payload.headers.length; i++) {
-        if (jsonresp.payload.headers[i].name.toUpperCase() === "MESSAGE-ID") {
-            messageID = jsonresp.payload.headers[i].value;
-        }
-    }
-    gmailMessageID = jsonresp.id;
-    gmailThreadID = jsonresp.threadId;
-    messageID = jsonresp.payload.headers[16].value;
-    messageHash = hashCode(messageID);
-});
