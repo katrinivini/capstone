@@ -23,6 +23,7 @@ html, body {
     background-color: #F3F3F4;
     padding-left: 0px;
     padding-right: 0px;
+    min-width: 200px;
 }
 
 .col-xs-9 {
@@ -75,6 +76,11 @@ html, body {
     margin-bottom: 0px !important;
 }
 
+.row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
 #right-dashboard {
 	padding-left: 20px;
 }
@@ -98,6 +104,7 @@ html, body {
     padding: 10px;
     margin: 5px;
     width: 30%;
+    min-width: 210px;
 }
 
 .right-view-item.col-md-4.dashboard-box h1 {
@@ -190,8 +197,10 @@ ul.nav a:hover {
     width: 48%;
 }
 
+/*no longer blue!*/
 .btn-blue {
-    background: #1c84c6;
+    /*background: #1c84c6;*/
+    background: #5DA492;
     color: #fff;
     text-shadow: none;
     box-shadow: none;
@@ -204,12 +213,12 @@ ul.nav a:hover {
 }
 
 .btn-orange {
-    margin-top: 20px;
+    margin-top: 10px;
     background: #F8AC59;
     color: #fff;
     text-shadow: none;
     box-shadow: none;
-    width: 150px;
+    /*width: 150px;*/
 }
 
 .btn-orange:hover {
@@ -286,9 +295,6 @@ ul.nav a:hover {
 
 .btn-delete {
     border-color: #EF6D7A;
-}
-
-.btn-delete .glyphicon {
     color: #EF6D7A;
 }
 
@@ -475,13 +481,45 @@ ul.nav a:hover {
 
 .template-preview {
     margin-top: 20px;
-    width: 48%;
+    /*width: 48%;*/
 }
 .template-list {
-    border-bottom: 1px solid #C2C2C2;
+    /*border-bottom: 1px solid #C2C2C2;*/
+    /*padding: 10px 20px;*/
+    border: 1px solid #eee;
+    padding: 5px;
+    margin: 5px 0;
+    margin-left: -15px;
+    height: 62px;
 }
+
+div.template-list:hover {
+    background-color: #F3F3F4;
+}
+
+.template-list-active {
+    background-color: #F3F3F4;
+}
+
+.template-list p {
+    margin: 0;
+    font-size: smaller;
+}
+
 .template-details {
-    width: 48%;
+    margin-top: 20px;
+    padding: 5px;
+    /*width: 48%;*/
+}
+
+.template-form input {
+    width: 75%;
+    margin-top: -7px;
+}
+
+.template-form textarea {
+    width: 75%;
+    margin-top: -7px;
 }
 
 /*this doesn't work... not sure why*/
