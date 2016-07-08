@@ -164,6 +164,9 @@ function syncID(gmailMessageID) {
             messageHash = hashCode(messageID);
 
             if (!messagesDatabase[messageHash]) messagesDatabase[messageHash] = {};
+            if (!messagesDatabase[messageHash].gmailThreadIDs) messagesDatabase[messageHash].gmailThreadIDs = {};
+
+            messagesDatabase[messageHash]["gmailThreadIDs"][gmailThreadID] = memberEmailAddress;
 
             // // Saves updates.
             messages.update(messagesDatabase);
@@ -186,12 +189,12 @@ function syncID(gmailMessageID) {
 
             // messages.child(messageHash).child("gmailThreadIDs")[response.gmailThreadID] = response.memberEmailAddress;
 
-            if (!messagesDatabase[response.messageHash].gmailThreadIDs) messagesDatabase[response.messageHash].gmailThreadIDs = {};
+            // if (!messagesDatabase[response.messageHash].gmailThreadIDs) messagesDatabase[response.messageHash].gmailThreadIDs = {};
 
-            messagesDatabase[response.messageHash]["gmailThreadIDs"][response.gmailThreadID] = response.memberEmailAddress;
+            // messagesDatabase[response.messageHash]["gmailThreadIDs"][response.gmailThreadID] = response.memberEmailAddress;
 
             // Saves updates.
-            messages.update(messagesDatabase);
+            // messages.update(messagesDatabase);
 
             // return {
             //     memberEmailAddress: "abc123@yahoo.com",
