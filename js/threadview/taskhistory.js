@@ -136,11 +136,11 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 thread = snapshot.val()
                     // console.log('we are in messages.once', snapshot.val());
                 if (thread && thread[hash]) { //we have thread and the thread
-                    var people = Array.prototype.slice.call(thread[hash].people)
-                    var returnee = people.filter(function(personobj) {
-                        return personobj.person === person;
-                    });
-                    if (returnee && returnee.length > 0 && returnee[0].status === 'read') return;
+                    // var people = Array.prototype.slice.call(thread[hash].people)
+                    // var returnee = people.filter(function(personobj) {
+                    //     return personobj.person === person;
+                    // });
+                    // if (returnee && returnee.length > 0 && returnee[0].status === 'read') return;
                     messages.child(hash).child('activity').push(eventObj(person, 'read'));
                     messages.child(hash).child('people').push({
                         person: person,

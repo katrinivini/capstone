@@ -1,12 +1,28 @@
-// var $ = require('jquery');
-// var Firebase = require('firebase');
-
-// var assignedHistory = require('../js/myapp.js').assignedHistory;
-// var members = require('../js/myapp.js').members;
-// var messages = require('../js/myapp.js').messages;
 var app = angular.module('thing', ['firebase', 'ui.router']);
 // Eventually need to refactor so that there's only one angular.module.
 var assignapp = angular.module('shazzam', ['firebase']);
+var modalAssignView;
+// brfs fs, not Node fs. Need to npm install brfs.
+var fs = require('fs');
+// Need path because brfs fs works at runtime, so it only understands statically analyzable paths (no variables or relative paths).
+var path = require('path');
+
+var parser = new DOMParser();
+
+
+// Gets html as string.
+var html = fs.readFileSync(path.resolve(__dirname + '/../templates/assign-button.html'), 'utf8');
+
+// Parses string into full html doc (with html & body tags).
+html = parser.parseFromString(html, 'text/html');
+
+// Gets only the html part (assign div) we need for the toolbar button modal InboxSDK makes because the modal won't render the full html doc.
+var el = html.getElementsByClassName('assign')[0];
+
+// Hooks up Angular with html. AssignCtrl is in app.js.
+angular.element(document).ready(function() {
+    angular.bootstrap(html, ['shazzam'])
+});
 
 var member;
 var messageID;
@@ -18,7 +34,7 @@ var messages = require('../js/myapp.js').messages;
 var members = require('../js/myapp.js').members;
 var assignments = require('../js/myapp.js').assignments;
 // var Firebase = require('../js/myapp.js').Firebase;
-
+var $ = require('jquery');
 
 assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 
@@ -37,23 +53,21 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 
 
 
-    console.log("before runtime sendMessage");
+
     // Call gapi in background script to sync common messageIDs with their respective Gmail threadIDs, which are different for each user.
     // Receives [{messageID: threadID}, ...].
-            
+
     chrome.runtime.sendMessage({
-        type: 'sync'
-    },
-        function(gapiResponse) {
+                type: 'sync'
+            },
+            function(gapiResponse) {
 
-            console.log("app.js sync gapiResponse: ", gapiResponse);
+                // Get all messageIDs (messages get added to Firebase when they're read).
+                messages.once('value', function(snapshot) {
+                    readMessages = snapshot.val();
+                });
 
-        // Get all messageIDs (messages get added to Firebase when they're read).
-        messages.once('value', function(snapshot) {
-            readMessages = snapshot.val();
-        });
-
-    }) // closes sendMessage
+            }) // closes sendMessage
 
 
 
@@ -85,6 +99,18 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 
                         }) // closes sendMessage
                 }) // closes registerThreadViewHandler
+            sdk.Toolbars.registerToolbarButtonForThreadView({
+                title: 'Assign',
+                iconUrl: 'https://cdn3.iconfinder.com/data/icons/box-and-shipping-supplies-icons/447/Clipboard_With_Pencil-512.png',
+                section: 'METADATA_STATE',
+                hasDropdown: false,
+                onClick: function(event) {
+                    modalAssignView = sdk.Widgets.showModalView({
+                        title: '',
+                        el: el
+                    })
+                }
+            });
         }) // closes InboxSDK then
         // Add members from Firebase to Angular scope.
         // $loaded is a Firebase thing.
@@ -124,9 +150,11 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
         }
 
         // Adds assignment to Firebase.
+        console.log('assignee: ', assignee);
+        console.log('member: ', member);
         messages.child(messageID).child('activity').push(assignment(member, assignee));
         // members.child(assignee).push({ action: 'was assigned by' + member, threadId: threadID, date: firebase.database.ServerValue.TIMESTAMP });
-
+        modalAssignView.close();
         // Make gapi call to add label.
         chrome.runtime.sendMessage({
             type: 'add label',
