@@ -32,15 +32,14 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             }
             // console.log("listLabels response.labels: ", arrayOfLabelObjects);
             // console.log("labelDictionary: ", labelDictionary);
-
             sendResponse(labelDictionary);
         });
     }
 
-    if (request.type === 'add label') {
+    if (request.type === 'create sharedLabel') {
         var newLabelName = request.name; 
         createLabel('me', newLabelName, function(response) {
-            console.log('what is this response', response)
+            // console.log('what is this response', response)
             sendResponse(response);
         });
     }

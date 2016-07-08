@@ -55,14 +55,13 @@ app.controller('LabelsCtrl', function($scope, $firebase, $firebaseArray, $state)
     // Make gapi call to create new label in Gmail.
     function addLabel(name){
 	    chrome.runtime.sendMessage({
-	        type: 'add label', 
+	        type: 'create sharedLabel', 
 	        name: name
 	    }, function(gapiResponse) {
 			console.log('here is the gapiResponse', gapiResponse);
+			//STORE THE GMAIL PROVIDED LABEL ID SOMEWHERE GLOBALLY
 	    });
-    	
     }
-
 
 	$scope.removeLabel = function(id){
 		console.log('label id', id);
@@ -98,9 +97,7 @@ app.controller('LabelsCtrl', function($scope, $firebase, $firebaseArray, $state)
 	            	$scope.gapiLabels.push(key);
 	            };
 	        }
-	    });
-    	
+	    });	
     }
-
 
 });
