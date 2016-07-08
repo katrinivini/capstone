@@ -58,15 +58,15 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
                     event.dropdown.el.appendChild(item);
 
-                    // list.addEventListener('click', function(event){
-                    //     buttonEvent.composeView.insertTextIntoBodyAtCursor(template.body);
-                    // })
+                    //attach a click event on each of these shared labels
+                    item.addEventListener('click', function(event){
+                        
+                    })
                 })
             });
 
 
 
-            //attach a click event on each of these shared labels
             //when you click on it - chrome.runtime.sendMessage
             //type: apply sharedLabel
             //send the gmail labelId of the label that you want to apply to other people's inboxes
