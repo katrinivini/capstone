@@ -19,13 +19,13 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         }
 
         getThread('me', request.threadId, function(jsonresp, rawresp) {
-            console.log('jsonresp', jsonresp)
+            // console.log('jsonresp', jsonresp)
             var msgId = "";
             var senderName = "";
             for (var i = 0; i < jsonresp.payload.headers.length; i++) {
                 if (jsonresp.payload.headers[i].name.toUpperCase() === "MESSAGE-ID") {
                     msgId = jsonresp.payload.headers[i].value;
-                    console.log('this is the messageID: ', msgId);
+                    // console.log('this is the messageID: ', msgId);
                 }
             }
             var msgHash = hashCode(msgId);

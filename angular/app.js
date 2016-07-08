@@ -8,7 +8,6 @@ var app = angular.module('thing', ['firebase', 'ui.router']);
 // Eventually need to refactor so that there's only one angular.module.
 var assignapp = angular.module('shazzam', ['firebase']);
 
-
 var member;
 var messageID;
 var threadID;
@@ -22,7 +21,6 @@ var assignments = require('../js/myapp.js').assignments;
 
 
 assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
-    console.log("inside assignapp.js AssignCtrl");
 
     var assignedThreads;
 
