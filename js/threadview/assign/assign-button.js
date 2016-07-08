@@ -34,6 +34,10 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 title: '',
                 el: el
             })
+            $('#assign-submit').on('click', function(event){
+                console.log('close assign modal view');
+                close();
+            });
         }
     });
 

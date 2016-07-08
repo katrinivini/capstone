@@ -127,7 +127,7 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 
         // Adds assignment to Firebase.
         messages.child(messageID).child('activity').push(assignment(member, assignee));
-        members.child(asignee).push({ action: 'was assigned by' + member, threadId: threadID, date: firebase.database.ServerValue.TIMESTAMP });
+        members.child(assignee).push({ action: 'was assigned by' + member, threadId: threadID, date: firebase.database.ServerValue.TIMESTAMP });
 
         // Make gapi call to add label.
         chrome.runtime.sendMessage({
