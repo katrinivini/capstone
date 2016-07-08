@@ -153,7 +153,7 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
         console.log('assignee: ', assignee);
         console.log('member: ', member);
         messages.child(messageID).child('activity').push(assignment(member, assignee));
-        // members.child(assignee).push({ action: 'was assigned by' + member, threadId: threadID, date: firebase.database.ServerValue.TIMESTAMP });
+
         modalAssignView.close();
         // Make gapi call to add label.
         chrome.runtime.sendMessage({
@@ -175,16 +175,9 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
             console.log("background response: ", gapiResponse);
         });
 
-        // if (!readMessages[messageID].gmailThreadIDs) readMessages[messageID].gmailThreadIDs = {};
-        // readMessages[messageID]["gmailThreadIDs"][member] = threadID;
-
-        // // Saves updates.
-        // messages.update(readMessages);
-
         // replaces above
 
         messages.child(messageID).child('gmailThreadIDs').push({ member: member, threadId: threadID });
-
 
 
     }
