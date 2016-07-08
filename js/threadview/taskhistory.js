@@ -31,12 +31,13 @@ function createActivity(task) {
     if (task.comment) { createComment(task.person, task.comment, task.date); return;}
     var act = document.createElement('div');
     act.className = 'activity';
+    act.classList.add('fade-in-anim');
     if (task.action === 'read') act.classList.add('read_activity');
     if (task.action === 'started draft') act.classList.add('draft_activity');
     if (task.action === 'sent a response') act.classList.add('sent_activity');
     var date = new Date(task.date);
     act.innerHTML = task.person + " " + task.action + " on " + date;
-    $('.taskHistory').prepend(act);
+    $('#commentcontainer').prepend(act);
 }
 
 // var unwatchLastComment = null;
@@ -65,7 +66,7 @@ function createComment(person, comment, date) {
     var person_comment = document.createElement('p');
     person_comment.innerHTML = '<b>' + person + '</b>' + ": " + comment;
     comm.appendChild(person_comment);
-    $('.taskHistory').prepend(comm);
+    $('#commentcontainer').prepend(comm);
     $('#comment').val('');
 }
 
@@ -102,6 +103,9 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         })
 
         taskHistory.appendChild(submit);
+        var commentcontainer = document.createElement('div');
+        commentcontainer.id = 'commentcontainer';
+        taskHistory.appendChild(commentcontainer);
         // thread > activity and comments
         // activity > [{person: person, action: action, date: date}]
         // comment > [{person:person , comment:comment , date:date}]
