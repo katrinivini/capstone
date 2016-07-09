@@ -101,6 +101,15 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                 }
             }
 
+            // Adds messageHash and its child appliedSharedLabels to messages database if they don't already exist.
+            if (!messagesDatabase[messageHash]) messagesDatabase[messageHash] = {};
+            if (!messagesDatabase[messageHash].appliedSharedLabels) messagesDatabase[messageHash].appliedSharedLabels = {};
+            
+            messagesDatabase[messageHash]["appliedSharedLabels"][assignee] = labelID;
+
+            // // Saves updates.
+            messages.update(messagesDatabase);
+
             return gapi.client.gmail.users.threads.modify({
                 'userId': 'me',
                 'id': gmailThreadID,
@@ -118,7 +127,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         // .catch(function(error) {
         //     console.log("add label error: ", error);
         // })
-        
+
     } // closes if block
 }) // closes addListener
 
