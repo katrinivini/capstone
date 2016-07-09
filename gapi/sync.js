@@ -1,5 +1,8 @@
-// background script: making gapi calls a like a rock star!
+// Background script: Listens for requests from content script app.js.
+// Making gapi calls a like a rock star!
+// Also works with Firebase...because why should content scripts have all the fun?
 
+// Sets up Firebase.
 var firebase = require('firebase');
 var config = {
     apiKey: "AIzaSyDPRP1vgm6bQ7SXuVAQtgBS5ewsjJoDLzg",
@@ -7,15 +10,14 @@ var config = {
     databaseURL: "https://capstone1604gha.firebaseio.com",
     storageBucket: "https://capstone1604gha.firebaseio.com",
 };
-
 firebase.initializeApp(config);
-
+// Gets messages branch of database.
+var messagesDatabase;
 var messages = firebase.database().ref('/messages');
+messages.once('value', function(snapshot) { messagesDatabase = snapshot.val(); })
 
 
-
-messages.once('value', function(snapshot) {messagesDatabase = snapshot.val();})
-// Listens for requests from content script mysync.js.
+// Listens for requests from content script app.js.
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
         console.log("inside sync.js addListener");
@@ -31,27 +33,100 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         var labelsToRemove;
         var request = request;
         var arrayOfSyncedIDs;
-        var query = "is:unread newer_than:7d to:teamidkgha@googlegroups.com OR from:teamidkgha@googlegroups.com OR from:b.emma.lai@gmail.com OR from:emailkathy@gmail.com OR from:rina.krevat@gmail.com OR from:katrinamvelez@gmail.com";
+        var query = "newer_than:1d";
+        // var query = "newer_than:1d from:emailkathy@gmail.com OR to:teamidkgha@googlegroups.com OR from:teamidkgha@googlegroups.com to:teamidkgha@gmail.com OR from:teamidkgha@gmail.com OR from:b.emma.lai@gmail.com OR from:rina.krevat@gmail.com OR to:katrinavelez@gmail.com OR from:katrinamvelez@gmail.com";
+        // var query = "is:unread newer_than:7d to:teamidkgha@googlegroups.com OR from:teamidkgha@googlegroups.com OR from:b.emma.lai@gmail.com OR from:emailkathy@gmail.com OR from:rina.krevat@gmail.com OR from:katrinamvelez@gmail.com";
 
         if (request.type === 'sync') {
+
+            console.log("inside sync listener");
+            console.log("sync request: ", request)
 
             // Gets list of messages that match query.
             listMessages('me', query, function(response) {
                 // response is [{id: gmailMessageID, threadId: gmailThreadID}, ...]
                 let arrayOfGmailIdObjects = response;
-                console.log("sync.js listMessages response: ", arrayOfGmailIdObjects);
-                let arrayOfGmailMessageIDs = arrayOfGmailIdObjects.map(function(obj)
-                {
+                let arrayOfGmailMessageIDs = arrayOfGmailIdObjects.map(function(obj) {
                     return obj.id;
                 });
-                console.log("arrayOfGmailMessageIDs: ", arrayOfGmailMessageIDs);
+
                 arrayOfSyncedIDs = arrayOfGmailMessageIDs.map(syncID);
 
             }); // closes listMessages
 
         } // closes if block
-        console.log("arrayOfSyncedIDs: ", arrayOfSyncedIDs);
-        // sendResponse("heyo from sync.js");
+
+
+        if (request.type === 'add assign label') {
+
+            console.log("inside add assign label listener");
+            console.log("add assign label request: ", request);
+
+            labelsToAdd = request.labelsToAdd;
+            labelsToRemove = request.labelsToRemove;
+            threadID = request.threadId;
+
+            gapi.client.gmail.users.messages.get({
+                    'id': request.threadId,
+                    'userId': 'me',
+                    'format': 'metadata'
+                })
+                .then(function(jsonresp, rawresp) {
+
+                    gmailMessageID = jsonresp.result.id;
+                    gmailThreadID = jsonresp.result.threadId;
+                    
+
+                    for (var i = 0; i < jsonresp.result.payload.headers.length; i++) {
+
+                        if (jsonresp.result.payload.headers[i].name.toUpperCase() === "MESSAGE-ID") {
+                            messageID = jsonresp.result.payload.headers[i].value;
+                            messageHash = hashCode(messageID);
+                        }
+
+                    }
+
+                    return gapi.client.gmail.users.threads.modify({
+                        'userId': 'me',
+                        'id': gmailThreadID,
+                        'addLabelIds': labelsToAdd,
+                        'removeLabelIds': labelsToRemove
+                    });
+                })
+                .then(function(response) {
+                    megaResponse = response;
+                    megaResponse["messageID"] = messageHash;
+                    megaResponse["gmailMessageID"] = gmailMessageID;
+                    megaResponse["gmailThreadID"] = gmailThreadID;
+                    console.log("megaResponse: ", megaResponse);
+                    sendResponse(megaResponse);
+                })
+                // .catch(function(error) {
+                //     console.log("add label error: ", error);
+                // })
+
+        } // closes if block
+
+        if (request.type === 'list user labels') {
+
+            console.log("inside list user labels listener");
+            console.log("list user labels request: ", request);
+
+            listLabels('me', function(response) {
+
+                var arrayOfLabelObjects = response.labels;
+                var labelDictionary = {};
+
+                for (var obj of arrayOfLabelObjects) {
+                    labelDictionary[obj.name] = obj.id;
+                }
+
+                // console.log("labelDictionary: ", labelDictionary);
+
+                sendResponse(labelDictionary);
+            });
+
+        } // closes if block
 
     }) // closes addListener
 
@@ -78,10 +153,11 @@ function listLabels(userId, callback) {
     request.execute(callback);
 }
 
+// For some godforsaken reason, 'label' should really be 'resources'.
 function createLabel(userId, newLabelName, callback) {
     var request = gapi.client.gmail.users.labels.create({
         'userId': userId,
-        'label': {
+        'resources': {
             'name': newLabelName,
             'labelListVisibility': 'labelShow',
             'messageListVisibility': 'show'
@@ -134,8 +210,6 @@ function syncID(gmailMessageID) {
         })
         .then(function(jsonresp, rawresp) {
 
-            
-
             for (var i = 0; i < jsonresp.result.payload.headers.length; i++) {
 
                 if (jsonresp.result.payload.headers[i].name.toUpperCase() === "DELIVERED-TO") {
@@ -145,6 +219,22 @@ function syncID(gmailMessageID) {
                 if (jsonresp.result.payload.headers[i].name.toUpperCase() === "MESSAGE-ID") {
                     messageID = jsonresp.result.payload.headers[i].value;
                 }
+
+                if (jsonresp.result.payload.headers[i].name.toUpperCase() === "DATE") {
+                    var date = jsonresp.result.payload.headers[i].value;
+                }
+
+                if (jsonresp.result.payload.headers[i].name.toUpperCase() === "TO") {
+                    var emailTo = jsonresp.result.payload.headers[i].value;
+                }
+
+                if (jsonresp.result.payload.headers[i].name.toUpperCase() === "FROM") {
+                    var emailFrom = jsonresp.result.payload.headers[i].value;
+                }
+
+                if (jsonresp.result.payload.headers[i].name.toUpperCase() === "SUBJECT") {
+                    var subject = jsonresp.result.payload.headers[i].value;
+                }
             }
 
             gmailMessageID = jsonresp.result.id;
@@ -152,33 +242,58 @@ function syncID(gmailMessageID) {
             messageHash = hashCode(messageID);
 
             if (!messagesDatabase[messageHash]) messagesDatabase[messageHash] = {};
+            if (!messagesDatabase[messageHash].gmailThreadIDs) messagesDatabase[messageHash].gmailThreadIDs = {};
+
+            messagesDatabase[messageHash]["gmailThreadIDs"][gmailThreadID] = memberEmailAddress;
 
             // // Saves updates.
             messages.update(messagesDatabase);
 
-            
+
 
             return {
                 memberEmailAddress: memberEmailAddress,
                 messageHash: messageHash,
-                gmailThreadID: gmailThreadID
+                gmailThreadID: gmailThreadID,
+                date: date,
+                to: emailTo,
+                from: emailFrom,
+                subject: subject
             };
         })
         .then(function(response) {
 
+            console.log("email to sync: ", response);
+
             // messages.child(messageHash).child("gmailThreadIDs")[response.gmailThreadID] = response.memberEmailAddress;
 
-            if (!messagesDatabase[response.messageHash].gmailThreadIDs) messagesDatabase[response.messageHash].gmailThreadIDs = {};
+            // if (!messagesDatabase[response.messageHash].gmailThreadIDs) messagesDatabase[response.messageHash].gmailThreadIDs = {};
 
-            messagesDatabase[response.messageHash]["gmailThreadIDs"][response.gmailThreadID] = response.memberEmailAddress;
+            // messagesDatabase[response.messageHash]["gmailThreadIDs"][response.gmailThreadID] = response.memberEmailAddress;
 
             // Saves updates.
-            messages.update(messagesDatabase);
+            // messages.update(messagesDatabase);
+
+            // return {
+            //     memberEmailAddress: "abc123@yahoo.com",
+            //     messageHash: response.messageHash,
+            //     gmailThreadID: "testgmailthread12345"
+            // };
 
         })
-        // .catch(function(error) {
-        //     console.log("add label error: ", error);
-        // })
+        // .then(function(response) {
+
+    //     if (!messagesDatabase[response.messageHash].gmailThreadIDs) messagesDatabase[response.messageHash].gmailThreadIDs = {};
+
+    //     messagesDatabase[response.messageHash]["gmailThreadIDs"][response.gmailThreadID] = response.memberEmailAddress;
+
+    //     // Saves updates.
+    //     messages.update(messagesDatabase);
+
+    // })
+    // .catch(function(error) {
+    //     console.log("add label error: ", error);
+    // })
 } // closes syncID
 
 // alternatively, maybe a function that removes the non letter characters?
