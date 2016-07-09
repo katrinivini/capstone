@@ -41,6 +41,7 @@ app.controller('LabelsCtrl', function($scope, $firebase, $firebaseArray, $state)
 		arr.$add({
 			label: name,
 			members: members, 
+			messageId: null,
 		})
 		.then(function(ref) {
 			// console.log('here is ref', ref);

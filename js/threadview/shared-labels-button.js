@@ -37,11 +37,41 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 console.log('here is the response after i created that shared label for you', gapiResponse);
             });
         }
+    })    
+
+    // once the messageId field has been populated AKA someone has decided to apply a label to a particular thread 
+    sharedLabels.on('child_changed', function(snapshot) { 
+        var labelWithMessageId = snapshot.val(); 
+        console.log('something was added to shared labels', snapshot.val())
+        // if your email is included in the 'members' array of the new label aka if someone included you on a new shared label, then you want to go and apply that new label in gmail
+        var peopleToAddLabelFor = [];
+        labelWithMessageId.members.forEach(function(member){
+            peopleToAddLabelFor.push(member.email)
+        })
+        console.log('here are the people to add the new label to', peopleToAddLabelFor)
+
+        //fetch your own email address
+        chrome.runtime.sendMessage({
+            type: 'get profile'
+        }, function(gapiResponse) {
+            console.log('here is my personal email', gapiResponse)
+            myOwnEmail = gapiResponse;
+        });
+
+        // send the message for gapi to apply this to the right thread
+        if (peopleToAddLabelFor.indexOf(myOwnEmail) >= 0) {
+            console.log('YES MY EMAIL IS IN HERE')
+            chrome.runtime.sendMessage({
+                type: 'apply sharedLabel', 
+                name: labelWithMessageId.label
+            }, function(gapiResponse) {
+                console.log('here is the response after i created that shared label for you', gapiResponse);
+            });
+        }
     })
 
     var messageID;
     var threadId;
-    var taskHistory;
     var person = sdk.User.getAccountSwitcherContactList()[0].name;
     
     //register that you're in thread view
@@ -94,11 +124,25 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
                     //attach a click event on each of these shared labels
                     item.addEventListener('click', function(event){
+                        //look up the message id of this thread
+                        console.log('here is the threadId', threadId)
                         chrome.runtime.sendMessage({
-                            type: 'apply sharedLabel', 
+                            type: 'get messageId', 
+                            threadId: threadId,
                             labelName: label.labelName,
-                            applyTo: label.sharedWith
-                        })
+                            // applyTo: label.sharedWith
+                        }
+                        // , function(gapiResponse) {
+                        //     console.log('here is the messageid', gapiResponse)
+                        //     messageID = gapiResponse;
+                        // }
+                        )                        
+
+                        // chrome.runtime.sendMessage({
+                        //     type: 'apply sharedLabel', 
+                        //     labelName: label.labelName,
+                        //     applyTo: label.sharedWith
+                        // })
                     })
                 })
             });
