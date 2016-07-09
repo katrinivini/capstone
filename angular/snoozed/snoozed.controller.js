@@ -49,12 +49,14 @@ app.controller('SnoozeCtrl', function($scope, $firebase, $firebaseArray, $state)
 
     })
 
-    $scope.removeSnooze = function(messageID, databaseID){
+    $scope.removeSnooze = function(snoozedemail){
     	//have to delete thing from database, then call $scope.$digest
-    	members.child(index).child('activity').child(databaseID).remove()
+        var i = $scope.snoozedemails.indexOf(snoozedemail);
+    	members.child(index).child('activity').child(snoozedemail.databaseId).remove()
     	.then(function(){
-            messages.child(messageID).child('activity').push(eventObj(name, 'unsnoozed this email'));
-    		$scope.$digest();
+            messages.child(snoozedemail.messageId).child('activity').push(eventObj(name, 'unsnoozed this email'));
+    		$scope.snoozedemails = $scope.snoozedemails.slice(0, i).concat($scope.snoozedemails.slice(i+1));
+            $scope.$digest();
     	})
     }
 
