@@ -10,24 +10,30 @@ var config = {
 var Firebase = firebase.initializeApp(config);
 
 var app = angular.module('app', ['firebase', 'ui.router', 'ui.select']);
-
+var members = firebase.database().ref('/members');
 app.config(function($stateProvider) {
-    // // 	// This turns off hashbang urls (/#about) and changes it to something normal (/about)
-    // 	// $locationProvider.html5Mode(true);
-    // // 	// If we go to a URL that ui-router doesn't have registered, go to the "/" url.
-    // 	// $urlRouterProvider.otherwise('/userpanel');
+    // //   // This turns off hashbang urls (/#about) and changes it to something normal (/about)
+    //  // $locationProvider.html5Mode(true);
+    // //   // If we go to a URL that ui-router doesn't have registered, go to the "/" url.
+    //  // $urlRouterProvider.otherwise('/userpanel');
 
-    // 	//this line doesn't work anymore after merging with master?
-    // 	// $urlRouterProvider.when('/userpanel', '/dashboard');
+    //  //this line doesn't work anymore after merging with master?
+    //  // $urlRouterProvider.when('/userpanel', '/dashboard');
+
 
     // var el = document.createElement("div");
     // fetch(chrome.extension.getURL('/templates/dashboard-home.html'))
     // .then(function(response){
-    // 	return response.text();
+    //  return response.text();
     // })
     // .then(function(html){
-    // 	insert = html; 
-    // 	// el.innerHTML = html;
+    //  insert = html; 
+    //  // el.innerHTML = html;
+    // })
+
+    // $stateProvider.state('index', {
+    //     templateUrl: chrome.extension.getURL('/templates/index.html'),
+    //     controller: 'IndexCtrl'
     // })
 
     $stateProvider.state('dashboard', {
@@ -65,7 +71,7 @@ app.config(function($stateProvider) {
         templateUrl: chrome.extension.getURL('/templates/email-template-edit.html'),
         controller: 'TemplatesCtrl'
     })
-     $stateProvider.state('emailtemplates.preview', {
+    $stateProvider.state('emailtemplates.preview', {
         // url: '/edit',
         templateUrl: chrome.extension.getURL('/templates/email-template-preview.html'),
         controller: 'TemplatesCtrl'
@@ -77,14 +83,10 @@ app.config(function($stateProvider) {
         controller: 'SnoozeCtrl'
     })
 
+    $stateProvider.state('completed', {
+        // url: '/snoozed',
+        templateUrl: chrome.extension.getURL('/templates/completed-items.html'),
+        controller: 'CompleteCtrl'
+    })
+
 })
-
-// module.exports = {
-// 	app: app
-// }
-// require('./app.js');
-// require('./dashboard/dashboard.controller.js');
-// require('./labels/labels.controller.js');
-// require('./snoozed/snoozed.controller.js');
-// require('./templates/templates.controller.js');
-

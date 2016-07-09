@@ -17,6 +17,8 @@
     <script src="../angular/labels/labels.controller.js" ></script>
     <script src="../angular/templates/templates.controller.js" ></script>
     <script src="../angular/snoozed/snoozed.controller.js" ></script>
+    <script src="../angular/completed/completed.controller.js" ></script>
+    <script src="../angular/index/index.controller.js" ></script>
 
   </head>
   <body ng-app="app">
@@ -27,14 +29,15 @@
       <div class="col-xs-3">
         <div id="left-dashboard">
 
-          <ul class="nav nav-pills nav-stacked">
-            <li class="user-info" id="username">Belinda Lai</li>
-            <li class="user-info" id="useremail">b.emma.lai@gmail.com</li>
+          <ul ng-controller="IndexCtrl" class="nav nav-pills nav-stacked">
+            <li class="user-info" id="username">{{member.name}}</li>
+            <li class="user-info" id="useremail">{{member.email}}</li>
             <tr>
             <li ui-sref-active="nav_active"><a ui-sref="dashboard"><small><span class="glyphicon glyphicon-cog"></span></small> Dashboard</a></li>
             <li ui-sref-active="nav_active"><a ui-sref="sharedlabels"><small><span class="glyphicon glyphicon-tags"></span></small> Shared Labels</a></li>
             <li ui-sref-active="nav_active"><a ui-sref="emailtemplates"><small><span class="glyphicon glyphicon-pencil"></span></small> Email Templates</a></li>
             <li ui-sref-active="nav_active"><a ui-sref="snoozed"><small><span class="glyphicon glyphicon-time"></span></small> Snoozed Items</a></li>
+            <li ui-sref-active="nav_active"><a ui-sref="completed"><small><span class="glyphicon glyphicon-ok"></span></small> Completed Items</a></li>
           </ul>
           
         </div>
