@@ -143,36 +143,6 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
         // Although you need ng-value (not just value) in the template for this to work. Life's a mystery.
         var assignee = $('input[name=radioMember]:checked', '#assignForm').val();
 
-        switch (assignee) {
-            case "Belinda Lai":
-                labelID = "Label_16";
-                break;
-            case "Kathy Chang":
-                labelID = "Label_17";
-                break;
-            case "Rina Krevat":
-                labelID = "Label_18";
-                break;
-            case "Katrina Velez":
-                labelID = "Label_19";
-                break;
-        }
-
-        // switch (assignee) {
-        //     case "b.emma.lai@gmail.com":
-        //         labelID = "Label_16";
-        //         break;
-        //     case "emailkathy@gmail.com":
-        //         labelID = "Label_17";
-        //         break;
-        //     case "rina.krevat@gmail.com":
-        //         labelID = "Label_18";
-        //         break;
-        //     case "katrinamvelez@gmail.com":
-        //         labelID = "Label_19";
-        //         break;
-        // }
-
         // Adds assignment to Firebase.
         console.log('assignee: ', assignee);
         console.log('member: ', member);
@@ -184,7 +154,7 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
         chrome.runtime.sendMessage({
             type: 'add assign label',
             threadId: threadID,
-            labelsToAdd: [labelID],
+            assignee: assignee,
             labelsToRemove: []
         }, function(gapiResponse) {
 
@@ -192,14 +162,14 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 
         });
 
-        // Makes gapi call to get list of user's labels.
-        chrome.runtime.sendMessage({
-            type: 'list user labels'
-        }, function(gapiResponse) {
+        // // Makes gapi call to get list of user's labels.
+        // chrome.runtime.sendMessage({
+        //     type: 'list user labels'
+        // }, function(gapiResponse) {
 
-            console.log("background response to list user labels: ", gapiResponse);
+        //     console.log("background response to list user labels: ", gapiResponse);
 
-        });
+        // });
 
         // if (!readMessages[messageID].gmailThreadIDs) readMessages[messageID].gmailThreadIDs = {};
         // readMessages[messageID]["gmailThreadIDs"][member] = threadID;
