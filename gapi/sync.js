@@ -1,5 +1,8 @@
-// background script: making gapi calls a like a rock star!
+// Background script: Listens for requests from content script app.js.
+// Making gapi calls a like a rock star!
+// Also works with Firebase...because why should content scripts have all the fun?
 
+// Sets up Firebase.
 var firebase = require('firebase');
 var config = {
     apiKey: "AIzaSyDPRP1vgm6bQ7SXuVAQtgBS5ewsjJoDLzg",
@@ -7,14 +10,13 @@ var config = {
     databaseURL: "https://capstone1604gha.firebaseio.com",
     storageBucket: "https://capstone1604gha.firebaseio.com",
 };
-
-// Sets up Firebase and gets messages branch of database.
 firebase.initializeApp(config);
+// Gets messages branch of database.
 var messages = firebase.database().ref('/messages');
-messages.once('value', function(snapshot) {messagesDatabase = snapshot.val();})
+messages.once('value', function(snapshot) { messagesDatabase = snapshot.val(); })
 
 
-// Listens for requests from content script mysync.js.
+// Listens for requests from content script app.js.
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
         console.log("inside sync.js addListener");
@@ -36,18 +38,92 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
         if (request.type === 'sync') {
 
+            console.log("inside sync listener");
+            console.log("sync request: ", request)
+
             // Gets list of messages that match query.
             listMessages('me', query, function(response) {
                 // response is [{id: gmailMessageID, threadId: gmailThreadID}, ...]
                 let arrayOfGmailIdObjects = response;
-                let arrayOfGmailMessageIDs = arrayOfGmailIdObjects.map(function(obj)
-                {
+                let arrayOfGmailMessageIDs = arrayOfGmailIdObjects.map(function(obj) {
                     return obj.id;
                 });
-                
+
                 arrayOfSyncedIDs = arrayOfGmailMessageIDs.map(syncID);
 
             }); // closes listMessages
+
+        } // closes if block
+
+
+        if (request.type === 'add assign label') {
+
+            console.log("inside add assign label listener");
+            console.log("add assign label request: ", request);
+
+            labelsToAdd = request.labelsToAdd;
+            labelsToRemove = request.labelsToRemove;
+            threadID = request.threadId;
+
+            gapi.client.gmail.users.messages.get({
+                    'id': request.threadId,
+                    'userId': 'me',
+                    'format': 'metadata'
+                })
+                .then(function(jsonresp, rawresp) {
+
+                    gmailMessageID = jsonresp.result.id;
+                    gmailThreadID = jsonresp.result.threadId;
+                    
+
+                    for (var i = 0; i < jsonresp.result.payload.headers.length; i++) {
+
+                        if (jsonresp.result.payload.headers[i].name.toUpperCase() === "MESSAGE-ID") {
+                            messageID = jsonresp.result.payload.headers[i].value;
+                            messageHash = hashCode(messageID);
+                        }
+
+                    }
+
+                    return gapi.client.gmail.users.threads.modify({
+                        'userId': 'me',
+                        'id': gmailThreadID,
+                        'addLabelIds': labelsToAdd,
+                        'removeLabelIds': labelsToRemove
+                    });
+                })
+                .then(function(response) {
+                    megaResponse = response;
+                    megaResponse["messageID"] = messageHash;
+                    megaResponse["gmailMessageID"] = gmailMessageID;
+                    megaResponse["gmailThreadID"] = gmailThreadID;
+                    console.log("megaResponse: ", megaResponse);
+                    sendResponse(megaResponse);
+                })
+                // .catch(function(error) {
+                //     console.log("add label error: ", error);
+                // })
+
+        } // closes if block
+
+        if (request.type === 'list user labels') {
+
+            console.log("inside list user labels listener");
+            console.log("list user labels request: ", request);
+
+            listLabels('me', function(response) {
+
+                var arrayOfLabelObjects = response.labels;
+                var labelDictionary = {};
+
+                for (var obj of arrayOfLabelObjects) {
+                    labelDictionary[obj.name] = obj.id;
+                }
+
+                // console.log("labelDictionary: ", labelDictionary);
+
+                sendResponse(labelDictionary);
+            });
 
         } // closes if block
 
@@ -76,10 +152,11 @@ function listLabels(userId, callback) {
     request.execute(callback);
 }
 
+// For some godforsaken reason, 'label' should really be 'resources'.
 function createLabel(userId, newLabelName, callback) {
     var request = gapi.client.gmail.users.labels.create({
         'userId': userId,
-        'label': {
+        'resources': {
             'name': newLabelName,
             'labelListVisibility': 'labelShow',
             'messageListVisibility': 'show'
@@ -171,7 +248,7 @@ function syncID(gmailMessageID) {
             // // Saves updates.
             messages.update(messagesDatabase);
 
-            
+
 
             return {
                 memberEmailAddress: memberEmailAddress,
@@ -205,17 +282,17 @@ function syncID(gmailMessageID) {
         })
         // .then(function(response) {
 
-        //     if (!messagesDatabase[response.messageHash].gmailThreadIDs) messagesDatabase[response.messageHash].gmailThreadIDs = {};
+    //     if (!messagesDatabase[response.messageHash].gmailThreadIDs) messagesDatabase[response.messageHash].gmailThreadIDs = {};
 
-        //     messagesDatabase[response.messageHash]["gmailThreadIDs"][response.gmailThreadID] = response.memberEmailAddress;
+    //     messagesDatabase[response.messageHash]["gmailThreadIDs"][response.gmailThreadID] = response.memberEmailAddress;
 
-        //     // Saves updates.
-        //     messages.update(messagesDatabase);
+    //     // Saves updates.
+    //     messages.update(messagesDatabase);
 
-        // })
-        // .catch(function(error) {
-        //     console.log("add label error: ", error);
-        // })
+    // })
+    // .catch(function(error) {
+    //     console.log("add label error: ", error);
+    // })
 } // closes syncID
 
 // alternatively, maybe a function that removes the non letter characters?
