@@ -1,6 +1,7 @@
 var messages = require('../myapp.js').messages;
 var members = require('../myapp.js').members;
 var Firebase = require('firebase');
+var index;
 InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
     var threadId;
     sdk.Conversations.registerThreadViewHandler(function(threadView) {
@@ -16,8 +17,8 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         })
     })
     sdk.Toolbars.registerToolbarButtonForThreadView({
-        title: 'Complete',
-        iconUrl: 'https://cdn2.iconfinder.com/data/icons/web/512/Check_Sign-512.png',
+        title: 'Snooze',
+        iconUrl: 'http://www.freeiconspng.com/uploads/clock-icon--pretty-office-8-iconset--custom-icon-design-4.ico',
         section: 'METADATA_STATE',
         onClick: function(event) {
             chrome.runtime.sendMessage({
@@ -26,20 +27,19 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             }, function(messageID) {
                 members.child(index).child('activity').once('value', function(snapshot) {
                     var userHistory = snapshot.val();
-                    console.log('userHistory: ', userHistory);
                     //checking if the member already snoozed this email
                     for (var databaseId in userHistory) {
-                        if (userHistory.hasOwnProperty(databaseId) && userHistory[databaseId].action === 'completed' && userHistory[databaseId].threadId === threadId) return;
+                        if (userHistory.hasOwnProperty(databaseId) && userHistory[databaseId].action === 'snoozed' && userHistory[databaseId].threadId === threadId) return;
                     }
-                    messages.child(messageID).child('activity').push(eventObj(name, 'completed this email'))
-                    members.child(index).child('activity').push({ action: 'completed', threadId: threadId, messageId: messageID, date: Firebase.database.ServerValue.TIMESTAMP })
+                    messages.child(messageID).child('activity').push(eventObj(name, 'snoozed this email'));
+                    members.child(index).child('activity').push({ action: 'snoozed', threadId: threadId, messageId: messageID, date: Firebase.database.ServerValue.TIMESTAMP })
                 })
             })
         }
     })
 });
 
-function eventObj(p, a) {
+function eventObj(p, a, threadID, messageID) {
     return {
         person: p,
         action: a,

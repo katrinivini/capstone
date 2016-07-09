@@ -1,7 +1,7 @@
 'use strict';
 
 var members = firebase.database().ref('/members');
-
+var messages = firebase.database().ref('/messages');
 var email;
 var name;
 var index;
@@ -9,10 +9,8 @@ var index;
 chrome.runtime.sendMessage({
     type: 'get profile'
 }, function(emailAddress) {
-    // email = emailAddress;
     members.once('value', function(snapshot) {
         var people = Array.prototype.slice.call(snapshot.val());
-
         people.forEach(function(person, i) {
             if (person.email === emailAddress) {
                 name = person.name;
@@ -32,46 +30,45 @@ chrome.runtime.sendMessage({
 app.controller('SnoozeCtrl', function($scope, $firebase, $firebaseArray, $state) {
     var snoozedemails = [];
     $scope.snoozedemails = [];
-    // $scope.hello = 'kathy';
-    console.log('index: ', index);
     members.child(index).child('activity').once('value', function(snapshot) {
         var userHistory = snapshot.val();
-        console.log('members once for activity history', userHistory);
         for (var id in userHistory) {
             if (userHistory.hasOwnProperty(id) && userHistory[id].action === 'snoozed') {
-            	console.log('get into this if statement for user history');
-                snoozedemails.push({databaseId: id , userHistory: userHistory[id]});
+                snoozedemails.push({databaseId: id , data: userHistory[id]});
             }
         }
-        console.log('snoozedemails: ', snoozedemails);
         snoozedemails.forEach(function(snoozedemail) {
             chrome.runtime.sendMessage({
                 type: 'fetch email',
-                threadId: snoozedemail.userHistory.threadId
+                threadId: snoozedemail.data.threadId
             }, function(emailBody) {
-            	console.log('hmmmm, does the email body get here', emailBody);
-                $scope.snoozedemails.push({ databaseId: snoozedemail.databaseId, threadId: snoozedemail.threadId, body: emailBody.snippet, date: new Date(snoozedemail.userHistory.date) });
-                console.log('this is a snoozed email: ', emailBody);
-                console.log('$scope.snoozedEmails: ', $scope.snoozedemails);
+                $scope.snoozedemails.push({ databaseId: snoozedemail.databaseId, threadId: snoozedemail.data.threadId, messageId: snoozedemail.data.messageId, body: truncated(emailBody), date: new Date(snoozedemail.data.date) });
                 $scope.$digest();
             })
         })
 
     })
 
-    $scope.removeSnooze = function(databaseId){
-    	//have to delete thing from database, then call scope.digest
-    	console.log('removing snooze');
-    	members.child(index).child('activity').child(databaseId).remove();
-    	console.log(members.child(index).child('activity').child(databaseId).remove())
+    $scope.removeSnooze = function(messageID, databaseID){
+    	//have to delete thing from database, then call $scope.$digest
+    	members.child(index).child('activity').child(databaseID).remove()
     	.then(function(){
-    		$scope.digest();
+            messages.child(messageID).child('activity').push(eventObj(name, 'unsnoozed this email'));
+    		$scope.$digest();
     	})
-    	// $scope.$digest();
-    	// members.child(index).child('activity').once('child_removed', function(){
-    	// 	console.log('members child activity once child removed');
-    	// 	$scope.$digest();
-    	// })
     }
 
 });
+
+function eventObj(p, a, threadID, messageID) {
+    return {
+        person: p,
+        action: a,
+        date: firebase.database.ServerValue.TIMESTAMP
+    }
+}
+
+function truncated (emailBody){
+    if (emailBody.snippet.length < 40) return emailBody.snippet;
+    else return emailBody.snippet.substring(0,40) + "...";
+}
