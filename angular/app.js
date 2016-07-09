@@ -71,21 +71,20 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
             }) // closes sendMessage
 
 
-
-
-
     // Load InboxSDK.
     InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
             // Get name of user who's viewing thread.
             member = sdk.User.getAccountSwitcherContactList()[0].name;
 
+            // Refreshes Inbox whenever navigating to Inbox view.
+            // So that assignment labels show up right after returning to Inbox.
+            // Otherwise you have to wait a while or press the refresh button.
             var route = sdk.Router.NativeListRouteIDs.INBOX;
-
             sdk.Router.handleListRoute(route, function(inboxView) {
                 inboxView.refresh();
                 console.log("Inbox refreshed!");
-            })
+            });
 
             // Register ThreadViewHandler to get threadID.
             sdk.Conversations.registerThreadViewHandler(function(threadView) {
@@ -105,8 +104,8 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
                                 readMessages = snapshot.val();
                             });
 
-                        }) // closes sendMessage
-                }) // closes registerThreadViewHandler
+                        }); // closes sendMessage
+                }); // closes registerThreadViewHandler
 
             sdk.Toolbars.registerToolbarButtonForThreadView({
                 title: 'Assign',
@@ -117,9 +116,9 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
                     modalAssignView = sdk.Widgets.showModalView({
                         title: '',
                         el: el
-                    })
+                    });
                 }
-            });
+            });  // closes registerToolbarButtonForThreadView
         }) // closes InboxSDK then
 
         // Add members from Firebase to Angular scope.
@@ -131,7 +130,7 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
         angular.forEach(membersArray, function(item) {
 
             $scope.members.push(item.name);
-        })
+        });
     });
 
     // Adds assignment activity to Firebase.
@@ -181,8 +180,7 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
         // members.child(assignee).push({ action: 'was assigned by' + member, threadId: threadID, date: firebase.database.ServerValue.TIMESTAMP });
         modalAssignView.close();
 
-        console.log("before add assign label sendMessage");
-        // Make gapi call to add label.
+        // Makes gapi call to add label.
         chrome.runtime.sendMessage({
             type: 'add assign label',
             threadId: threadID,
@@ -194,7 +192,7 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 
         });
 
-        // Make gapi call to get list of user's labels.
+        // Makes gapi call to get list of user's labels.
         chrome.runtime.sendMessage({
             type: 'list user labels'
         }, function(gapiResponse) {
@@ -216,7 +214,5 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 
 
     }  // closes $scope.submitAssignment
-
-
 
 }); // closes assignapp.controller

@@ -12,6 +12,7 @@ var config = {
 };
 firebase.initializeApp(config);
 // Gets messages branch of database.
+var messagesDatabase;
 var messages = firebase.database().ref('/messages');
 messages.once('value', function(snapshot) { messagesDatabase = snapshot.val(); })
 
