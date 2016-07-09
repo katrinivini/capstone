@@ -77,6 +77,12 @@ app.config(function($stateProvider) {
         controller: 'SnoozeCtrl'
     })
 
+    $stateProvider.state('completed', {
+        // url: '/snoozed',
+        templateUrl: chrome.extension.getURL('/templates/completed-items.html'),
+        controller: 'CompleteCtrl'
+    })
+
 })
 
 // module.exports = {
