@@ -43,9 +43,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
     if (request.type === 'sync') {
 
-        console.log("inside sync listener");
-        console.log("sync request: ", request)
-
         // Gets list of messages that match query.
         listMessages('me', query, function(response) {
             // response is [{id: gmailMessageID, threadId: gmailThreadID}, ...]
@@ -81,11 +78,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                 labelDictionary[obj.name] = obj.id;
             }
 
-            console.log("labelDictionary in sync.js: ", labelDictionary);
-
             labelID = labelDictionary[assignee];
-            console.log("labelID: ", labelID);
-
             labelsToAdd = [labelID];
 
             return gapi.client.gmail.users.messages.get({
@@ -99,7 +92,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
             gmailMessageID = jsonresp.result.id;
             gmailThreadID = jsonresp.result.threadId;
-            
 
             for (var i = 0; i < jsonresp.result.payload.headers.length; i++) {
 
@@ -121,15 +113,13 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             megaResponse["messageID"] = messageHash;
             megaResponse["gmailMessageID"] = gmailMessageID;
             megaResponse["gmailThreadID"] = gmailThreadID;
-            console.log("megaResponse: ", megaResponse);
             sendResponse(megaResponse);
         })
         // .catch(function(error) {
         //     console.log("add label error: ", error);
         // })
-
+        
     } // closes if block
-
 }) // closes addListener
 
 
@@ -262,38 +252,14 @@ function syncID(gmailMessageID) {
 
             console.log("email to sync: ", response);
 
-            // messages.child(messageHash).child("gmailThreadIDs")[response.gmailThreadID] = response.memberEmailAddress;
-
-            // if (!messagesDatabase[response.messageHash].gmailThreadIDs) messagesDatabase[response.messageHash].gmailThreadIDs = {};
-
-            // messagesDatabase[response.messageHash]["gmailThreadIDs"][response.gmailThreadID] = response.memberEmailAddress;
-
-            // Saves updates.
-            // messages.update(messagesDatabase);
-
-            // return {
-            //     memberEmailAddress: "abc123@yahoo.com",
-            //     messageHash: response.messageHash,
-            //     gmailThreadID: "testgmailthread12345"
-            // };
-
         })
-        // .then(function(response) {
-
-    //     if (!messagesDatabase[response.messageHash].gmailThreadIDs) messagesDatabase[response.messageHash].gmailThreadIDs = {};
-
-    //     messagesDatabase[response.messageHash]["gmailThreadIDs"][response.gmailThreadID] = response.memberEmailAddress;
-
-    //     // Saves updates.
-    //     messages.update(messagesDatabase);
-
-    // })
     // .catch(function(error) {
     //     console.log("add label error: ", error);
     // })
 } // closes syncID
 
-// alternatively, maybe a function that removes the non letter characters?
+
+// Because Firebase doesn't like weird characters.
 function hashCode(s) {
     // return s.split("").reduce(function(a, b) { a = ((a << 5) - a) + b.charCodeAt(0);
     //     return a & a }, 0);
