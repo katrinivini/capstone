@@ -1,3 +1,6 @@
+// This content script is sending messages to the background script sync.js.
+
+
 var app = angular.module('thing', ['firebase', 'ui.router']);
 // Eventually need to refactor so that there's only one angular.module.
 var assignapp = angular.module('shazzam', ['firebase']);
@@ -51,9 +54,6 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
     }
 
 
-
-
-
     // Call gapi in background script to sync common messageIDs with their respective Gmail threadIDs, which are different for each user.
     // Receives [{messageID: threadID}, ...].
 
@@ -63,14 +63,12 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
             function(gapiResponse) {
 
                 // Get all messageIDs (messages get added to Firebase when they're read).
-                messages.once('value', function(snapshot) {
-                    readMessages = snapshot.val();
-                });
+                // messages.once('value', function(snapshot) {
+                //     readMessages = snapshot.val();
+                // });
+                console.log("gapiResponse to sync sendMessage: ", gapiResponse);
 
             }) // closes sendMessage
-
-
-
 
 
     // Load InboxSDK.
@@ -78,6 +76,15 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 
             // Get name of user who's viewing thread.
             member = sdk.User.getAccountSwitcherContactList()[0].name;
+
+            // Refreshes Inbox whenever navigating to Inbox view.
+            // So that assignment labels show up right after returning to Inbox.
+            // Otherwise you have to wait a while or press the refresh button.
+            var route = sdk.Router.NativeListRouteIDs.INBOX;
+            sdk.Router.handleListRoute(route, function(inboxView) {
+                inboxView.refresh();
+                console.log("Inbox refreshed!");
+            });
 
             // Register ThreadViewHandler to get threadID.
             sdk.Conversations.registerThreadViewHandler(function(threadView) {
@@ -97,8 +104,9 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
                                 readMessages = snapshot.val();
                             });
 
-                        }) // closes sendMessage
-                }) // closes registerThreadViewHandler
+                        }); // closes sendMessage
+                }); // closes registerThreadViewHandler
+
             sdk.Toolbars.registerToolbarButtonForThreadView({
                 title: 'Assign',
                 iconUrl: 'https://cdn3.iconfinder.com/data/icons/box-and-shipping-supplies-icons/447/Clipboard_With_Pencil-512.png',
@@ -108,10 +116,11 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
                     modalAssignView = sdk.Widgets.showModalView({
                         title: '',
                         el: el
-                    })
+                    });
                 }
-            });
+            });  // closes registerToolbarButtonForThreadView
         }) // closes InboxSDK then
+
         // Add members from Firebase to Angular scope.
         // $loaded is a Firebase thing.
 
@@ -121,7 +130,7 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
         angular.forEach(membersArray, function(item) {
 
             $scope.members.push(item.name);
-        })
+        });
     });
 
     // Adds assignment activity to Firebase.
@@ -135,19 +144,34 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
         var assignee = $('input[name=radioMember]:checked', '#assignForm').val();
 
         switch (assignee) {
-            case "b.emma.lai@gmail.com":
+            case "Belinda Lai":
                 labelID = "Label_16";
                 break;
-            case "emailkathy@gmail.com":
+            case "Kathy Chang":
                 labelID = "Label_17";
                 break;
-            case "rina.krevat@gmail.com":
+            case "Rina Krevat":
                 labelID = "Label_18";
                 break;
-            case "katrinamvelez@gmail.com":
+            case "Katrina Velez":
                 labelID = "Label_19";
                 break;
         }
+
+        // switch (assignee) {
+        //     case "b.emma.lai@gmail.com":
+        //         labelID = "Label_16";
+        //         break;
+        //     case "emailkathy@gmail.com":
+        //         labelID = "Label_17";
+        //         break;
+        //     case "rina.krevat@gmail.com":
+        //         labelID = "Label_18";
+        //         break;
+        //     case "katrinamvelez@gmail.com":
+        //         labelID = "Label_19";
+        //         break;
+        // }
 
         // Adds assignment to Firebase.
         console.log('assignee: ', assignee);
@@ -155,24 +179,26 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
         messages.child(messageID).child('activity').push(assignment(member, assignee));
         // members.child(assignee).push({ action: 'was assigned by' + member, threadId: threadID, date: firebase.database.ServerValue.TIMESTAMP });
         modalAssignView.close();
-        // Make gapi call to add label.
+
+        // Makes gapi call to add label.
         chrome.runtime.sendMessage({
-            type: 'add label',
+            type: 'add assign label',
             threadId: threadID,
             labelsToAdd: [labelID],
             labelsToRemove: []
         }, function(gapiResponse) {
 
+            console.log("background response to add assign label: ", gapiResponse);
 
-
-            console.log("background response to add label: ", gapiResponse);
         });
 
-        // Make gapi call to get list of user's labels.
+        // Makes gapi call to get list of user's labels.
         chrome.runtime.sendMessage({
-            type: 'list labels'
+            type: 'list user labels'
         }, function(gapiResponse) {
-            console.log("background response: ", gapiResponse);
+
+            console.log("background response to list user labels: ", gapiResponse);
+
         });
 
         // if (!readMessages[messageID].gmailThreadIDs) readMessages[messageID].gmailThreadIDs = {};
@@ -183,9 +209,10 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 
         // replaces above
 
-        messages.child(messageID).child('gmailThreadIDs').push({ member: member, threadId: threadID });
+        // messages.child(messageID).child('gmailThreadIDs').push({ member: member, threadId: threadID });
 
 
 
-    }
-}); // end of controller
+    }  // closes $scope.submitAssignment
+
+}); // closes assignapp.controller
