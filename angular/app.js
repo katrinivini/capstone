@@ -39,6 +39,8 @@ var assignments = require('../js/myapp.js').assignments;
 // var Firebase = require('../js/myapp.js').Firebase;
 var $ = require('jquery');
 
+
+
 assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
 
     var assignedThreads;
@@ -89,23 +91,23 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
             // Register ThreadViewHandler to get threadID.
             sdk.Conversations.registerThreadViewHandler(function(threadView) {
 
-                    threadID = threadView.getThreadID();
+                threadID = threadView.getThreadID();
 
-                    // Use threadID to call gapi in background script to get messageID.
-                    // Because messageID can only come from gapi.
-                    chrome.runtime.sendMessage({
-                            type: 'read message',
-                            threadId: threadID // Watch out. Case-sensitive.
-                        }, function(hash) {
-                            // Hash function in background gets rid of characters Firebase doesn't like.
-                            messageID = hash;
-                            // Get all messageIDs (messages get added to Firebase when they're read).
-                            messages.once('value', function(snapshot) {
-                                readMessages = snapshot.val();
-                            });
+                // Use threadID to call gapi in background script to get messageID.
+                // Because messageID can only come from gapi.
+                chrome.runtime.sendMessage({
+                    type: 'read message',
+                    threadId: threadID // Watch out. Case-sensitive.
+                }, function(hash) {
+                    // Hash function in background gets rid of characters Firebase doesn't like.
+                    messageID = hash;
+                    // Get all messageIDs (messages get added to Firebase when they're read).
+                    messages.once('value', function(snapshot) {
+                        readMessages = snapshot.val();
+                    });
 
-                        }); // closes sendMessage
-                }); // closes registerThreadViewHandler
+                }); // closes sendMessage
+            }); // closes registerThreadViewHandler
 
             sdk.Toolbars.registerToolbarButtonForThreadView({
                 title: 'Assign',
@@ -118,11 +120,11 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
                         el: el
                     });
                 }
-            });  // closes registerToolbarButtonForThreadView
+            }); // closes registerToolbarButtonForThreadView
         }) // closes InboxSDK then
 
-        // Add members from Firebase to Angular scope.
-        // $loaded is a Firebase thing.
+    // Add members from Firebase to Angular scope.
+    // $loaded is a Firebase thing.
 
     $scope.members = [];
     var membersArray = $firebaseArray(members);
@@ -137,82 +139,82 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
     // DOM updates via whatever's in taskhistory.js.
     $scope.submitAssignment = function() {
 
-        var labelID;
+            var labelID;
 
-        // Gets radio input value. Used jquery because I gave up on Angular.
-        // Although you need ng-value (not just value) in the template for this to work. Life's a mystery.
-        var assignee = $('input[name=radioMember]:checked', '#assignForm').val();
+            // Gets radio input value. Used jquery because I gave up on Angular.
+            // Although you need ng-value (not just value) in the template for this to work. Life's a mystery.
+            var assignee = $('input[name=radioMember]:checked', '#assignForm').val();
 
-        switch (assignee) {
-            case "Belinda Lai":
-                labelID = "Label_16";
-                break;
-            case "Kathy Chang":
-                labelID = "Label_17";
-                break;
-            case "Rina Krevat":
-                labelID = "Label_18";
-                break;
-            case "Katrina Velez":
-                labelID = "Label_19";
-                break;
-        }
+            switch (assignee) {
+                case "Belinda Lai":
+                    labelID = "Label_16";
+                    break;
+                case "Kathy Chang":
+                    labelID = "Label_17";
+                    break;
+                case "Rina Krevat":
+                    labelID = "Label_18";
+                    break;
+                case "Katrina Velez":
+                    labelID = "Label_19";
+                    break;
+            }
 
-        // switch (assignee) {
-        //     case "b.emma.lai@gmail.com":
-        //         labelID = "Label_16";
-        //         break;
-        //     case "emailkathy@gmail.com":
-        //         labelID = "Label_17";
-        //         break;
-        //     case "rina.krevat@gmail.com":
-        //         labelID = "Label_18";
-        //         break;
-        //     case "katrinamvelez@gmail.com":
-        //         labelID = "Label_19";
-        //         break;
-        // }
+            // switch (assignee) {
+            //     case "b.emma.lai@gmail.com":
+            //         labelID = "Label_16";
+            //         break;
+            //     case "emailkathy@gmail.com":
+            //         labelID = "Label_17";
+            //         break;
+            //     case "rina.krevat@gmail.com":
+            //         labelID = "Label_18";
+            //         break;
+            //     case "katrinamvelez@gmail.com":
+            //         labelID = "Label_19";
+            //         break;
+            // }
 
-        // Adds assignment to Firebase.
-        console.log('assignee: ', assignee);
-        console.log('member: ', member);
-        messages.child(messageID).child('activity').push(assignment(member, assignee));
-        // members.child(assignee).push({ action: 'was assigned by' + member, threadId: threadID, date: firebase.database.ServerValue.TIMESTAMP });
-        modalAssignView.close();
+            // Adds assignment to Firebase.
+            console.log('assignee: ', assignee);
+            console.log('member: ', member);
+            messages.child(messageID).child('activity').push(assignment(member, assignee));
+            // members.child(assignee).push({ action: 'was assigned by' + member, threadId: threadID, date: firebase.database.ServerValue.TIMESTAMP });
+            modalAssignView.close();
 
-        // Makes gapi call to add label.
-        chrome.runtime.sendMessage({
-            type: 'add assign label',
-            threadId: threadID,
-            labelsToAdd: [labelID],
-            labelsToRemove: []
-        }, function(gapiResponse) {
+            // Makes gapi call to add label.
+            chrome.runtime.sendMessage({
+                type: 'add assign label',
+                threadId: threadID,
+                labelsToAdd: [labelID],
+                labelsToRemove: []
+            }, function(gapiResponse) {
 
-            console.log("background response to add assign label: ", gapiResponse);
+                console.log("background response to add assign label: ", gapiResponse);
 
-        });
+            });
 
-        // Makes gapi call to get list of user's labels.
-        chrome.runtime.sendMessage({
-            type: 'list user labels'
-        }, function(gapiResponse) {
+            // Makes gapi call to get list of user's labels.
+            chrome.runtime.sendMessage({
+                type: 'list user labels'
+            }, function(gapiResponse) {
 
-            console.log("background response to list user labels: ", gapiResponse);
+                console.log("background response to list user labels: ", gapiResponse);
 
-        });
+            });
 
-        // if (!readMessages[messageID].gmailThreadIDs) readMessages[messageID].gmailThreadIDs = {};
-        // readMessages[messageID]["gmailThreadIDs"][member] = threadID;
+            // if (!readMessages[messageID].gmailThreadIDs) readMessages[messageID].gmailThreadIDs = {};
+            // readMessages[messageID]["gmailThreadIDs"][member] = threadID;
 
-        // // Saves updates.
-        // messages.update(readMessages);
+            // // Saves updates.
+            // messages.update(readMessages);
 
-        // replaces above
+            // replaces above
 
-        // messages.child(messageID).child('gmailThreadIDs').push({ member: member, threadId: threadID });
+            // messages.child(messageID).child('gmailThreadIDs').push({ member: member, threadId: threadID });
 
 
 
-    }  // closes $scope.submitAssignment
+        } // closes $scope.submitAssignment
 
 }); // closes assignapp.controller
