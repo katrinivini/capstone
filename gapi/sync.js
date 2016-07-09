@@ -11,6 +11,7 @@ var config = {
     storageBucket: "https://capstone1604gha.firebaseio.com",
 };
 firebase.initializeApp(config);
+
 // Gets messages branch of database.
 var messagesDatabase;
 var messages = firebase.database().ref('/messages');
@@ -20,115 +21,116 @@ messages.once('value', function(snapshot) { messagesDatabase = snapshot.val(); }
 // Listens for requests from content script app.js.
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
-        console.log("inside sync.js addListener");
+    console.log("inside sync.js addListener");
 
-        var messageID;
-        var messageHash;
-        var gmailMessageID;
-        var gmailThreadID;
-        var threadID;
-        var memberEmailAddress;
-        var megaResponse;
-        var labelsToAdd;
-        var labelsToRemove;
-        var request = request;
-        var arrayOfSyncedIDs;
-        var query = "newer_than:1d";
-        // var query = "newer_than:1d from:emailkathy@gmail.com OR to:teamidkgha@googlegroups.com OR from:teamidkgha@googlegroups.com to:teamidkgha@gmail.com OR from:teamidkgha@gmail.com OR from:b.emma.lai@gmail.com OR from:rina.krevat@gmail.com OR to:katrinavelez@gmail.com OR from:katrinamvelez@gmail.com";
-        // var query = "is:unread newer_than:7d to:teamidkgha@googlegroups.com OR from:teamidkgha@googlegroups.com OR from:b.emma.lai@gmail.com OR from:emailkathy@gmail.com OR from:rina.krevat@gmail.com OR from:katrinamvelez@gmail.com";
-
-        if (request.type === 'sync') {
-
-            console.log("inside sync listener");
-            console.log("sync request: ", request)
-
-            // Gets list of messages that match query.
-            listMessages('me', query, function(response) {
-                // response is [{id: gmailMessageID, threadId: gmailThreadID}, ...]
-                let arrayOfGmailIdObjects = response;
-                let arrayOfGmailMessageIDs = arrayOfGmailIdObjects.map(function(obj) {
-                    return obj.id;
-                });
-
-                arrayOfSyncedIDs = arrayOfGmailMessageIDs.map(syncID);
-
-            }); // closes listMessages
-
-        } // closes if block
+    var labelID;
+    var messageID;
+    var messageHash;
+    var gmailMessageID;
+    var gmailThreadID;
+    var threadID;
+    var assignee;
+    var memberEmailAddress;
+    var megaResponse;
+    var labelsToAdd;
+    var labelsToRemove;
+    var request = request;
+    var arrayOfSyncedIDs;
+    var query = "newer_than:2d in:inbox";
+    // var query = "newer_than:1d from:emailkathy@gmail.com OR to:teamidkgha@googlegroups.com OR from:teamidkgha@googlegroups.com to:teamidkgha@gmail.com OR from:teamidkgha@gmail.com OR from:b.emma.lai@gmail.com OR from:rina.krevat@gmail.com OR to:katrinavelez@gmail.com OR from:katrinamvelez@gmail.com";
+    // var query = "is:unread newer_than:7d to:teamidkgha@googlegroups.com OR from:teamidkgha@googlegroups.com OR from:b.emma.lai@gmail.com OR from:emailkathy@gmail.com OR from:rina.krevat@gmail.com OR from:katrinamvelez@gmail.com";
 
 
-        if (request.type === 'add assign label') {
+    if (request.type === 'sync') {
 
-            console.log("inside add assign label listener");
-            console.log("add assign label request: ", request);
+        console.log("inside sync listener");
+        console.log("sync request: ", request)
 
-            labelsToAdd = request.labelsToAdd;
-            labelsToRemove = request.labelsToRemove;
-            threadID = request.threadId;
-
-            gapi.client.gmail.users.messages.get({
-                    'id': request.threadId,
-                    'userId': 'me',
-                    'format': 'metadata'
-                })
-                .then(function(jsonresp, rawresp) {
-
-                    gmailMessageID = jsonresp.result.id;
-                    gmailThreadID = jsonresp.result.threadId;
-                    
-
-                    for (var i = 0; i < jsonresp.result.payload.headers.length; i++) {
-
-                        if (jsonresp.result.payload.headers[i].name.toUpperCase() === "MESSAGE-ID") {
-                            messageID = jsonresp.result.payload.headers[i].value;
-                            messageHash = hashCode(messageID);
-                        }
-
-                    }
-
-                    return gapi.client.gmail.users.threads.modify({
-                        'userId': 'me',
-                        'id': gmailThreadID,
-                        'addLabelIds': labelsToAdd,
-                        'removeLabelIds': labelsToRemove
-                    });
-                })
-                .then(function(response) {
-                    megaResponse = response;
-                    megaResponse["messageID"] = messageHash;
-                    megaResponse["gmailMessageID"] = gmailMessageID;
-                    megaResponse["gmailThreadID"] = gmailThreadID;
-                    console.log("megaResponse: ", megaResponse);
-                    sendResponse(megaResponse);
-                })
-                // .catch(function(error) {
-                //     console.log("add label error: ", error);
-                // })
-
-        } // closes if block
-
-        if (request.type === 'list user labels') {
-
-            console.log("inside list user labels listener");
-            console.log("list user labels request: ", request);
-
-            listLabels('me', function(response) {
-
-                var arrayOfLabelObjects = response.labels;
-                var labelDictionary = {};
-
-                for (var obj of arrayOfLabelObjects) {
-                    labelDictionary[obj.name] = obj.id;
-                }
-
-                // console.log("labelDictionary: ", labelDictionary);
-
-                sendResponse(labelDictionary);
+        // Gets list of messages that match query.
+        listMessages('me', query, function(response) {
+            // response is [{id: gmailMessageID, threadId: gmailThreadID}, ...]
+            let arrayOfGmailIdObjects = response;
+            let arrayOfGmailMessageIDs = arrayOfGmailIdObjects.map(function(obj) {
+                return obj.id;
             });
 
-        } // closes if block
+            arrayOfSyncedIDs = arrayOfGmailMessageIDs.map(syncID);
 
-    }) // closes addListener
+        }); // closes listMessages
+
+    } // closes if block
+
+
+    if (request.type === 'add assign label') {
+
+        console.log("inside add assign label listener");
+
+        assignee = request.assignee;
+        labelsToRemove = request.labelsToRemove;
+        threadID = request.threadId;
+
+        gapi.client.gmail.users.labels.list({
+        'userId': 'me'
+        })
+        .then(function(response) {
+
+            let arrayOfLabelObjects = response.result.labels;
+            let labelDictionary = {};
+
+            for (let obj of arrayOfLabelObjects) {
+                labelDictionary[obj.name] = obj.id;
+            }
+
+            console.log("labelDictionary in sync.js: ", labelDictionary);
+
+            labelID = labelDictionary[assignee];
+            console.log("labelID: ", labelID);
+
+            labelsToAdd = [labelID];
+
+            return gapi.client.gmail.users.messages.get({
+                'id': threadID,
+                'userId': 'me',
+                'format': 'metadata'
+            });
+
+        })
+        .then(function(jsonresp, rawresp) {
+
+            gmailMessageID = jsonresp.result.id;
+            gmailThreadID = jsonresp.result.threadId;
+            
+
+            for (var i = 0; i < jsonresp.result.payload.headers.length; i++) {
+
+                if (jsonresp.result.payload.headers[i].name.toUpperCase() === "MESSAGE-ID") {
+                    messageID = jsonresp.result.payload.headers[i].value;
+                    messageHash = hashCode(messageID);
+                }
+            }
+
+            return gapi.client.gmail.users.threads.modify({
+                'userId': 'me',
+                'id': gmailThreadID,
+                'addLabelIds': labelsToAdd,
+                'removeLabelIds': labelsToRemove
+            });
+        })
+        .then(function(response) {
+            megaResponse = response;
+            megaResponse["messageID"] = messageHash;
+            megaResponse["gmailMessageID"] = gmailMessageID;
+            megaResponse["gmailThreadID"] = gmailThreadID;
+            console.log("megaResponse: ", megaResponse);
+            sendResponse(megaResponse);
+        })
+        // .catch(function(error) {
+        //     console.log("add label error: ", error);
+        // })
+
+    } // closes if block
+
+}) // closes addListener
 
 
 
@@ -153,11 +155,11 @@ function listLabels(userId, callback) {
     request.execute(callback);
 }
 
-// For some godforsaken reason, 'label' should really be 'resources'.
+// For some godforsaken reason, 'label' should really be 'resource'.
 function createLabel(userId, newLabelName, callback) {
     var request = gapi.client.gmail.users.labels.create({
         'userId': userId,
-        'resources': {
+        'resource': {
             'name': newLabelName,
             'labelListVisibility': 'labelShow',
             'messageListVisibility': 'show'
@@ -215,23 +217,18 @@ function syncID(gmailMessageID) {
                 if (jsonresp.result.payload.headers[i].name.toUpperCase() === "DELIVERED-TO") {
                     memberEmailAddress = jsonresp.result.payload.headers[i].value;
                 }
-
                 if (jsonresp.result.payload.headers[i].name.toUpperCase() === "MESSAGE-ID") {
                     messageID = jsonresp.result.payload.headers[i].value;
                 }
-
                 if (jsonresp.result.payload.headers[i].name.toUpperCase() === "DATE") {
                     var date = jsonresp.result.payload.headers[i].value;
                 }
-
                 if (jsonresp.result.payload.headers[i].name.toUpperCase() === "TO") {
                     var emailTo = jsonresp.result.payload.headers[i].value;
                 }
-
                 if (jsonresp.result.payload.headers[i].name.toUpperCase() === "FROM") {
                     var emailFrom = jsonresp.result.payload.headers[i].value;
                 }
-
                 if (jsonresp.result.payload.headers[i].name.toUpperCase() === "SUBJECT") {
                     var subject = jsonresp.result.payload.headers[i].value;
                 }
