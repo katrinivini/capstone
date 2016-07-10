@@ -25,6 +25,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
     console.log("inside sync.js addListener");
 
+    var unclear;
     var labelID;
     var messageID;
     var messageHash;
@@ -37,7 +38,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     var labelsToRemove;
     var request = request;
     var arrayOfSyncedIDs;
-    var query = "newer_than:2d in:inbox";
+    var query = "in:inbox";
     // var query = "newer_than:1d from:emailkathy@gmail.com OR to:teamidkgha@googlegroups.com OR from:teamidkgha@googlegroups.com to:teamidkgha@gmail.com OR from:teamidkgha@gmail.com OR from:b.emma.lai@gmail.com OR from:rina.krevat@gmail.com OR to:katrinavelez@gmail.com OR from:katrinamvelez@gmail.com";
     // var query = "is:unread newer_than:7d to:teamidkgha@googlegroups.com OR from:teamidkgha@googlegroups.com OR from:b.emma.lai@gmail.com OR from:emailkathy@gmail.com OR from:rina.krevat@gmail.com OR from:katrinamvelez@gmail.com";
 
@@ -219,6 +220,9 @@ function listMessages(userId, query, callback) {
 // Syncs common messageID with its respective Gmail threadID, which are different for each user.
 function syncID(gmailMessageID) {
 
+    let labelsToAdd;
+    let labelsToRemove = [];
+
     gapi.client.gmail.users.messages.get({
             'id': gmailMessageID,
             'userId': 'me',
@@ -246,7 +250,7 @@ function syncID(gmailMessageID) {
                 if (jsonresp.result.payload.headers[i].name.toUpperCase() === "SUBJECT") {
                     var subject = jsonresp.result.payload.headers[i].value;
                 }
-            }
+            }  // closes for loop
 
             gmailMessageID = jsonresp.result.id;
             gmailThreadID = jsonresp.result.threadId;
@@ -265,12 +269,34 @@ function syncID(gmailMessageID) {
             messages.child(messageHash).child("appliedSharedLabels").on("value", 
                 function(snapshot) {
 
-                    console.log(messageHash + " has a new value for appliedSharedLabels: ", snapshot.val());
+                    let newLabelObject = snapshot.val();
 
+                    if (newLabelObject) {
+                        let newLabelObjectKey = Object.keys(newLabelObject)[0];
+
+                        console.log(messageHash + " has a new value for appliedSharedLabels: ", newLabelObject);
+
+                        console.log("hopefully labelID: ", newLabelObject[newLabelObjectKey])
+
+                        var newLabelID = newLabelObject[newLabelObjectKey];
+                        labelsToAdd = [newLabelID];
+                    }
                     
 
 
-                })
+                    
+
+                    return gapi.client.gmail.users.threads.modify({
+                        'userId': 'me',
+                        'id': gmailThreadID,
+                        'addLabelIds': labelsToAdd,
+                        'removeLabelIds': labelsToRemove
+                    });
+
+
+                })  // closes callback
+
+            
 
 
 
