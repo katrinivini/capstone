@@ -18,7 +18,9 @@ var messages = firebase.database().ref('/messages');
 messages.once('value', function(snapshot) { messagesDatabase = snapshot.val(); })
 
 
-// Listens for requests from content script app.js.
+
+
+// Listens for requests from content script angular/app.js.
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
     console.log("inside sync.js addListener");
@@ -31,7 +33,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     var threadID;
     var assignee;
     var memberEmailAddress;
-    var megaResponse;
     var labelsToAdd;
     var labelsToRemove;
     var request = request;
@@ -55,7 +56,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
         }); // closes listMessages
 
-    } // closes if block
+        sendResponse("SYNCHRONIZED BABY!");
+
+    } // closes sync if block
 
 
     if (request.type === 'add assign label') {
@@ -118,17 +121,29 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             });
         })
         .then(function(response) {
-            megaResponse = response;
+            let megaResponse = {};
+            megaResponse["labels"] = response.result.messages[0].labelIds;
             megaResponse["messageID"] = messageHash;
             megaResponse["gmailMessageID"] = gmailMessageID;
             megaResponse["gmailThreadID"] = gmailThreadID;
             sendResponse(megaResponse);
+
         })
         // .catch(function(error) {
         //     console.log("add label error: ", error);
         // })
+    } // closes add assign label if block
 
-    } // closes if block
+    if (request.type === 'sync assignment label') {
+
+        console.log("received sync assignment label message");
+        sendResponse("ROGER THAT");
+
+    } // closes sync assignment label if block
+
+
+
+
 }) // closes addListener
 
 
@@ -242,8 +257,20 @@ function syncID(gmailMessageID) {
 
             messagesDatabase[messageHash]["gmailThreadIDs"][gmailThreadID] = memberEmailAddress;
 
+            if (!messagesDatabase[messageHash].appliedSharedLabels) messagesDatabase[messageHash].appliedSharedLabels = {};
+
             // // Saves updates.
             messages.update(messagesDatabase);
+
+            messages.child(messageHash).child("appliedSharedLabels").on("value", 
+                function(snapshot) {
+
+                    console.log(messageHash + " has a new value for appliedSharedLabels: ", snapshot.val());
+
+                    
+
+
+                })
 
 
 

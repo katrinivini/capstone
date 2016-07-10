@@ -39,34 +39,20 @@ var assignments = require('../js/myapp.js').assignments;
 // var Firebase = require('../js/myapp.js').Firebase;
 var $ = require('jquery');
 
+
+
 assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
-
-    // This came from taskhistory.js.
-    function assignment(assigner, assignee) {
-        return {
-            person: assigner,
-            action: "assigned to " + assignee,
-            assignee: assignee,
-            date: firebase.database.ServerValue.TIMESTAMP
-        }
-    }
-
 
     // Call gapi in background script to sync common messageIDs with their respective Gmail threadIDs, which are different for each user.
     // Receives [{messageID: threadID}, ...].
-
     chrome.runtime.sendMessage({
-                type: 'sync'
-            },
-            function(gapiResponse) {
+        type: 'sync'
+        },
+        function(gapiResponse) {
 
-                // Get all messageIDs (messages get added to Firebase when they're read).
-                // messages.once('value', function(snapshot) {
-                //     readMessages = snapshot.val();
-                // });
-                console.log("gapiResponse to sync sendMessage: ", gapiResponse);
+            console.log("gapiResponse to sync sendMessage: ", gapiResponse);
 
-            }) // closes sendMessage
+    }); // closes sendMessage
 
 
     // Load InboxSDK.
@@ -81,29 +67,28 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
         var route = sdk.Router.NativeListRouteIDs.INBOX;
         sdk.Router.handleListRoute(route, function(inboxView) {
             inboxView.refresh();
-            console.log("Inbox refreshed!");
         });
 
         // Register ThreadViewHandler to get threadID.
         sdk.Conversations.registerThreadViewHandler(function(threadView) {
 
-                threadID = threadView.getThreadID();
+            threadID = threadView.getThreadID();
 
-                // Use threadID to call gapi in background script to get messageID.
-                // Because messageID can only come from gapi.
-                chrome.runtime.sendMessage({
-                        type: 'read message',
-                        threadId: threadID // Watch out. Case-sensitive.
-                    }, function(hash) {
-                        // Hash function in background gets rid of characters Firebase doesn't like.
-                        messageID = hash;
-                        // Get all messageIDs (messages get added to Firebase when they're read).
-                        messages.once('value', function(snapshot) {
-                            readMessages = snapshot.val();
-                        });
+            // Use threadID to call gapi in background script to get messageID.
+            // Because messageID can only come from gapi.
+            chrome.runtime.sendMessage({
+                type: 'read message',
+                threadId: threadID // Watch out. Case-sensitive.
+            }, function(hash) {
+                // Hash function in background gets rid of characters Firebase doesn't like.
+                messageID = hash;
+                // Get all messageIDs (messages get added to Firebase when they're read).
+                messages.once('value', function(snapshot) {
+                    readMessages = snapshot.val();
+                });
 
-                    }); // closes sendMessage
-            }); // closes registerThreadViewHandler
+            }); // closes sendMessage
+        }); // closes registerThreadViewHandler
 
         sdk.Toolbars.registerToolbarButtonForThreadView({
             title: 'Assign',
@@ -139,6 +124,16 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
         // Although you need ng-value (not just value) in the template for this to work. Life's a mystery.
         var assignee = $('input[name=radioMember]:checked', '#assignForm').val();
 
+        // This is modified from taskhistory.js.
+        function assignment(assigner, assignee) {
+            return {
+                person: assigner,
+                action: "assigned to " + assignee,
+                assignee: assignee,
+                date: firebase.database.ServerValue.TIMESTAMP
+            }
+        }
+
         // Adds assignment to Firebase.
         console.log('assignee: ', assignee);
         console.log('member: ', member);
@@ -154,8 +149,16 @@ assignapp.controller('AssignCtrl', function($scope, $firebaseArray) {
             assignee: assignee,
             labelsToRemove: []
         }, function(gapiResponse) {
-            // Currently background doesn't send a response to this.
-            console.log("background response to add assign label: ", gapiResponse);
+
+            console.log("gapiResponse to add assign label: ", gapiResponse);
+
+            // Unclear if this is necessary.
+            // Trying to ask background sync.js to listen for assignments and trigger add label gapi calls.
+            chrome.runtime.sendMessage({
+                type: 'sync assignment label'
+            }, function(response) {
+                console.log("response from sync assignment label sendMessage: ", response);
+            });
 
         });
 

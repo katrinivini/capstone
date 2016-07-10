@@ -48,6 +48,7 @@ require('./dashboard/dashboard.js');
 // require('./left-navmenu/myconversations.js');
 // require('./left-navmenu/shared-labels.js');
 require('./threadview/taskhistory.js');
+require('./threadview/sync-content-script.js');
 require('./threadview/snoozed.js');
 require('./threadview/assign/assign-button.js');
 require('./threadview/completed.js');
