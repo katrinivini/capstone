@@ -21,35 +21,35 @@ chrome.runtime.sendMessage({
 
 })
 
-app.controller('SnoozeCtrl', function($scope, $firebase, $firebaseArray, $state) {
-    var snoozedemails = [];
-    $scope.snoozedemails = [];
+app.controller('CompleteCtrl', function($scope, $firebase, $firebaseArray, $state) {
+    var completedemails = [];
+    $scope.completedemails = [];
     members.child(index).child('activity').once('value', function(snapshot) {
         var userHistory = snapshot.val();
         for (var id in userHistory) {
-            if (userHistory.hasOwnProperty(id) && userHistory[id].action === 'snoozed') {
-                snoozedemails.push({databaseId: id , data: userHistory[id]});
+            if (userHistory.hasOwnProperty(id) && userHistory[id].action === 'completed') {
+                completedemails.push({databaseId: id , data: userHistory[id]});
             }
         }
-        snoozedemails.forEach(function(snoozedemail) {
+        completedemails.forEach(function(completedemail) {
             chrome.runtime.sendMessage({
                 type: 'fetch email',
-                threadId: snoozedemail.data.threadId
+                threadId: completedemail.data.threadId
             }, function(emailBody) {
-                $scope.snoozedemails.push({ databaseId: snoozedemail.databaseId, threadId: snoozedemail.data.threadId, messageId: snoozedemail.data.messageId, body: truncated(emailBody), date: new Date(snoozedemail.data.date) });
+                $scope.completedemails.push({ databaseId: completedemail.databaseId, threadId: completedemail.data.threadId, messageId: completedemail.data.messageId, body: truncated(emailBody), date: new Date(completedemail.data.date) });
                 $scope.$digest();
             })
         })
 
     })
 
-    $scope.removeSnooze = function(snoozedemail){
+    $scope.undo = function(completedemail){
     	//have to delete thing from database, then call $scope.$digest
-        var i = $scope.snoozedemails.indexOf(snoozedemail);
-    	members.child(index).child('activity').child(snoozedemail.databaseId).remove()
+        var i = $scope.completedemails.indexOf(completedemail);
+    	members.child(index).child('activity').child(completedemail.databaseId).remove()
     	.then(function(){
-            messages.child(snoozedemail.messageId).child('activity').push(eventObj(name, 'unsnoozed this email'));
-    		$scope.snoozedemails = $scope.snoozedemails.slice(0, i).concat($scope.snoozedemails.slice(i+1));
+            messages.child(completedemail.messageId).child('activity').push(eventObj(name, 'unmarked this email as complete'));
+    		$scope.completedemails = $scope.completedemails.slice(0, i).concat($scope.completedemails.slice(i+1));
             $scope.$digest();
     	})
     }

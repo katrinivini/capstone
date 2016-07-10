@@ -24,8 +24,16 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 type: 'read message',
                 threadId: threadId
             }, function(messageID) {
-                messages.child(messageID).child('activity').push(eventObj(name, 'completed this email'))
-                members.child(index).child('activity').push({ action: 'completed', threadId: threadId, date: Firebase.database.ServerValue.TIMESTAMP })
+                members.child(index).child('activity').once('value', function(snapshot) {
+                    var userHistory = snapshot.val();
+                    console.log('userHistory: ', userHistory);
+                    //checking if the member already snoozed this email
+                    for (var databaseId in userHistory) {
+                        if (userHistory.hasOwnProperty(databaseId) && userHistory[databaseId].action === 'completed' && userHistory[databaseId].threadId === threadId) return;
+                    }
+                    messages.child(messageID).child('activity').push(eventObj(name, 'completed this email'))
+                    members.child(index).child('activity').push({ action: 'completed', threadId: threadId, messageId: messageID, date: Firebase.database.ServerValue.TIMESTAMP })
+                })
             })
         }
     })

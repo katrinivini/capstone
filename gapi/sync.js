@@ -1,5 +1,8 @@
-// background script: making gapi calls a like a rock star!
+// Background script: Listens for requests from content script app.js.
+// Making gapi calls a like a rock star!
+// Also works with Firebase...because why should content scripts have all the fun?
 
+// Sets up Firebase.
 var firebase = require('firebase');
 var config = {
     apiKey: "AIzaSyDPRP1vgm6bQ7SXuVAQtgBS5ewsjJoDLzg",
@@ -7,53 +10,126 @@ var config = {
     databaseURL: "https://capstone1604gha.firebaseio.com",
     storageBucket: "https://capstone1604gha.firebaseio.com",
 };
-
 firebase.initializeApp(config);
 
+// Gets messages branch of database.
+var messagesDatabase;
 var messages = firebase.database().ref('/messages');
+messages.once('value', function(snapshot) { messagesDatabase = snapshot.val(); })
 
 
-
-messages.once('value', function(snapshot) {messagesDatabase = snapshot.val();})
-// Listens for requests from content script mysync.js.
+// Listens for requests from content script app.js.
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
-        console.log("inside sync.js addListener");
+    console.log("inside sync.js addListener");
 
-        var messageID;
-        var messageHash;
-        var gmailMessageID;
-        var gmailThreadID;
-        var threadID;
-        var memberEmailAddress;
-        var megaResponse;
-        var labelsToAdd;
-        var labelsToRemove;
-        var request = request;
-        var arrayOfSyncedIDs;
-        var query = "is:unread newer_than:7d to:teamidkgha@googlegroups.com OR from:teamidkgha@googlegroups.com OR from:b.emma.lai@gmail.com OR from:emailkathy@gmail.com OR from:rina.krevat@gmail.com OR from:katrinamvelez@gmail.com";
+    var labelID;
+    var messageID;
+    var messageHash;
+    var gmailMessageID;
+    var gmailThreadID;
+    var threadID;
+    var assignee;
+    var memberEmailAddress;
+    var megaResponse;
+    var labelsToAdd;
+    var labelsToRemove;
+    var request = request;
+    var arrayOfSyncedIDs;
+    var query = "newer_than:2d in:inbox";
+    // var query = "newer_than:1d from:emailkathy@gmail.com OR to:teamidkgha@googlegroups.com OR from:teamidkgha@googlegroups.com to:teamidkgha@gmail.com OR from:teamidkgha@gmail.com OR from:b.emma.lai@gmail.com OR from:rina.krevat@gmail.com OR to:katrinavelez@gmail.com OR from:katrinamvelez@gmail.com";
+    // var query = "is:unread newer_than:7d to:teamidkgha@googlegroups.com OR from:teamidkgha@googlegroups.com OR from:b.emma.lai@gmail.com OR from:emailkathy@gmail.com OR from:rina.krevat@gmail.com OR from:katrinamvelez@gmail.com";
 
-        if (request.type === 'sync') {
 
-            // Gets list of messages that match query.
-            listMessages('me', query, function(response) {
-                // response is [{id: gmailMessageID, threadId: gmailThreadID}, ...]
-                let arrayOfGmailIdObjects = response;
-                console.log("sync.js listMessages response: ", arrayOfGmailIdObjects);
-                let arrayOfGmailMessageIDs = arrayOfGmailIdObjects.map(function(obj)
-                {
-                    return obj.id;
-                });
-                console.log("arrayOfGmailMessageIDs: ", arrayOfGmailMessageIDs);
-                arrayOfSyncedIDs = arrayOfGmailMessageIDs.map(syncID);
+    if (request.type === 'sync') {
 
-            }); // closes listMessages
+        // Gets list of messages that match query.
+        listMessages('me', query, function(response) {
+            // response is [{id: gmailMessageID, threadId: gmailThreadID}, ...]
+            let arrayOfGmailIdObjects = response;
+            let arrayOfGmailMessageIDs = arrayOfGmailIdObjects.map(function(obj) {
+                return obj.id;
+            });
 
-        } // closes if block
-        console.log("arrayOfSyncedIDs: ", arrayOfSyncedIDs);
-        // sendResponse("heyo from sync.js");
+            arrayOfSyncedIDs = arrayOfGmailMessageIDs.map(syncID);
 
-    }) // closes addListener
+        }); // closes listMessages
+
+    } // closes if block
+
+
+    if (request.type === 'add assign label') {
+
+        console.log("inside add assign label listener");
+
+        assignee = request.assignee;
+        labelsToRemove = request.labelsToRemove;
+        threadID = request.threadId;
+
+        gapi.client.gmail.users.labels.list({
+        'userId': 'me'
+        })
+        .then(function(response) {
+
+            let arrayOfLabelObjects = response.result.labels;
+            let labelDictionary = {};
+
+            for (let obj of arrayOfLabelObjects) {
+                labelDictionary[obj.name] = obj.id;
+            }
+
+            labelID = labelDictionary[assignee];
+            labelsToAdd = [labelID];
+
+            return gapi.client.gmail.users.messages.get({
+                'id': threadID,
+                'userId': 'me',
+                'format': 'metadata'
+            });
+
+        })
+        .then(function(jsonresp, rawresp) {
+
+            gmailMessageID = jsonresp.result.id;
+            gmailThreadID = jsonresp.result.threadId;
+
+            for (var i = 0; i < jsonresp.result.payload.headers.length; i++) {
+
+                if (jsonresp.result.payload.headers[i].name.toUpperCase() === "MESSAGE-ID") {
+                    messageID = jsonresp.result.payload.headers[i].value;
+                    messageHash = hashCode(messageID);
+                }
+            }
+
+            // Adds messageHash and its child appliedSharedLabels to messages database if they don't already exist.
+            if (!messagesDatabase[messageHash]) messagesDatabase[messageHash] = {};
+            if (!messagesDatabase[messageHash].appliedSharedLabels) messagesDatabase[messageHash].appliedSharedLabels = {};
+            
+            messagesDatabase[messageHash]["appliedSharedLabels"][assignee] = labelID;
+
+            // // Saves updates.
+            messages.update(messagesDatabase);
+
+            return gapi.client.gmail.users.threads.modify({
+                'userId': 'me',
+                'id': gmailThreadID,
+                'addLabelIds': labelsToAdd,
+                'removeLabelIds': labelsToRemove
+            });
+        })
+        .then(function(response) {
+            megaResponse = response;
+            megaResponse["messageID"] = messageHash;
+            megaResponse["gmailMessageID"] = gmailMessageID;
+            megaResponse["gmailThreadID"] = gmailThreadID;
+            sendResponse(megaResponse);
+        })
+        // .catch(function(error) {
+        //     console.log("add label error: ", error);
+        // })
+
+    } // closes if block
+}) // closes addListener
 
 
 
@@ -78,10 +154,11 @@ function listLabels(userId, callback) {
     request.execute(callback);
 }
 
+// For some godforsaken reason, 'label' should really be 'resource'.
 function createLabel(userId, newLabelName, callback) {
     var request = gapi.client.gmail.users.labels.create({
         'userId': userId,
-        'label': {
+        'resource': {
             'name': newLabelName,
             'labelListVisibility': 'labelShow',
             'messageListVisibility': 'show'
@@ -134,16 +211,25 @@ function syncID(gmailMessageID) {
         })
         .then(function(jsonresp, rawresp) {
 
-            
-
             for (var i = 0; i < jsonresp.result.payload.headers.length; i++) {
 
                 if (jsonresp.result.payload.headers[i].name.toUpperCase() === "DELIVERED-TO") {
                     memberEmailAddress = jsonresp.result.payload.headers[i].value;
                 }
-
                 if (jsonresp.result.payload.headers[i].name.toUpperCase() === "MESSAGE-ID") {
                     messageID = jsonresp.result.payload.headers[i].value;
+                }
+                if (jsonresp.result.payload.headers[i].name.toUpperCase() === "DATE") {
+                    var date = jsonresp.result.payload.headers[i].value;
+                }
+                if (jsonresp.result.payload.headers[i].name.toUpperCase() === "TO") {
+                    var emailTo = jsonresp.result.payload.headers[i].value;
+                }
+                if (jsonresp.result.payload.headers[i].name.toUpperCase() === "FROM") {
+                    var emailFrom = jsonresp.result.payload.headers[i].value;
+                }
+                if (jsonresp.result.payload.headers[i].name.toUpperCase() === "SUBJECT") {
+                    var subject = jsonresp.result.payload.headers[i].value;
                 }
             }
 
@@ -152,36 +238,37 @@ function syncID(gmailMessageID) {
             messageHash = hashCode(messageID);
 
             if (!messagesDatabase[messageHash]) messagesDatabase[messageHash] = {};
+            if (!messagesDatabase[messageHash].gmailThreadIDs) messagesDatabase[messageHash].gmailThreadIDs = {};
+
+            messagesDatabase[messageHash]["gmailThreadIDs"][gmailThreadID] = memberEmailAddress;
 
             // // Saves updates.
             messages.update(messagesDatabase);
 
-            
+
 
             return {
                 memberEmailAddress: memberEmailAddress,
                 messageHash: messageHash,
-                gmailThreadID: gmailThreadID
+                gmailThreadID: gmailThreadID,
+                date: date,
+                to: emailTo,
+                from: emailFrom,
+                subject: subject
             };
         })
         .then(function(response) {
 
-            // messages.child(messageHash).child("gmailThreadIDs")[response.gmailThreadID] = response.memberEmailAddress;
-
-            if (!messagesDatabase[response.messageHash].gmailThreadIDs) messagesDatabase[response.messageHash].gmailThreadIDs = {};
-
-            messagesDatabase[response.messageHash]["gmailThreadIDs"][response.gmailThreadID] = response.memberEmailAddress;
-
-            // Saves updates.
-            messages.update(messagesDatabase);
+            console.log("email to sync: ", response);
 
         })
-        // .catch(function(error) {
-        //     console.log("add label error: ", error);
-        // })
+    // .catch(function(error) {
+    //     console.log("add label error: ", error);
+    // })
 } // closes syncID
 
-// alternatively, maybe a function that removes the non letter characters?
+
+// Because Firebase doesn't like weird characters.
 function hashCode(s) {
     // return s.split("").reduce(function(a, b) { a = ((a << 5) - a) + b.charCodeAt(0);
     //     return a & a }, 0);
