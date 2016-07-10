@@ -281,10 +281,6 @@ function syncID(gmailMessageID) {
                         var newLabelID = newLabelObject[newLabelObjectKey];
                         labelsToAdd = [newLabelID];
                     }
-                    
-
-
-                    
 
                     return gapi.client.gmail.users.threads.modify({
                         'userId': 'me',
@@ -292,8 +288,7 @@ function syncID(gmailMessageID) {
                         'addLabelIds': labelsToAdd,
                         'removeLabelIds': labelsToRemove
                     });
-
-
+                    
                 })  // closes callback
 
             
