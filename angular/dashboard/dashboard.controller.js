@@ -25,5 +25,5 @@ app.controller('DashboardCtrl', function($scope, $firebase, $firebaseArray, $sta
 		})
 	});
 
-
 });
+
