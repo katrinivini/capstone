@@ -59,6 +59,15 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
         var messageId;
         // console.log('threadId in listener', request.threadId);
+
+        // BELINDA WORK ON THIS PART FIRST - WHERE YOU ACTUALLY ADD THE LABEL TO YOUR OWN THREAD ID FIRST
+        
+        // gapi.client.gmail.users.threads.modify({
+        //     'userId': 'me',
+        //     'id': request.threadId,
+        //     'addLabelIds': labelId
+        // })
+
         gapi.client.gmail.users.messages.get({
             'id': request.threadId,
             'userId': 'me',
@@ -106,9 +115,48 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     } // closes request.type === 'get messageId'
 
     if (request.type === 'apply sharedLabel') {
+
+        var messagesInFireBase;
+        var labelId; 
+        var threadIdToBeLabelled;
+
         console.log('in the listener apply sharedLabel', request)
         //receive the label name and the thread id for which the label should be applied
-        // call a function that will apply this label 
+        var hashedMessageId = hashCode(request.messageId) 
+        console.log('here is the hashed version', hashedMessageId);
+
+        listLabels('me', function(labels){
+            // console.log('are these the labels', labels)
+            labels.labels.forEach(function(labelObj){
+                if (labelObj.name === request.name) {
+                    console.log('here is the gmail label id', labelObj.id)
+                    labelId = labelObj.id
+                }
+            })
+        })
+        
+        messages.once('value', function(snapshot) { 
+            messagesInFireBase = snapshot.val(); 
+            // console.log("PLEASE WORK", messagesInFireBase[hashedMessageId]["gmailThreadIDs"])
+            var threadIdObj = messagesInFireBase[hashedMessageId]["gmailThreadIDs"];
+            for (var key in threadIdObj) {
+                console.log('here are the keys', key);
+                if (threadIdObj[key] === request.me) {
+                    threadIdToBeLabelled = key;
+                    console.log('thread id to be labelled', threadIdToBeLabelled)
+                }
+            }
+            // return messagesInFireBase;
+        })
+        .then(function(){
+            // call a function that will apply this label 
+            gapi.client.gmail.users.threads.modify({
+                'userId': 'me',
+                'id': threadIdToBeLabelled,
+                'addLabelIds': labelId
+            })
+        })
+
         // refresh the view so that the label is applied in real time 
 
     }

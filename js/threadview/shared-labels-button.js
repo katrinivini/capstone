@@ -18,13 +18,13 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         newLabelAdded.members.forEach(function(member){
             newLabelPeople.push(member.email)
         })
-        console.log('here is an array of ppl', newLabelPeople)
+        // console.log('here is an array of ppl', newLabelPeople)
 
         //fetch your own email address
         chrome.runtime.sendMessage({
             type: 'get profile'
         }, function(gapiResponse) {
-            console.log('here is my personal email', gapiResponse)
+            // console.log('here is my personal email', gapiResponse)
             myOwnEmail = gapiResponse;
         });
 
@@ -54,7 +54,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         chrome.runtime.sendMessage({
             type: 'get profile'
         }, function(gapiResponse) {
-            console.log('here is my personal email', gapiResponse)
+            // console.log('here is my personal email', gapiResponse)
             myOwnEmail = gapiResponse;
         });
 
@@ -63,7 +63,9 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             console.log('YES MY EMAIL IS IN HERE')
             chrome.runtime.sendMessage({
                 type: 'apply sharedLabel', 
-                name: labelWithMessageId.label
+                name: labelWithMessageId.label,
+                messageId: labelWithMessageId.messageId, 
+                me: myOwnEmail
             }, function(gapiResponse) {
                 console.log('here is the response after i created that shared label for you', gapiResponse);
             });
