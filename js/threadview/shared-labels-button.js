@@ -67,7 +67,8 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 messageId: labelWithMessageId.messageId, 
                 me: myOwnEmail
             }, function(gapiResponse) {
-                console.log('here is the response after i created that shared label for you', gapiResponse);
+                // i never sent a response, so it's fine that this is undefined
+                console.log('SUCCESSFULLY LABELLED I THINK', gapiResponse);
             });
         }
     })
@@ -126,25 +127,13 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
                     //attach a click event on each of these shared labels
                     item.addEventListener('click', function(event){
-                        //look up the message id of this thread
                         console.log('here is the threadId', threadId)
                         chrome.runtime.sendMessage({
                             type: 'get messageId', 
                             threadId: threadId,
                             labelName: label.labelName,
                             // applyTo: label.sharedWith
-                        }
-                        // , function(gapiResponse) {
-                        //     console.log('here is the messageid', gapiResponse)
-                        //     messageID = gapiResponse;
-                        // }
-                        )                        
-
-                        // chrome.runtime.sendMessage({
-                        //     type: 'apply sharedLabel', 
-                        //     labelName: label.labelName,
-                        //     applyTo: label.sharedWith
-                        // })
+                        })                        
                     })
                 })
             });
