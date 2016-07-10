@@ -86,12 +86,15 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         taskHistory = document.createElement('div');
         taskHistory.classList.add('taskHistory');
         var addComment;
-        var textarea = document.createElement('textarea');
+        var textarea = document.createElement('input');
+        var commenttextwrapper = document.createElement('div');
+        commenttextwrapper.id = "commenttextwrapper";
         textarea.id = 'comment';
-        taskHistory.appendChild(textarea);
-        var submit = document.createElement('input');
+        commenttextwrapper.appendChild(textarea);
+        var submit = document.createElement('button');
         submit.type = 'submit';
         submit.id = 'submitComment';
+        submit.innerHTML = 'Submit';
         submit.addEventListener('click', function(event) {
             event.preventDefault();
             //update the database, then update the dom with a listener
@@ -102,9 +105,10 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
             // watchComment(messageID);
         })
 
-        taskHistory.appendChild(submit);
+        commenttextwrapper.appendChild(submit);
         var commentcontainer = document.createElement('div');
         commentcontainer.id = 'commentcontainer';
+        taskHistory.appendChild(commenttextwrapper);
         taskHistory.appendChild(commentcontainer);
         // thread > activity and comments
         // activity > [{person: person, action: action, date: date}]

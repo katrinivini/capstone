@@ -357,6 +357,20 @@ ul.nav a:hover {
     margin: 0;
 }
 
+#commenttextwrapper {
+    display: flex;
+}
+
+#commenttextwrapper input {
+     flex: 1;
+     z-index:100;
+}
+
+#commenttextwrapper button {
+    z-index: 101;
+}
+
+
 .search-bar {
     padding: 0;
     margin-top: 10px;
