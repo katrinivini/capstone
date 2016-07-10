@@ -1,255 +1,148 @@
-// Listens for requests from content script app.js.
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+// // Listens for requests from content script app.js.
+// chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
-    // var messageID;
-    // var messageHash;
-    // var gmailMessageID;
-    // var gmailThreadID;
-    // var threadID;
-    // var senderName;
-    // var megaResponse;
-    // var labelsToAdd;
-    // var labelsToRemove;
-    // var request = request;
-    // var query = "is:unread newer_than:7d to:b.emma.lai@gmail.com OR to:emailkathy@gmail.com OR to:rina.krevat@gmail.com OR to:katrinamvelez@gmail.com";
-    // // var query = "is:unread newer_than:1d from:katrinamvelez@gmail.com";
+//     var messageID;
+//     var messageHash;
+//     var gmailMessageID;
+//     var gmailThreadID;
+//     var threadID;
+//     var senderName;
+//     var megaResponse;
+//     var labelsToAdd;
+//     var labelsToRemove;
+//     var request = request;
+    
 
-    // if (request.type === 'add label') {
+//     if (request.type === 'add assign label') {
 
-    //     labelsToAdd = request.labelsToAdd;
-    //     labelsToRemove = request.labelsToRemove;
-    //     threadID = request.threadId;
+//         labelsToAdd = request.labelsToAdd;
+//         labelsToRemove = request.labelsToRemove;
+//         threadID = request.threadId;
 
-    //     gapi.client.gmail.users.messages.get({
-    //         'id': request.threadId,
-    //         'userId': 'me',
-    //         'format': 'metadata'
-    //     })
-    //     .then(function(jsonresp, rawresp) {
+//         gapi.client.gmail.users.messages.get({
+//             'id': request.threadId,
+//             'userId': 'me',
+//             'format': 'metadata'
+//         })
+//         .then(function(jsonresp, rawresp) {
 
-    //         gmailMessageID = jsonresp.result.id;
-    //         gmailThreadID = jsonresp.result.threadId;
-    //         messageID = jsonresp.result.payload.headers[16].value;
-    //         messageHash = hashCode(messageID);
+//             gmailMessageID = jsonresp.result.id;
+//             gmailThreadID = jsonresp.result.threadId;
+//             messageID = jsonresp.result.payload.headers[16].value;
+//             messageHash = hashCode(messageID);
 
-    //         return gapi.client.gmail.users.threads.modify({
-    //             'userId': 'me',
-    //             'id': gmailThreadID,
-    //             'addLabelIds': labelsToAdd,
-    //             'removeLabelIds': labelsToRemove
-    //         });
-    //     })
-    //     .then(function(response) {
-    //         megaResponse = response;
-    //         megaResponse["messageID"] = messageHash;
-    //         megaResponse["gmailMessageID"] = gmailMessageID;
-    //         megaResponse["gmailThreadID"] = gmailThreadID;
-    //         // console.log("megaResponse: ", megaResponse);
-    //         sendResponse(megaResponse);
-    //     })
-    //     // .catch(function(error) {
-    //     //     console.log("add label error: ", error);
-    //     // })
+//             return gapi.client.gmail.users.threads.modify({
+//                 'userId': 'me',
+//                 'id': gmailThreadID,
+//                 'addLabelIds': labelsToAdd,
+//                 'removeLabelIds': labelsToRemove
+//             });
+//         })
+//         .then(function(response) {
+//             megaResponse = response;
+//             megaResponse["messageID"] = messageHash;
+//             megaResponse["gmailMessageID"] = gmailMessageID;
+//             megaResponse["gmailThreadID"] = gmailThreadID;
+//             console.log("megaResponse: ", megaResponse);
+//             sendResponse(megaResponse);
+//         })
+//         // .catch(function(error) {
+//         //     console.log("add label error: ", error);
+//         // })
 
-    // } else if (request.type === 'list labels') {
+//     } else if (request.type === 'list user labels') {
 
-    //     listLabels('me', function(response) {
+//         listLabels('me', function(response) {
 
-    //         var arrayOfLabelObjects = response.labels;
-    //         var labelDictionary = {};
+//             var arrayOfLabelObjects = response.labels;
+//             var labelDictionary = {};
 
-    //         for (var obj of arrayOfLabelObjects) {
-    //             labelDictionary[obj.name] = obj.id;
-    //         }
+//             for (var obj of arrayOfLabelObjects) {
+//                 labelDictionary[obj.name] = obj.id;
+//             }
 
-    //         // console.log("labelDictionary: ", labelDictionary);
+//             // console.log("labelDictionary: ", labelDictionary);
 
-    //         sendResponse(labelDictionary);
-    //     });
+//             sendResponse(labelDictionary);
+//         });
 
-    // }  // closes else if
+//     }  // closes else if
 
-
-    // BELINDAS WORK BELOW FOR SHARED LABELS
-
-    // if (request.type === 'get messageId') {
-    //     console.log('threadId in listener', request.threadId);
-    //     gapi.client.gmail.users.messages.get({
-    //             'id': request.threadId,
-    //             'userId': 'me',
-    //             'format': 'metadata'
-    //     })
-    //     .then(function(message){
-    //         // console.log('here is the message', message);
-    //         var arrayWithMessageIdInside = message.result.payload.headers;
-    //         for (var i = 0; i < arrayWithMessageIdInside.length; i++) {
-    //             if (arrayWithMessageIdInside[i].name === "Message-ID") {
-    //                 var messageId = arrayWithMessageIdInside[i].value
-    //                 // console.log('here is the unique messageId', messageId);
-    //                 // return messageId;
-    //                 sendResponse(messageId);
-    //             }
-    //         }
-    //     })
-
-    // }
-
-    // if (request.type === 'apply sharedLabel') {
-    //     console.log('in the listener apply sharedLabel', request)
-    //     //receive the label name and the people for whom the shared label should appear for 
-    //     request.applyTo.forEach(function(person){
-    //         console.log(person.email);
-    //     })
-
-    //     // get the individual thread id's for each person
-    //     // call a function that will apply this label to each person's thread
-    //     // refresh the view so that the label is applied in real time 
-
-    // }
-
-})    // closes addListener
+// })    // closes addListener
 
 
 
-// ---------- FUNCTIONS ----------
+// // ---------- FUNCTIONS ----------
 
-// Syncs common messageID with its respective Gmail threadID, which are different for each user.
-function syncID(gmailMessageID) {
+// // Add Gmail label to thread.
+// function modifyThread(userId, threadId, labelsToAdd, labelsToRemove, callback) {
+//     var request = gapi.client.gmail.users.threads.modify({
+//         'userId': userId,
+//         'id': threadId,
+//         'addLabelIds': labelsToAdd,
+//         'removeLabelIds': labelsToRemove
+//     });
+//     request.execute(callback);
+// }
 
-    gapi.client.gmail.users.messages.get({
-            'id': gmailMessageID,
-            'userId': 'me',
-            'format': 'metadata'
-        })
-        .then(function(jsonresp, rawresp) {
-            for (var i = 0; i < jsonresp.result.payload.headers.length; i++) {
+// // Get list of user's Gmail labels.
+// function listLabels(userId, callback) {
+//     var request = gapi.client.gmail.users.labels.list({
+//         'userId': userId
+//     });
+//     request.execute(callback);
+// }
 
-                if (jsonresp.result.payload.headers[i].name.toUpperCase() === "DELIVERED-TO") {
-                    memberEmailAddress = jsonresp.result.payload.headers[i].value;
-                }
+// // For some godforsaken reason, 'label' should really be 'resources'.
+// function createLabel(userId, newLabelName, callback) {
+//     var request = gapi.client.gmail.users.labels.create({
+//         'userId': userId,
+//         'resources': {
+//             'name': newLabelName,
+//             'labelListVisibility': 'labelShow',
+//             'messageListVisibility': 'show'
+//         }
+//     });
+//     request.execute(callback);
+// }
 
-                if (jsonresp.result.payload.headers[i].name.toUpperCase() === "MESSAGE-ID") {
-                    messageID = jsonresp.result.payload.headers[i].value;
-                }
-            }
+// // Using threadID because messageID of 1st msg in thread is same as threadID.
+// function getMessage(userId, threadId, callback) {
+//     var request = gapi.client.gmail.users.messages.get({
+//         'id': threadId,
+//         'userId': userId,
+//         'format': 'metadata'
+//     })
+//     return request.execute(callback);
+// }
 
-            gmailMessageID = jsonresp.result.id;
-            gmailThreadID = jsonresp.result.threadId;
-            messageHash = hashCode(messageID);
+// function listMessages(userId, query, callback) {
+//     var getPageOfMessages = function(request, result) {
+//         request.execute(function(resp) {
+//             result = result.concat(resp.messages);
+//             var nextPageToken = resp.nextPageToken;
+//             if (nextPageToken) {
+//                 request = gapi.client.gmail.users.messages.list({
+//                     'userId': userId,
+//                     'pageToken': nextPageToken,
+//                     'q': query
+//                 });
+//                 getPageOfMessages(request, result);
+//             } else {
+//                 callback(result);
+//             }
+//         });
+//     };
+//     var initialRequest = gapi.client.gmail.users.messages.list({
+//         'userId': userId,
+//         'q': query
+//     });
+//     getPageOfMessages(initialRequest, []);
+// }
 
-            if (!messagesDatabase[messageHash]) messagesDatabase[messageHash] = {};
-
-            // // Saves updates.
-            messages.update(messagesDatabase); 
-
-            return {
-                memberEmailAddress: memberEmailAddress,
-                messageHash: messageHash,
-                gmailThreadID: gmailThreadID
-            };
-        })
-        .then(function(response) {
-
-            // messages.child(messageHash).child("gmailThreadIDs")[response.gmailThreadID] = response.memberEmailAddress;
-
-            if (!messagesDatabase[response.messageHash].gmailThreadIDs) messagesDatabase[response.messageHash].gmailThreadIDs = {};
-
-            messagesDatabase[response.messageHash]["gmailThreadIDs"][response.gmailThreadID] = response.memberEmailAddress;
-
-            // Saves updates.
-            messages.update(messagesDatabase);
-
-        })
-
-} // closes syncID
-
-// Add Gmail label to thread.
-function modifyThread(userId, threadId, labelsToAdd, labelsToRemove, callback) {
-    var request = gapi.client.gmail.users.threads.modify({
-        'userId': userId,
-        'id': threadId,
-        'addLabelIds': labelsToAdd,
-        'removeLabelIds': labelsToRemove
-    });
-    request.execute(callback);
-}
-
-// Get list of user's Gmail labels.
-function listLabels(userId, callback) {
-    var request = gapi.client.gmail.users.labels.list({
-        'userId': userId
-    });
-    request.execute(callback);
-}
-
-function createLabel(userId, newLabelName, callback) {
-    var request = gapi.client.gmail.users.labels.create({
-        'userId': userId,
-        'label': {
-            'name': newLabelName,
-            'labelListVisibility': 'labelShow',
-            'messageListVisibility': 'show'
-        }
-    });
-    request.execute(callback);
-}
-
-// Using threadID because messageID of 1st msg in thread is same as threadID.
-function getMessage(userId, threadId, callback) {
-    var request = gapi.client.gmail.users.messages.get({
-        'id': threadId,
-        'userId': userId,
-        'format': 'metadata'
-    })
-    return request.execute(callback);
-}
-
-function listMessages(userId, query, callback) {
-    var getPageOfMessages = function(request, result) {
-        request.execute(function(resp) {
-            result = result.concat(resp.messages);
-            var nextPageToken = resp.nextPageToken;
-            if (nextPageToken) {
-                request = gapi.client.gmail.users.messages.list({
-                    'userId': userId,
-                    'pageToken': nextPageToken,
-                    'q': query
-                });
-                getPageOfMessages(request, result);
-            } else {
-                callback(result);
-            }
-        });
-    };
-    var initialRequest = gapi.client.gmail.users.messages.list({
-        'userId': userId,
-        'q': query
-    });
-    getPageOfMessages(initialRequest, []);
-}
-
-// alternatively, maybe a function that removes the non letter characters?
-function hashCode(s) {
-    // return s.split("").reduce(function(a, b) { a = ((a << 5) - a) + b.charCodeAt(0);
-    //     return a & a }, 0);
-    return s.replace(/[^\w\s]/gi, '');
-}
-
-
-
-
-
-
-// Version with loop instead of directly fetching with index.
-    // getMessage('me', request.threadId, function(jsonresp, rawresp) {
-
-    //     // for (var i = 0; i < jsonresp.payload.headers.length; i++) {
-    //     //     if (jsonresp.payload.headers[i].name.toUpperCase() === "MESSAGE-ID") {
-    //     //         messageID = jsonresp.payload.headers[i].value;
-    //     //     }
-    //     // }
-    //     gmailMessageID = jsonresp.id;
-    //     gmailThreadID = jsonresp.threadId;
-    //     messageID = jsonresp.payload.headers[16].value;
-    //     messageHash = hashCode(messageID);
-    // });
+// // alternatively, maybe a function that removes the non letter characters?
+// function hashCode(s) {
+//     // return s.split("").reduce(function(a, b) { a = ((a << 5) - a) + b.charCodeAt(0);
+//     //     return a & a }, 0);
+//     return s.replace(/[^\w\s]/gi, '');
+// }
