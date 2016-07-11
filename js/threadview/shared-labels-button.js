@@ -92,7 +92,12 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         hasDropdown: true,
         onClick: function(event) {
             var e = event;
-
+            chrome.runtime.sendMessage({
+                type: 'read message',
+                threadId: threadId
+            }, function(hash){
+                messageID = hash;
+            })
             var labels = []; 
             sharedLabels.once('value', function(snapshot){
                 var data = snapshot.val(); 
@@ -135,6 +140,11 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                             threadId: threadId,
                             labelName: label.labelName,
                             // applyTo: label.sharedWith
+                        })
+                        messages.child(messageID).child('activity').push({
+                            person: sdk.User.getAccountSwitcherContactList()[0].name,
+                            action: 'assigned the shared label ' + label.labelName,
+                            date: Firebase.database.ServerValue.TIMESTAMP
                         })                        
                     })
                 })

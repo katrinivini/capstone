@@ -39,7 +39,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     var labelsToRemove;
     // var request = request; // why is this line necessary?
     var arrayOfSyncedIDs;
-    var query = "newer_than:4d in:inbox from:emailkathy@gmail.com";
+    var query = "newer_than:4d in:inbox";
     // var query = "newer_than:1d from:emailkathy@gmail.com OR to:teamidkgha@googlegroups.com OR from:teamidkgha@googlegroups.com to:teamidkgha@gmail.com OR from:teamidkgha@gmail.com OR from:b.emma.lai@gmail.com OR from:rina.krevat@gmail.com OR to:katrinavelez@gmail.com OR from:katrinamvelez@gmail.com";
     // var query = "is:unread newer_than:7d to:teamidkgha@googlegroups.com OR from:teamidkgha@googlegroups.com OR from:b.emma.lai@gmail.com OR from:emailkathy@gmail.com OR from:rina.krevat@gmail.com OR from:katrinamvelez@gmail.com";
 
@@ -344,6 +344,7 @@ function syncID(gmailMessageID) {
             gmailThreadID = jsonresp.result.threadId;
             messageHash = hashCode(messageID);
 
+            if (!messagesDatabase) messagesDatabase = {};
             if (!messagesDatabase[messageHash]) messagesDatabase[messageHash] = {};
             if (!messagesDatabase[messageHash].gmailThreadIDs) messagesDatabase[messageHash].gmailThreadIDs = {};
 
