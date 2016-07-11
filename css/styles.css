@@ -176,6 +176,7 @@ ul.nav a:hover {
 
 #username {
 	font-weight: bold;	
+    margin-bottom: -10px;
 }
 
 #useremail {
@@ -504,6 +505,11 @@ ul.nav a:hover {
 	background-color: #C2C2C2;
 }
 
+
+.help-block {
+    font-size: small;
+    color: #c2c2c2;
+}
 
 .template-preview {
     margin-top: 20px;

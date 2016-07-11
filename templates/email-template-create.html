@@ -3,18 +3,21 @@
 	<div class="right-view">
 		<h2 class="section title">Create Email Template</h2>
 
-		<form class="template-form">
+		<form class="template-form" name="templateform">
 			<label for="title">Title:</label>
-			<input id="title" type="text" ng-model="newtemplate.title" class="form-control" required></input>
+			<input id="title" name="title" type="text" ng-model="newtemplate.title" class="form-control" required></input>
+			<p ng-show="templateform.title.$invalid || !templateform.title.$pristine" class="help-block">This field is required.</p>
 			<label for="body">Body:</label>
-			<textarea id="body" type="text" ng-model="newtemplate.body" class="form-control" required></textarea>
+			<textarea id="body" name="body" type="text" ng-model="newtemplate.body" class="form-control" required></textarea>
+			<p ng-show="templateform.body.$invalid || templateform.body.$pristine" class="help-block">This field is required.</p>
 			<label for="members">Users to share this template with: </label>
-			<input id="members" type="text" ng-model="newtemplate.members" class="form-control" required></input>
+			<input id="members" type="text" name="members" ng-model="newtemplate.members" class="form-control" required></input>
+			<p ng-show="templateform.members.$invalid || template-form.members.$pristine" class="help-block">This field is required.</p>
 		</form>
 
-		<button class="btn btn-orange" ng-click="addTemplate(newtemplate)">Save</button>
+		<button class="btn btn-orange" ng-click="addTemplate(newtemplate)" ng-disabled="templateform.$invalid">Save</button>
 
-		<button class="btn btn-orange" ng-click="discardTemplate()">Discard</button>
+		<button class="btn btn-orange" ng-click="discardNewTemplate()">Discard</button>
 		
 	</div>
 </div>
