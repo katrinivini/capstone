@@ -21,11 +21,14 @@ messages.once('value', function(snapshot) {
     messagesDatabase = snapshot.val(); 
 })
 
-// Listens for requests from content script app.js.
+
+
+// Listens for requests from content script angular/app.js.
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
     // console.log("inside sync.js addListener");
 
+    var newAssignee;
     var labelID;
     var messageID;
     var messageHash;
@@ -34,7 +37,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     var threadID;
     var assignee;
     var memberEmailAddress;
-    var megaResponse;
     var labelsToAdd;
     var labelsToRemove;
     // var request = request; // why is this line necessary?
@@ -162,7 +164,9 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
         }); // closes listMessages
 
-    } // closes if block
+        sendResponse("SYNCHRONIZED BABY!");
+
+    } // closes sync if block
 
     if (request.type === 'add assign label') {
 
@@ -211,7 +215,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             if (!messagesDatabase[messageHash]) messagesDatabase[messageHash] = {};
             if (!messagesDatabase[messageHash].appliedSharedLabels) messagesDatabase[messageHash].appliedSharedLabels = {};
             
-            messagesDatabase[messageHash]["appliedSharedLabels"][assignee] = labelID;
+            messagesDatabase[messageHash]["appliedSharedLabels"]["Label Name"] = assignee;
 
             // // Saves updates.
             messages.update(messagesDatabase);
@@ -224,17 +228,25 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             });
         })
         .then(function(response) {
-            megaResponse = response;
+            let megaResponse = {};
+            megaResponse["labels"] = response.result.messages[0].labelIds;
             megaResponse["messageID"] = messageHash;
             megaResponse["gmailMessageID"] = gmailMessageID;
             megaResponse["gmailThreadID"] = gmailThreadID;
             sendResponse(megaResponse);
+
         })
         // .catch(function(error) {
         //     console.log("add label error: ", error);
         // })
+    } // closes add assign label if block
 
-    } // closes if block
+    if (request.type === 'sync assignment label') {
+
+        console.log("received sync assignment label message");
+        sendResponse("ROGER THAT");
+
+    } // closes sync assignment label if block
 
 }) // closes addListener
 
@@ -311,6 +323,9 @@ function listMessages(userId, query, callback) {
 // Syncs common messageID with its respective Gmail threadID, which are different for each user.
 function syncID(gmailMessageID) {
 
+    let newLabelsToAdd;
+    let newLabelsToRemove = [];
+
     gapi.client.gmail.users.messages.get({
             'id': gmailMessageID,
             'userId': 'me',
@@ -338,7 +353,7 @@ function syncID(gmailMessageID) {
                 if (jsonresp.result.payload.headers[i].name.toUpperCase() === "SUBJECT") {
                     var subject = jsonresp.result.payload.headers[i].value;
                 }
-            }
+            }  // closes for loop
 
             gmailMessageID = jsonresp.result.id;
             gmailThreadID = jsonresp.result.threadId;
@@ -347,13 +362,64 @@ function syncID(gmailMessageID) {
             if (!messagesDatabase) messagesDatabase = {};
             if (!messagesDatabase[messageHash]) messagesDatabase[messageHash] = {};
             if (!messagesDatabase[messageHash].gmailThreadIDs) messagesDatabase[messageHash].gmailThreadIDs = {};
-
             messagesDatabase[messageHash]["gmailThreadIDs"][gmailThreadID] = memberEmailAddress;
+
+            if (!messagesDatabase[messageHash].appliedSharedLabels) messagesDatabase[messageHash].appliedSharedLabels = {};
+            // messagesDatabase[messageHash].appliedSharedLabels["boogie"] = "woogie";
+
+
 
             // // Saves updates.
             messages.update(messagesDatabase);
 
+            messages.child(messageHash).child("appliedSharedLabels").on("child_added", 
+                function(snapshot) {
 
+                    newAssignee = snapshot.val();
+
+                    console.log("newAssignee: ", newAssignee);
+
+                    if (newAssignee) {
+
+                        console.log(messageHash + " has a new value for appliedSharedLabels: ", newAssignee);
+
+                    }
+
+                    gapi.client.gmail.users.labels.list({
+                        'userId': 'me'
+                        })
+                        .then(function(response) {
+
+                            let newArrayOfLabelObjects = response.result.labels;
+                            // let newLabelDictionary = {};
+
+                            // for (let obj of newArrayOfLabelObjects) {
+                            //     newLabelDictionary[obj.name] = obj.id;
+                            // }
+
+                            // let newLabelID = newLabelDictionary[newAssignee];
+
+                            newArrayOfLabelObjects.forEach(function(labelObject) {
+                                if (labelObject.name === newAssignee) {
+                                    newLabelID = labelObject.id;
+                                }
+                            })
+
+                            newLabelsToAdd = [newLabelID];
+
+                            console.log("hopefully labelID: ", newLabelID);
+                            console.log("newLabelsToAdd: ", newLabelsToAdd);
+                            console.log("newAssignee: ", newAssignee);
+
+                            return gapi.client.gmail.users.threads.modify({
+                                'userId': 'me',
+                                'id': gmailThreadID,
+                                'addLabelIds': newLabelsToAdd,
+                                'removeLabelIds': newLabelsToRemove
+                            });
+                        })
+
+                })  // closes callback
 
             return {
                 memberEmailAddress: memberEmailAddress,
