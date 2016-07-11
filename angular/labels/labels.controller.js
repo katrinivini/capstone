@@ -41,6 +41,7 @@ app.controller('LabelsCtrl', function($scope, $firebase, $firebaseArray, $state)
 		arr.$add({
 			label: name,
 			members: members, 
+			messageId: null,
 		})
 		.then(function(ref) {
 			// console.log('here is ref', ref);
@@ -59,7 +60,6 @@ app.controller('LabelsCtrl', function($scope, $firebase, $firebaseArray, $state)
 	        name: name
 	    }, function(gapiResponse) {
 			console.log('here is the gapiResponse', gapiResponse);
-			//STORE THE GMAIL PROVIDED LABEL ID SOMEWHERE GLOBALLY
 	    });
     }
 

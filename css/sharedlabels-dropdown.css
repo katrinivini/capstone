@@ -1,0 +1,24 @@
+.labels-dropdown {
+	width: 250px;
+}
+
+.labels-dropdown-title {
+	background-color: #5DA492; 
+	color: #FFFFFF;
+	height: 30px;
+	/*padding-left: 8px;*/
+	font-size: 1.2vw;
+	line-height: 30px;
+	text-align: center; 
+}
+
+.labels-dropdown-item {
+	border-bottom: 1px solid #C2C2C2;
+	padding-left: 8px;
+	height: 25px;
+	line-height: 25px;
+}
+
+.labels-dropdown-item:hover {
+	background-color: #C2C2C2;
+}

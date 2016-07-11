@@ -15,15 +15,18 @@ firebase.initializeApp(config);
 // Gets messages branch of database.
 var messagesDatabase;
 var messages = firebase.database().ref('/messages');
-messages.once('value', function(snapshot) { messagesDatabase = snapshot.val(); })
+var sharedLabels = firebase.database().ref('/sharedLabels');
 
+messages.once('value', function(snapshot) { 
+    messagesDatabase = snapshot.val(); 
+})
 
 
 
 // Listens for requests from content script angular/app.js.
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
-    console.log("inside sync.js addListener");
+    // console.log("inside sync.js addListener");
 
     var newAssignee;
     var labelID;
@@ -36,12 +39,116 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     var memberEmailAddress;
     var labelsToAdd;
     var labelsToRemove;
-    var request = request;
+    // var request = request; // why is this line necessary?
     var arrayOfSyncedIDs;
-    var query = "newer_than:4d in:inbox to:teamidkgha@googlegroups.com OR from:teamidkgha@gmail.com OR from:b.emma.lai@gmail.com OR from:emailkathy@gmail.com OR from:rina.krevat@gmail.com OR from:katrinamvelez@gmail.com";
+    var query = "newer_than:4d in:inbox";
     // var query = "newer_than:1d from:emailkathy@gmail.com OR to:teamidkgha@googlegroups.com OR from:teamidkgha@googlegroups.com to:teamidkgha@gmail.com OR from:teamidkgha@gmail.com OR from:b.emma.lai@gmail.com OR from:rina.krevat@gmail.com OR to:katrinavelez@gmail.com OR from:katrinamvelez@gmail.com";
     // var query = "is:unread newer_than:7d to:teamidkgha@googlegroups.com OR from:teamidkgha@googlegroups.com OR from:b.emma.lai@gmail.com OR from:emailkathy@gmail.com OR from:rina.krevat@gmail.com OR from:katrinamvelez@gmail.com";
 
+
+    // BELINDAS WORK BELOW FOR SHARED LABELS
+
+    if (request.type === 'get messageId') {
+
+        var messageId;
+        // console.log('threadId in listener', request.threadId);
+
+        gapi.client.gmail.users.messages.get({
+            'id': request.threadId,
+            'userId': 'me',
+            'format': 'metadata'
+        })
+        .then(function(message) {
+            // console.log('here is the message', message);
+            var arrayWithMessageIdInside = message.result.payload.headers;
+
+            for (var i = 0; i < arrayWithMessageIdInside.length; i++) {
+                if (arrayWithMessageIdInside[i].name === "Message-ID") {
+                    //fetch the unique messageId
+                    messageId = arrayWithMessageIdInside[i].value
+                        // console.log('here is the unique messageId', messageId);
+                }
+            }
+            // get the firebaseId of the label that we want to apply
+            sharedLabels.once("value", function(snapshot) {
+                // console.log('snapshot of labels', snapshot.val());
+                var objOfLabels = snapshot.val();
+                return objOfLabels;
+            })
+            .then(function(thing){
+                // console.log('is this a thing', thing);
+                // console.log('is this a thing', thing.val());
+                var obj = thing.val();
+                for (var key in obj) {
+                    var singleLabel = obj[key];
+                    for (var prop in singleLabel) {
+                        if (singleLabel[prop] === request.labelName) {
+                            // console.log('thing to match', request.labelName)
+                            // console.log('here is the matching one', singleLabel[prop])
+                            var firebaseIdOfMatchingLabel = key;
+                        }
+                    }
+                } 
+                return firebaseIdOfMatchingLabel;
+            })
+            .then(function(firebaseId){
+                // console.log('firebaseId here', firebaseId);
+                // console.log('making sure messageid is still right', messageId)
+                sharedLabels.child(firebaseId).update({ messageId: messageId });
+            })
+        })
+    } // closes request.type === 'get messageId'
+
+    if (request.type === 'apply sharedLabel') {
+
+        var messagesInFireBase;
+        var labelId = []; 
+        var threadIdToBeLabelled;
+
+        // console.log('in the listener apply sharedLabel', request)
+        
+        messages.once('value', function(snapshot) { 
+
+            var hashedMessageId = hashCode(request.messageId) 
+            // console.log('here is the hashed version', hashedMessageId);
+
+            gapi.client.gmail.users.labels.list({
+                    'userId': 'me'
+            })
+            .then(function(labels){
+                labels.result.labels.forEach(function(labelObj){
+                    if (labelObj.name === request.name) {
+                        // console.log('here is the gmail label id', labelObj.id)
+                        labelId.push(labelObj.id)
+                    }
+                })
+                return labelId; 
+            })
+            .then(function(){
+                messagesInFireBase = snapshot.val(); 
+                // console.log("PLEASE WORK", messagesInFireBase[hashedMessageId]["gmailThreadIDs"])
+                var threadIdObj = messagesInFireBase[hashedMessageId]["gmailThreadIDs"];
+                for (var key in threadIdObj) {
+                    // console.log('here are the keys', key);
+                    //not goign in here because my threadid isn't in here? 
+                    if (threadIdObj[key] === request.me) {
+                        threadIdToBeLabelled = key;
+                        // console.log('thread id to be labelled', threadIdToBeLabelled)
+                    }
+                }
+
+                return gapi.client.gmail.users.threads.modify({
+                    'userId': 'me',
+                    'id': threadIdToBeLabelled,
+                    'addLabelIds': labelId
+                })
+            })
+
+        })
+
+        // refresh the view so that the label is applied in real time 
+
+    }
 
     if (request.type === 'sync') {
 
@@ -60,7 +167,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         sendResponse("SYNCHRONIZED BABY!");
 
     } // closes sync if block
-
 
     if (request.type === 'add assign label') {
 
@@ -141,9 +247,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         sendResponse("ROGER THAT");
 
     } // closes sync assignment label if block
-
-
-
 
 }) // closes addListener
 
@@ -256,6 +359,7 @@ function syncID(gmailMessageID) {
             gmailThreadID = jsonresp.result.threadId;
             messageHash = hashCode(messageID);
 
+            if (!messagesDatabase) messagesDatabase = {};
             if (!messagesDatabase[messageHash]) messagesDatabase[messageHash] = {};
             if (!messagesDatabase[messageHash].gmailThreadIDs) messagesDatabase[messageHash].gmailThreadIDs = {};
             messagesDatabase[messageHash]["gmailThreadIDs"][gmailThreadID] = memberEmailAddress;
