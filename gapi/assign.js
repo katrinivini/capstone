@@ -1,12 +1,3 @@
-
-
-// "content_security_policy": "script-src 'self' 'unsafe-eval' https://*.google.com https://cdn.firebase.com https://*.firebaseio.com; object-src 'self' https://*.google.com https://*.firebaseio.com ",
-
-
-
-
-
-
 // // Listens for requests from content script app.js.
 // chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
@@ -155,9 +146,3 @@
 //     //     return a & a }, 0);
 //     return s.replace(/[^\w\s]/gi, '');
 // }
-
-
-
-
-
-
