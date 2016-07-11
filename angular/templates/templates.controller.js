@@ -75,5 +75,9 @@ app.controller('TemplatesCtrl', function($scope, $firebaseArray, $state) {
 		$scope.template.title = arr[itemindex].title;
 		$state.go('emailtemplates.preview');
 	}
+
+	$scope.discardNewTemplate = function(){
+		$state.go('emailtemplates.preview')
+	}
 	
 });
