@@ -39,6 +39,8 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
         }
     })    
 
+    // maybe do this not on InboxSDK Load? How can we just always listen for this... 
+
     // once the messageId field has been populated AKA someone has decided to apply a label to a particular thread 
     sharedLabels.on('child_changed', function(snapshot) { 
         var labelWithMessageId = snapshot.val(); 
@@ -60,7 +62,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
 
         // send the message for gapi to apply this to the right thread
         if (peopleToAddLabelFor.indexOf(myOwnEmail) >= 0) {
-            console.log('YES MY EMAIL IS IN HERE')
+            console.log('YES I NEED MY THREAD TO BE UPDATED WITH THIS LABEL')
             chrome.runtime.sendMessage({
                 type: 'apply sharedLabel', 
                 name: labelWithMessageId.label,
