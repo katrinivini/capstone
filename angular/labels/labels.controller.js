@@ -48,7 +48,7 @@ app.controller('LabelsCtrl', function($scope, $firebase, $firebaseArray, $state)
 			var id = ref.key;
 			console.log("added record with id " + id);
 			// console.log("location in array", arr.$indexFor(id)); // returns location in the array
-			addLabel(name);
+			// addLabel(name);
 			$state.go('sharedlabels')
 		});
 	}

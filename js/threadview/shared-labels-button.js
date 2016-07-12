@@ -34,7 +34,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 type: 'create sharedLabel', 
                 name: newLabelName
             }, function(gapiResponse) {
-                console.log('here is the response after i created that shared label for you', gapiResponse);
+                console.log('here is the firebaseid of the shared label that was just created', gapiResponse);
             });
         }
     })    
@@ -69,8 +69,7 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                 messageId: labelWithMessageId.messageId, 
                 me: myOwnEmail
             }, function(gapiResponse) {
-                // i never sent a response, so it's fine that this is undefined
-                console.log('SUCCESSFULLY LABELLED I THINK', gapiResponse);
+                console.log('response from background', gapiResponse);
             });
         }
     })
@@ -140,6 +139,8 @@ InboxSDK.load('1.0', 'sdk_CapstoneIDK_aa9966850e').then(function(sdk) {
                             threadId: threadId,
                             labelName: label.labelName,
                             // applyTo: label.sharedWith
+                        }, function(gapiResponse) {
+                            console.log('DONE WITH GET MESSAGEID', gapiResponse);
                         })
                         messages.child(messageID).child('activity').push({
                             person: sdk.User.getAccountSwitcherContactList()[0].name,
