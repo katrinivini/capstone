@@ -42,7 +42,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     var labelsToRemove;
     // var request = request; // why is this line necessary?
     var arrayOfSyncedIDs;
-    var query = "newer_than:4d in:inbox to:teamidkgha@gmail.com from:rina.krevat@gmail.com";
+    var query = "newer_than:4d in:inbox to:teamidkgha@gmail.com";
     // var query = "newer_than:1d from:emailkathy@gmail.com OR to:teamidkgha@googlegroups.com OR from:teamidkgha@googlegroups.com to:teamidkgha@gmail.com OR from:teamidkgha@gmail.com OR from:b.emma.lai@gmail.com OR from:rina.krevat@gmail.com OR to:katrinavelez@gmail.com OR from:katrinamvelez@gmail.com";
     // var query = "is:unread newer_than:7d to:teamidkgha@googlegroups.com OR from:teamidkgha@googlegroups.com OR from:b.emma.lai@gmail.com OR from:emailkathy@gmail.com OR from:rina.krevat@gmail.com OR from:katrinamvelez@gmail.com";
 
@@ -94,8 +94,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                 return firebaseIdOfMatchingLabel;
             })
             .then(function(firebaseId){
-                console.log('firebaseId here', firebaseId);
-                console.log('making sure messageid is still right', messageId)
+                // console.log('firebaseId here', firebaseId);
+                // console.log('making sure messageid is still right', messageId)
                 sharedLabels.child(firebaseId).update({ messageId: messageId });
                 sendResponse(firebaseIdOfMatchingLabel)
             })
@@ -113,7 +113,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         messages.once('value', function(snapshot) { 
 
             var hashedMessageId = hashCode(request.messageId) 
-            console.log('here is the hashed version', hashedMessageId);
+            // console.log('here is the hashed version', hashedMessageId);
 
             gapi.client.gmail.users.labels.list({
                     'userId': 'me'
@@ -121,7 +121,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
             .then(function(labels){
                 labels.result.labels.forEach(function(labelObj){
                     if (labelObj.name === request.name) {
-                        console.log('here is the gmail label id', labelObj.id)
+                        // console.log('here is the gmail label id', labelObj.id)
                         labelId.push(labelObj.id)
                     }
                 })
@@ -136,7 +136,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
                     //not goign in here because my threadid isn't in here? 
                     if (threadIdObj[key] === request.me) {
                         threadIdToBeLabelled = key;
-                        console.log('thread id to be labelled', threadIdToBeLabelled)
+                        // console.log('thread id to be labelled', threadIdToBeLabelled)
                     }
                 }
 
@@ -336,14 +336,14 @@ function syncID(gmailMessageID) {
 
         // console.log('from get profile', response)
         whoAmI = response.result.emailAddress; 
-        
+
         gapi.client.gmail.users.messages.get({
                 'id': gmailMessageID,
                 'userId': 'me',
                 'format': 'metadata'
             })
             .then(function(jsonresp, rawresp) {
-                console.log('HERE IS THE WHOLE JSONRESP', jsonresp);
+                // console.log('HERE IS THE WHOLE JSONRESP', jsonresp);
 
                 for (var i = 0; i < jsonresp.result.payload.headers.length; i++) {
 
@@ -452,7 +452,7 @@ function syncID(gmailMessageID) {
             })
             .then(function(response) {
 
-                console.log("email to sync: ", response);
+                // console.log("email to sync: ", response);
 
             })
     })
